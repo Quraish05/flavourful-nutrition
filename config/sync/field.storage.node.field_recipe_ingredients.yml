@@ -1,0 +1,20 @@
+uuid: 82f274ec-8a67-4f61-9232-7db6b1efcaa5
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+    - taxonomy
+id: node.field_recipe_ingredients
+field_name: field_recipe_ingredients
+entity_type: node
+type: entity_reference
+settings:
+  target_type: taxonomy_term
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

@@ -1,0 +1,23 @@
+uuid: 05db5904-09f7-467d-9a78-0e4254239f07
+langcode: en
+status: true
+dependencies:
+  config:
+    - node.type.recipe
+  module:
+    - node
+id: recipe_node_title
+label: 'Recipe Node Title'
+type: 'canonical_entities:node'
+pattern: '/recipes/[node:title]'
+selection_criteria:
+  838b4740-4144-4685-9877-f954b41d0fea:
+    id: 'entity_bundle:node'
+    negate: false
+    context_mapping:
+      node: node
+    bundles:
+      recipe: recipe
+selection_logic: and
+weight: -5
+relationships: {  }
