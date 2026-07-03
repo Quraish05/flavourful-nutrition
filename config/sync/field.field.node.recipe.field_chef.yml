@@ -1,0 +1,29 @@
+uuid: 6bdf8dd7-c7c4-49af-93bd-35ba7ca246ef
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_chef
+    - node.type.chef
+    - node.type.recipe
+id: node.recipe.field_chef
+field_name: field_chef
+entity_type: node
+bundle: recipe
+label: Chef
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:node'
+  handler_settings:
+    target_bundles:
+      chef: chef
+    sort:
+      field: _none
+      direction: ASC
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

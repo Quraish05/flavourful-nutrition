@@ -103,6 +103,10 @@
         }
     },
     "require-dev": {
-        "drupal/devel": "^5.5"
+        "drupal/coder": "^9.0",
+        "drupal/devel": "^5.5",
+        "mglaman/phpstan-drupal": "^2.0",
+        "phpstan/extension-installer": "^1.4",
+        "phpstan/phpstan": "^2.2"
     }
 }

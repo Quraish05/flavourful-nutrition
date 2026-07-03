@@ -17,7 +17,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
   admin_label: new TranslatableMarkup('Recipe nutrition facts'),
   category: new TranslatableMarkup('Flavorful'),
 )]
-class NutritionFactsBlock extends BlockBase implements ContainerFactoryPluginInterface {
+final class NutritionFactsBlock extends BlockBase implements ContainerFactoryPluginInterface {
 
   public function __construct(
     array $configuration,
@@ -28,6 +28,9 @@ class NutritionFactsBlock extends BlockBase implements ContainerFactoryPluginInt
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): static {
     return new static(
       $configuration,
@@ -37,6 +40,9 @@ class NutritionFactsBlock extends BlockBase implements ContainerFactoryPluginInt
     );
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function build(): array {
     $data = $this->client->getNutritionForIngredient('tomato');
     return [

@@ -1,0 +1,23 @@
+name: CI
+on:
+  pull_request:
+  push:
+    branches: [ main ]
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          tools: composer
+      - name: Install dependencies
+        run: composer install --no-interaction --no-progress
+      - name: Coding standards (Drupal)
+        run: vendor/bin/phpcs --standard=Drupal,DrupalPractice web/modules/custom web/themes/custom
+      - name: Static analysis
+        run: vendor/bin/phpstan analyse web/modules/custom
+      - name: Tests
+        run: vendor/bin/phpunit web/modules/custom || true

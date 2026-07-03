@@ -1,0 +1,20 @@
+uuid: 7f55494e-fd91-43a4-92a4-dd3643f0a184
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+    - taxonomy
+id: node.field_type_of_diet
+field_name: field_type_of_diet
+entity_type: node
+type: entity_reference
+settings:
+  target_type: taxonomy_term
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false
