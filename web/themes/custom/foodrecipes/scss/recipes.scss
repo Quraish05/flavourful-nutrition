@@ -1,0 +1,8 @@
+// =============================================================================
+// recipes.scss  ->  css/recipes.css
+// -----------------------------------------------------------------------------
+// Styling for the /recipes listing and recipe cards. Attached only where needed
+// via the `foodrecipes/recipes` library, using `{{ attach_library() }}` from the
+// recipes View templates.
+// =============================================================================
+@use 'components';

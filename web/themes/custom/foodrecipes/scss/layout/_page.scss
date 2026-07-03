@@ -1,0 +1,19 @@
+// =============================================================================
+// Page layout
+// =============================================================================
+@use '../abstracts' as *;
+
+.page-wrapper,
+main {
+  display: block;
+}
+
+// Constrain and centre the main content column.
+main {
+  @include container;
+  padding-block: $space-lg;
+
+  @include respond-to('lg') {
+    padding-block: $space-xl;
+  }
+}

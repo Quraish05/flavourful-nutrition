@@ -1,0 +1,62 @@
+// =============================================================================
+// Design tokens
+// -----------------------------------------------------------------------------
+// Build-time Sass variables. These are also emitted as CSS custom properties in
+// `base/_root.scss` (prefixed `--fr-*`) so they can be consumed at runtime from
+// Twig/inline styles as well as from Sass.
+// =============================================================================
+
+// Brand palette — warm, appetising tones.
+$color-paprika: #d94f30; // Primary accent (tomato / paprika).
+$color-paprika-dark: #b03a20;
+$color-basil: #3f7d3f; // Secondary accent (herb green).
+$color-saffron: #e8a72c; // Highlight (badges, ratings).
+
+// Neutrals (warm grey scale).
+$color-ink: #24201c; // Body text.
+$color-slate: #5d564d; // Muted text.
+$color-line: #e7e0d6; // Borders / hairlines.
+$color-cream: #fbf7f0; // Page background.
+$color-white: #ffffff; // Surfaces / cards.
+
+// Difficulty accents (map keyed by field_difficulty allowed values).
+$difficulty-colors: (
+  'easy': #3f7d3f,
+  'medium': #e8a72c,
+  'hard': #d94f30,
+  'expert': #8a2b16,
+);
+
+// Typography.
+$font-body: 'Georgia', 'Times New Roman', serif;
+$font-heading: 'Helvetica Neue', 'Arial', sans-serif;
+$font-size-base: 1rem;
+$line-height-base: 1.6;
+
+// Spacing scale (rem).
+$space-3xs: 0.25rem;
+$space-2xs: 0.5rem;
+$space-xs: 0.75rem;
+$space-sm: 1rem;
+$space-md: 1.5rem;
+$space-lg: 2rem;
+$space-xl: 3rem;
+$space-2xl: 4rem;
+
+// Radii & elevation.
+$radius-sm: 4px;
+$radius-md: 10px;
+$radius-lg: 18px;
+$shadow-card: 0 2px 4px rgba(36, 32, 28, 0.06), 0 8px 24px rgba(36, 32, 28, 0.08);
+$shadow-card-hover: 0 6px 12px rgba(36, 32, 28, 0.1), 0 16px 40px rgba(36, 32, 28, 0.14);
+
+// Layout.
+$container-max: 1200px;
+
+// Responsive breakpoints.
+$breakpoints: (
+  'sm': 36rem, // ~576px
+  'md': 48rem, // ~768px
+  'lg': 64rem, // ~1024px
+  'xl': 75rem, // ~1200px
+);

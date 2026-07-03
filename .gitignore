@@ -1,0 +1,45 @@
+# =============================================================================
+# .gitignore — Drupal Composer project (relocated docroot: web/)
+# -----------------------------------------------------------------------------
+# Everything ignored here is either managed by Composer (rebuild with
+# `composer install`), generated at runtime, or environment-specific/sensitive.
+# Commit composer.json + composer.lock and custom code; do NOT commit the
+# vendored dependencies below.
+# =============================================================================
+
+# --- Composer-managed dependencies -------------------------------------------
+/vendor/
+/web/core/
+/web/modules/contrib/
+/web/profiles/contrib/
+/web/themes/contrib/
+/web/libraries/
+
+# --- Environment-specific / sensitive settings -------------------------------
+# Keep the *.example / default templates, ignore the real ones (DB creds, hash
+# salt, local overrides). settings.php + settings.ddev.php are regenerated per
+# environment (DDEV rewrites settings.ddev.php on `ddev start`).
+/web/sites/*/settings.php
+/web/sites/*/settings.local.php
+/web/sites/*/settings.ddev.php
+/web/sites/*/services.yml
+!/web/sites/*/default.settings.php
+!/web/sites/*/default.services.yml
+
+# --- User-generated & runtime content ----------------------------------------
+/web/sites/*/files/
+/web/sites/*/private/
+/web/sites/simpletest/
+
+# --- Front-end build artifacts (Node) ----------------------------------------
+node_modules/
+*.css.map
+
+# --- OS / editor cruft --------------------------------------------------------
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/
+
+web/themes/custom/foodrecipes/images/icons/

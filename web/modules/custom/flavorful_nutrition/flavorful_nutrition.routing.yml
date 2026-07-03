@@ -1,0 +1,7 @@
+flavorful_nutrition.summary:
+  path: "/nutrition/summary"
+  defaults:
+    _controller: '\Drupal\flavorful_nutrition\Controller\NutritionController::summary'
+    _title: "Nutrition summary"
+  requirements:
+    _permission: "access content"

@@ -1,0 +1,4 @@
+// Forward all abstract tools so a single `@use 'abstracts' as *;` exposes
+// both design tokens and mixins to any partial that needs them.
+@forward 'variables';
+@forward 'mixins';

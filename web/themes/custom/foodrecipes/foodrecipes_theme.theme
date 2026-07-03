@@ -1,0 +1,22 @@
+<?php
+
+/**
+ * @file
+ * Theme hooks for Flavorful Theme.
+ */
+
+use Drupal\node\NodeInterface;
+
+/**
+ * Implements hook_preprocess_HOOK() for node templates.
+ *
+ * Adds a computed {{ total_time }} variable to Recipe nodes.
+ */
+function foodrecipes_theme_preprocess_node(array &$variables): void {
+  $node = $variables['node'] ?? NULL;
+  if ($node instanceof NodeInterface && $node->bundle() === 'recipe') {
+    $prep = (int) $node->get('field_prep_time')->value;
+    $cook = (int) $node->get('field_cook_time')->value;
+    $variables['total_time'] = $prep + $cook;
+  }
+}

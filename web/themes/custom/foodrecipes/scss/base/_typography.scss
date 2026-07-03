@@ -1,0 +1,37 @@
+// =============================================================================
+// Base typography & document
+// =============================================================================
+@use '../abstracts' as *;
+
+body {
+  margin: 0;
+  background-color: var(--fr-color-cream);
+  color: var(--fr-color-ink);
+  font-family: var(--fr-font-body);
+  font-size: $font-size-base;
+  line-height: $line-height-base;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--fr-font-heading);
+  line-height: 1.2;
+  color: var(--fr-color-ink);
+}
+
+a {
+  color: var(--fr-color-paprika-dark);
+  text-decoration: none;
+
+  &:hover,
+  &:focus {
+    text-decoration: underline;
+  }
+}
+
+.visually-hidden {
+  @include visually-hidden;
+}

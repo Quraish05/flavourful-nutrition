@@ -1,0 +1,32 @@
+// =============================================================================
+// Badge
+// -----------------------------------------------------------------------------
+// Small pill label. Difficulty variants pull their colour from the
+// `--fr-difficulty-*` custom properties emitted in base/_root.scss.
+// =============================================================================
+@use 'sass:map';
+@use '../abstracts' as *;
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-3xs;
+  padding: $space-3xs $space-xs;
+  border-radius: 999px;
+  background-color: var(--fr-color-slate);
+  color: var(--fr-color-white);
+  font-family: var(--fr-font-heading);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+.badge--difficulty {
+  @each $level, $value in $difficulty-colors {
+    &.badge--#{$level} {
+      background-color: var(--fr-difficulty-#{$level});
+    }
+  }
+}

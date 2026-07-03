@@ -1,0 +1,26 @@
+{#
+/**
+ * @file
+ * Grid style override for the "Recipes" view.
+ *
+ * Replaces core's nested row/column table-like markup with a single flat
+ * `.recipes-grid` container. Column count is handled by CSS grid
+ * (see scss/components/_recipes-listing.scss) so it stays fully responsive
+ * regardless of the "columns" setting configured in the View UI.
+ *
+ * The `items` structure depends on the alignment option; we flatten both the
+ * horizontal (rows → columns) and vertical (columns → rows) shapes to the
+ * rendered row content.
+ *
+ * @see template_preprocess_views_view_grid()
+ */
+#}
+<div class="recipes-grid">
+  {% for group in items %}
+    {% for cell in group.content %}
+      <div class="recipes-grid__item">
+        {{- cell.content -}}
+      </div>
+    {% endfor %}
+  {% endfor %}
+</div>

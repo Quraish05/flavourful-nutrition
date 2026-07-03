@@ -1,0 +1,117 @@
+// =============================================================================
+// Recipes listing (the /recipes View)
+// -----------------------------------------------------------------------------
+// Rendered by:
+//   - templates/views/views-view--recipes.html.twig       (.recipes-view + header)
+//   - templates/views/views-view-grid--recipes.html.twig  (.recipes-grid)
+// =============================================================================
+@use '../abstracts' as *;
+
+// Intro header at the top of the listing.
+.recipes-header {
+  margin-bottom: $space-xl;
+  text-align: center;
+
+  &__title {
+    margin: 0 0 $space-2xs;
+    font-size: clamp(2rem, 5vw, 3rem);
+  }
+
+  &__lead {
+    max-width: 60ch;
+    margin-inline: auto;
+    color: var(--fr-color-slate);
+    font-size: 1.1rem;
+  }
+}
+
+// Responsive card grid.
+.recipes-grid {
+  display: grid;
+  gap: $space-lg;
+  grid-template-columns: 1fr;
+
+  @include respond-to('sm') {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @include respond-to('lg') {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  @include respond-to('xl') {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+// Exposed filters (Diet / Cuisine + Apply).
+.recipes-view .view-filters {
+  margin-bottom: $space-xl;
+
+  form {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: center;
+    gap: $space-sm $space-md;
+  }
+
+  .form-item {
+    display: flex;
+    flex-direction: column;
+    gap: $space-3xs;
+    margin: 0;
+  }
+
+  label {
+    font-family: var(--fr-font-heading);
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: var(--fr-color-slate);
+  }
+
+  select {
+    padding: $space-2xs $space-sm;
+    border: 1px solid var(--fr-color-line);
+    border-radius: var(--fr-radius-sm);
+    background-color: var(--fr-color-white);
+    font: inherit;
+    color: var(--fr-color-ink);
+  }
+
+  .form-actions {
+    margin: 0;
+  }
+
+  .button,
+  input[type='submit'] {
+    padding: $space-2xs $space-md;
+    border: 0;
+    border-radius: var(--fr-radius-sm);
+    background-color: var(--fr-color-paprika);
+    color: var(--fr-color-white);
+    font-family: var(--fr-font-heading);
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+
+    &:hover,
+    &:focus {
+      background-color: var(--fr-color-paprika-dark);
+    }
+  }
+}
+
+// Empty state.
+.recipes-view .view-empty {
+  padding: $space-xl;
+  text-align: center;
+  color: var(--fr-color-slate);
+}
+
+// Pager spacing.
+.recipes-view .pager {
+  margin-top: $space-xl;
+}

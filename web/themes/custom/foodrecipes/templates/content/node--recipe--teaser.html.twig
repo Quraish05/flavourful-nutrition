@@ -1,0 +1,81 @@
+{#
+/**
+ * @file
+ * Recipe card, used for the teaser view mode (rows of the /recipes View).
+ *
+ * The `foodrecipes/recipes` library that styles this card is attached by the
+ * view wrapper (views-view--recipes.html.twig), so it is available wherever the
+ * card is rendered.
+ *
+ * Notes:
+ * - The hero image is rendered through `content.field_hero` so its configured
+ *   image style, alt text and cacheability are preserved. A CSS gradient
+ *   placeholder is shown when no image is set.
+ * - The small meta values are read directly from the node for a compact,
+ *   label-free presentation. Their cache tags ride along with the view's
+ *   `node_list` result cache.
+ *
+ * @see template_preprocess_node()
+ */
+#}
+{%
+  set difficulty = node.field_difficulty.value
+%}
+<article class="recipe-card">
+
+  <a class="recipe-card__media" href="{{ url }}" tabindex="-1" aria-hidden="true">
+    {% if content.field_hero|render|trim is not empty %}
+      {{ content.field_hero }}
+    {% else %}
+      <span class="recipe-card__placeholder">🍽️</span>
+    {% endif %}
+
+    {% if difficulty %}
+      <span class="badge badge--difficulty badge--{{ difficulty|clean_class }}">
+        {{ difficulty|capitalize }}
+      </span>
+    {% endif %}
+  </a>
+
+  <div class="recipe-card__body">
+    {% if node.field_recipe_cuisine_type.entity %}
+      <p class="recipe-card__eyebrow">{{ node.field_recipe_cuisine_type.entity.label }}</p>
+    {% endif %}
+
+    <h2 class="recipe-card__title">
+      <a href="{{ url }}" rel="bookmark">{{ label }}</a>
+    </h2>
+
+    {% if node.field_summary.value %}
+      <p class="recipe-card__summary">{{ node.field_summary.value }}</p>
+    {% endif %}
+
+    {% set cooking_time = node.field_cooking_time.value %}
+    {% set diet = node.field_type_of_diet.entity.label %}
+    {% set chef = node.field_chef.entity.label %}
+
+    {% if cooking_time or diet or chef %}
+      <ul class="recipe-card__meta">
+        {% if cooking_time %}
+          <li class="recipe-meta">
+            <span class="recipe-meta__icon" aria-hidden="true">⏱️</span>
+            <span class="recipe-meta__value">{{ cooking_time|round }}</span>&nbsp;{{ 'min'|t }}
+          </li>
+        {% endif %}
+        {% if diet %}
+          <li class="recipe-meta">
+            <span class="recipe-meta__icon" aria-hidden="true">🥗</span>
+            <span>{{ diet }}</span>
+          </li>
+        {% endif %}
+        {% if chef %}
+          <li class="recipe-meta">
+            <span class="recipe-meta__icon" aria-hidden="true">👨‍🍳</span>
+            <span>{{ chef }}</span>
+          </li>
+        {% endif %}
+      </ul>
+    {% endif %}
+  </div>
+
+</article>
