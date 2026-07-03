@@ -17,7 +17,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
   admin_label: new TranslatableMarkup('Recipe nutrition facts'),
   category: new TranslatableMarkup('Flavorful'),
 )]
-class NutritionFactsBlock extends BlockBase implements ContainerFactoryPluginInterface {
+final class NutritionFactsBlock extends BlockBase implements ContainerFactoryPluginInterface {
 
   public function __construct(
     array $configuration,
