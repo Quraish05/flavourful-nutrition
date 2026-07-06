@@ -17,9 +17,9 @@
 
 # --- Environment-specific / sensitive settings -------------------------------
 # Keep the *.example / default templates, ignore the real ones (DB creds, hash
-# salt, local overrides). settings.php + settings.ddev.php are regenerated per
-# environment (DDEV rewrites settings.ddev.php on `ddev start`).
-/web/sites/*/settings.php
+# salt, local overrides). settings.php is committed (environment-aware, no
+# secrets) so it ships in the deploy artifact; the per-environment/secret files
+# below stay ignored (DDEV rewrites settings.ddev.php on `ddev start`).
 /web/sites/*/settings.local.php
 /web/sites/*/settings.ddev.php
 /web/sites/*/services.yml
