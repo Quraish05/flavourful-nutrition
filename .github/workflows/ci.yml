@@ -16,8 +16,8 @@ jobs:
       - name: Install dependencies
         run: composer install --no-interaction --no-progress
       - name: Coding standards (Drupal)
-        run: vendor/bin/phpcs --standard=Drupal,DrupalPractice web/modules/custom web/themes/custom
+        run: vendor/bin/phpcs --standard=Drupal,DrupalPractice docroot/modules/custom docroot/themes/custom
       - name: Static analysis
-        run: vendor/bin/phpstan analyse web/modules/custom
+        run: vendor/bin/phpstan analyse docroot/modules/custom
       - name: Tests
-        run: vendor/bin/phpunit web/modules/custom || true
+        run: vendor/bin/phpunit docroot/modules/custom || true
