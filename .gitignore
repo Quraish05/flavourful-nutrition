@@ -42,4 +42,12 @@ Thumbs.db
 .idea/
 .vscode/
 
+# --- Local-only convenience ---------------------------------------------------
+# Symlink so Acquia CLI (which expects docroot/index.php) finds the web/ docroot.
+# Local aid only; the real web root is web/. Do not commit.
+/docroot
+
+# Claude Code local settings (machine-specific)
+/.claude/settings.local.json
+
 web/themes/custom/foodrecipes/images/icons/
