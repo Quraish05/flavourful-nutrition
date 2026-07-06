@@ -1,0 +1,5 @@
+cloud_app_uuid: 9187eff2-bfe1-4bd4-a4e4-08ea2a634894
+push:
+  artifact:
+    destination_git_urls:
+      - pp9187eff2@svn-45062.prod.hosting.acquia.com:pp9187eff2.git

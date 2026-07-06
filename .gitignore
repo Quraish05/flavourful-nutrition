@@ -1,5 +1,5 @@
 # =============================================================================
-# .gitignore — Drupal Composer project (relocated docroot: web/)
+# .gitignore — Drupal Composer project (docroot: docroot/)
 # -----------------------------------------------------------------------------
 # Everything ignored here is either managed by Composer (rebuild with
 # `composer install`), generated at runtime, or environment-specific/sensitive.
@@ -9,27 +9,27 @@
 
 # --- Composer-managed dependencies -------------------------------------------
 /vendor/
-/web/core/
-/web/modules/contrib/
-/web/profiles/contrib/
-/web/themes/contrib/
-/web/libraries/
+/docroot/core/
+/docroot/modules/contrib/
+/docroot/profiles/contrib/
+/docroot/themes/contrib/
+/docroot/libraries/
 
 # --- Environment-specific / sensitive settings -------------------------------
 # Keep the *.example / default templates, ignore the real ones (DB creds, hash
-# salt, local overrides). settings.php + settings.ddev.php are regenerated per
-# environment (DDEV rewrites settings.ddev.php on `ddev start`).
-/web/sites/*/settings.php
-/web/sites/*/settings.local.php
-/web/sites/*/settings.ddev.php
-/web/sites/*/services.yml
-!/web/sites/*/default.settings.php
-!/web/sites/*/default.services.yml
+# salt, local overrides). settings.php is committed (environment-aware, no
+# secrets) so it ships in the deploy artifact; the per-environment/secret files
+# below stay ignored (DDEV rewrites settings.ddev.php on `ddev start`).
+/docroot/sites/*/settings.local.php
+/docroot/sites/*/settings.ddev.php
+/docroot/sites/*/services.yml
+!/docroot/sites/*/default.settings.php
+!/docroot/sites/*/default.services.yml
 
 # --- User-generated & runtime content ----------------------------------------
-/web/sites/*/files/
-/web/sites/*/private/
-/web/sites/simpletest/
+/docroot/sites/*/files/
+/docroot/sites/*/private/
+/docroot/sites/simpletest/
 
 # --- Front-end build artifacts (Node) ----------------------------------------
 node_modules/
@@ -42,4 +42,7 @@ Thumbs.db
 .idea/
 .vscode/
 
-web/themes/custom/foodrecipes/images/icons/
+# Claude Code local settings (machine-specific)
+/.claude/settings.local.json
+
+docroot/themes/custom/foodrecipes/images/icons/
