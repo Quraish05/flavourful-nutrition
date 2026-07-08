@@ -2,32 +2,55 @@
 
 namespace Drupal\flavorful_nutrition;
 
+use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use GuzzleHttp\ClientInterface;
 
-/**
- * Fetches nutrition data for ingredients.
- */
 class NutritionClient {
 
   public function __construct(
     protected ClientInterface $httpClient,
     protected LoggerChannelFactoryInterface $loggerFactory,
+    protected CacheBackendInterface $cache,
   ) {}
 
   /**
-   * Returns nutrition data for an ingredient.
-   *
-   * Currently returns stub data. This will be replaced with a real API call
-   * using $this->httpClient and $this->loggerFactory for error handling.
+   * Returns rough per-100g nutrition for an ingredient (calories, protein).
    */
   public function getNutritionForIngredient(string $ingredient): array {
-    // @todo Replace the stub below with a real API request.
-    return [
-      'ingredient' => $ingredient,
-      'calories' => 42,
-      'protein' => 3,
-    ];
+    $cid = 'flavorful_nutrition:' . md5(strtolower($ingredient));
+    if ($hit = $this->cache->get($cid)) {
+      return $hit->data;                       // served from cache
+    }
+
+    $result = ['ingredient' => $ingredient, 'calories' => 0, 'protein' => 0];
+
+    try {
+      $response = $this->httpClient->request('GET',
+        'https://world.openfoodfacts.org/cgi/search.pl', [
+          'query' => [
+            'search_terms' => $ingredient,
+            'search_simple' => 1,
+            'action' => 'process',
+            'json' => 1,
+            'page_size' => 1,
+            'fields' => 'product_name,nutriments',
+          ],
+          'headers' => ['User-Agent' => 'Flavorful/1.0 (learning project)'],
+          'timeout' => 5,
+        ]);
+      $data = json_decode((string) $response->getBody(), TRUE);
+      $nutriments = $data['products'][0]['nutriments'] ?? [];
+      $result['calories'] = (int) round($nutriments['energy-kcal_100g'] ?? 0);
+      $result['protein']  = (float) ($nutriments['proteins_100g'] ?? 0);
+
+      // Cache for 24h so we don't call the API on every page load.
+      $this->cache->set($cid, $result, time() + 86400);
+    }
+    catch (\Throwable $e) {
+      $this->loggerFactory->get('flavorful_nutrition')->error('Nutrition API: @m', ['@m' => $e->getMessage()]);
+    }
+    return $result;
   }
 
 }
