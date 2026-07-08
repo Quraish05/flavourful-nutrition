@@ -8,6 +8,7 @@ use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\flavorful_nutrition\NutritionClient;
+use Drupal\node\NodeInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -39,7 +40,7 @@ final class NutritionFactsBlock extends BlockBase implements ContainerFactoryPlu
       $plugin_id,
       $plugin_definition,
       $container->get('flavorful_nutrition.client'),
-       $container->get('current_route_match'),
+      $container->get('current_route_match'),
     );
   }
 
@@ -48,7 +49,7 @@ final class NutritionFactsBlock extends BlockBase implements ContainerFactoryPlu
    */
   public function build(): array {
     $node = $this->routeMatch->getParameter('node');
-    if (!$node instanceof \Drupal\node\NodeInterface || $node->bundle() !== 'recipe') {
+    if (!$node instanceof NodeInterface || $node->bundle() !== 'recipe') {
       return [];
     }
     if (!$node->hasField('field_recipe_ingredients')) {

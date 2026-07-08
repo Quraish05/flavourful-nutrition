@@ -6,6 +6,9 @@ use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use GuzzleHttp\ClientInterface;
 
+/**
+ * Fetches nutrition data for ingredients from Open Food Facts.
+ */
 class NutritionClient {
 
   public function __construct(
@@ -20,7 +23,8 @@ class NutritionClient {
   public function getNutritionForIngredient(string $ingredient): array {
     $cid = 'flavorful_nutrition:' . md5(strtolower($ingredient));
     if ($hit = $this->cache->get($cid)) {
-      return $hit->data;                       // served from cache
+      // Served from cache.
+      return $hit->data;
     }
 
     $result = ['ingredient' => $ingredient, 'calories' => 0, 'protein' => 0];
