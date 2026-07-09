@@ -1,0 +1,10 @@
+// =============================================================================
+// global.scss  ->  css/global.css
+// -----------------------------------------------------------------------------
+// Site-wide styling attached on every page via the `flavourful/global-styling`
+// library (see flavourful.libraries.yml, referenced from flavourful.info.yml).
+// Only tokens/mixins are @use'd for their side-effect-free API; the base and
+// layout layers emit actual CSS.
+// =============================================================================
+@use 'base';
+@use 'layout';

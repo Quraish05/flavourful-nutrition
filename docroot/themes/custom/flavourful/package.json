@@ -1,0 +1,15 @@
+{
+  "name": "flavourful",
+  "version": "1.0.0",
+  "description": "SCSS build tooling for the Flavourful Drupal theme.",
+  "private": true,
+  "license": "GPL-2.0-or-later",
+  "scripts": {
+    "build": "sass scss:css --style=compressed --no-source-map --quiet-deps",
+    "dev": "sass scss:css --style=expanded --source-map --quiet-deps",
+    "watch": "sass --watch scss:css --style=expanded --source-map --quiet-deps"
+  },
+  "devDependencies": {
+    "sass": "^1.80.0"
+  }
+}

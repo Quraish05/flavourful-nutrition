@@ -1,0 +1,27 @@
+name: "Flavourful"
+type: theme
+"base theme": olivero
+version: 1.0.0
+libraries:
+  - flavourful/base
+  - flavourful/messages
+  - core/normalize
+  - flavourful/global-styling
+libraries-extend:
+  user/drupal.user:
+    - flavourful/user
+  core/drupal.dropbutton:
+    - flavourful/dropbutton
+  core/drupal.dialog:
+    - flavourful/dialog
+  file/drupal.file:
+    - flavourful/file
+  core/drupal.item-list:
+    - flavourful/item-list
+  core/drupal.progress:
+    - flavourful/progress
+  core/drupal.tablesort:
+    - flavourful/drupal.tablesort
+description: ""
+core_version_requirement: ^11
+generator: "starterkit_theme:11.4.0"

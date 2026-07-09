@@ -45,4 +45,4 @@ Thumbs.db
 # Claude Code local settings (machine-specific)
 /.claude/settings.local.json
 
-docroot/themes/custom/foodrecipes/images/icons/
+docroot/themes/custom/flavourful/images/icons/

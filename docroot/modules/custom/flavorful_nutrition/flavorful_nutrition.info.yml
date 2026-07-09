@@ -1,7 +1,0 @@
-name: "Flavorful Nutrition"
-type: module
-description: "Fetches and displays nutrition data for recipes."
-package: Flavorful
-core_version_requirement: ^10 || ^11
-dependencies:
-  - drupal:node
