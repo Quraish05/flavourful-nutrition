@@ -1,0 +1,81 @@
+{#
+/**
+ * @file
+ * Theme override for the "Recipes" view (all displays).
+ *
+ * Adds an intro header, a `.recipes-view` wrapper class and attaches the
+ * `flavourful/recipes` library so the listing/card CSS only loads here.
+ *
+ * @see template_preprocess_views_view()
+ * @see the base template in core: views-view.html.twig
+ */
+#}
+{{ attach_library('flavourful/recipes') }}
+{%
+  set classes = [
+    'view',
+    'recipes-view',
+    'view-' ~ id|clean_class,
+    'view-display-id-' ~ display_id,
+    dom_id ? 'js-view-dom-id-' ~ dom_id,
+  ]
+%}
+<div{{ attributes.addClass(classes) }}>
+  {{ title_prefix }}
+  {{ title_suffix }}
+
+  <header class="recipes-header">
+    <h1 class="recipes-header__title">{{ title|default('Recipes'|t) }}</h1>
+    <p class="recipes-header__lead">
+      {{ 'Browse our collection of hand-picked recipes — filter by cuisine, diet and difficulty to find your next meal.'|t }}
+    </p>
+  </header>
+
+  {% if exposed %}
+    <div class="view-filters">
+      {{ exposed }}
+    </div>
+  {% endif %}
+
+  {% if attachment_before %}
+    <div class="attachment attachment-before">
+      {{ attachment_before }}
+    </div>
+  {% endif %}
+
+  {% if rows %}
+    <div class="view-content">
+      {{ rows }}
+    </div>
+  {% elseif empty %}
+    <div class="view-empty">
+      {{ empty }}
+    </div>
+  {% endif %}
+
+  {% if pager %}
+    {{ pager }}
+  {% endif %}
+
+  {% if attachment_after %}
+    <div class="attachment attachment-after">
+      {{ attachment_after }}
+    </div>
+  {% endif %}
+
+  {% if more %}
+    {{ more }}
+  {% endif %}
+
+  {% if footer %}
+    <div class="view-footer">
+      {{ footer }}
+    </div>
+  {% endif %}
+
+  {% if feed_icons %}
+    <div class="feed-icons">
+      {{ feed_icons }}
+    </div>
+  {% endif %}
+</div>

@@ -1,0 +1,23 @@
+uuid: bdfa3ef6-ba1c-47f4-abc5-da2d8cf63c86
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_prep_time
+    - node.type.recipe
+id: node.recipe.field_prep_time
+field_name: field_prep_time
+entity_type: node
+bundle: recipe
+label: 'Prep time'
+description: 'Preparation time in minutes (excludes active cooking).'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: 0
+  max: null
+  prefix: ''
+  suffix: ' min'
+field_type: integer

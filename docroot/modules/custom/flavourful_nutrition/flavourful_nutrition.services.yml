@@ -1,0 +1,4 @@
+services:
+  flavourful_nutrition.client:
+    class: Drupal\flavourful_nutrition\NutritionClient
+    arguments: ["@http_client", "@logger.factory", "@cache.default"]

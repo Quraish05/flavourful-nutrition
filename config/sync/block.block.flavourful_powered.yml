@@ -1,0 +1,22 @@
+uuid: b0853803-16c0-47f4-9ae4-fff1ea05ff9e
+langcode: en
+status: true
+dependencies:
+  module:
+    - system
+  theme:
+    - flavourful
+_core:
+  default_config_hash: eYL19CLDyinGTWYQfBD1DswWzglEotE_kHnHx3AxTXM
+id: flavourful_powered
+theme: flavourful
+region: sidebar_first
+weight: 0
+provider: null
+plugin: system_powered_by_block
+settings:
+  id: system_powered_by_block
+  label: 'Powered by Drupal'
+  label_display: '0'
+  provider: system
+visibility: {  }

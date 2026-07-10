@@ -1,4 +1,0 @@
-services:
-  flavorful_nutrition.client:
-    class: Drupal\flavorful_nutrition\NutritionClient
-    arguments: ["@http_client", "@logger.factory"]

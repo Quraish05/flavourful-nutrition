@@ -1,0 +1,20 @@
+uuid: 36833d30-58b4-4762-b9c0-1b7360ea8288
+langcode: en
+status: true
+dependencies:
+  module:
+    - flavourful_nutrition
+  theme:
+    - flavourful
+id: flavourful_recipenutritionfacts
+theme: flavourful
+region: content
+weight: 0
+provider: null
+plugin: flavourful_nutrition_facts
+settings:
+  id: flavourful_nutrition_facts
+  label: 'Recipe nutrition facts'
+  label_display: visible
+  provider: flavourful_nutrition
+visibility: {  }

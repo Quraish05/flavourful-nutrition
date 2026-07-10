@@ -7,9 +7,11 @@ dependencies:
     - field.field.node.recipe.field_cooking_time
     - field.field.node.recipe.field_difficulty
     - field.field.node.recipe.field_hero
+    - field.field.node.recipe.field_prep_time
     - field.field.node.recipe.field_recipe_cuisine_type
     - field.field.node.recipe.field_recipe_ingredients
     - field.field.node.recipe.field_summary
+    - field.field.node.recipe.field_total_time
     - field.field.node.recipe.field_type_of_diet
     - image.style.thumbnail
     - node.type.recipe
@@ -57,6 +59,13 @@ content:
     settings:
       progress_indicator: throbber
       preview_image_style: thumbnail
+    third_party_settings: {  }
+  field_prep_time:
+    type: number
+    weight: 20
+    region: content
+    settings:
+      placeholder: ''
     third_party_settings: {  }
   field_recipe_cuisine_type:
     type: entity_reference_autocomplete
@@ -128,5 +137,6 @@ content:
       placeholder: ''
     third_party_settings: {  }
 hidden:
+  field_total_time: true
   promote: true
   sticky: true

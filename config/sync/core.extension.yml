@@ -19,7 +19,7 @@ module:
   field_ui: 0
   file: 0
   filter: 0
-  flavorful_nutrition: 0
+  flavourful_nutrition: 0
   help: 0
   image: 0
   layout_builder: 0
@@ -47,5 +47,5 @@ module:
 theme:
   olivero: 0
   claro: 0
-  foodrecipes: 0
+  flavourful: 0
 profile: standard
