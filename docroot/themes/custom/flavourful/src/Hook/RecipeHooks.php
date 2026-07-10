@@ -1,21 +1,19 @@
 <?php
 
-namespace Drupal\flavorful_nutrition\Hook;
+namespace Drupal\flavourful\Hook;
 
 use Drupal\Core\Hook\Attribute\Hook;
 
 /**
  * OOP hook implementations for recipes.
  */
-class RecipeHooks
-{
+class RecipeHooks {
 
   /**
    * Implements hook_preprocess_node() via the #[Hook] attribute.
    */
   #[Hook('preprocess_node')]
-  public function preprocessNode(array &$variables): void
-  {
+  public function preprocessNode(array &$variables): void {
     $node = $variables['node'] ?? NULL;
     if (!$node || $node->bundle() !== 'recipe') {
       return;
@@ -26,4 +24,5 @@ class RecipeHooks
       $variables['attributes']['class'][] = 'recipe--quick';
     }
   }
+
 }
