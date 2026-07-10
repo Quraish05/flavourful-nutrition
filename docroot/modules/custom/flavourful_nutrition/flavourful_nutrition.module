@@ -1,0 +1,95 @@
+<?php
+
+/**
+ * @file
+ * Hook implementations for Flavourful Nutrition.
+ */
+
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
+
+/**
+ * Implements hook_form_FORM_ID_alter() for the Recipe node form.
+ *
+ * FORM_ID-specific alters only fire for that one form — cleaner than a
+ * generic hook_form_alter() with an if-check inside.
+ */
+function flavourful_nutrition_form_node_recipe_form_alter(array &$form, FormStateInterface $form_state, string $form_id): void
+{
+  // Add help text under the cooking-time field.
+  if (isset($form['field_cooking_time'])) {
+    $form['field_cooking_time']['widget'][0]['value']['#description'] = new TranslatableMarkup('Active cooking time in minutes (excludes prep).');
+  }
+  // Nudge the summary field to the top of the form.
+  if (isset($form['field_summary'])) {
+    $form['field_summary']['#weight'] = -100;
+  }
+}
+
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\FieldableEntityInterface;
+
+/**
+ * Implements hook_entity_presave().
+ *
+ * Runs just before ANY entity is saved; we narrow to Recipe nodes and
+ * populate field_total_time = prep + cook.
+ */
+function flavourful_nutrition_entity_presave(EntityInterface $entity): void
+{
+  if (!$entity instanceof FieldableEntityInterface) {
+    return;
+  }
+  if ($entity->getEntityTypeId() !== 'node' || $entity->bundle() !== 'recipe') {
+    return;
+  }
+  // Bail unless the destination field exists — the recipe bundle currently
+  // ships only field_cooking_time, so there is nothing to total up yet.
+  if (!$entity->hasField('field_total_time')) {
+    return;
+  }
+  $prep = $entity->hasField('field_prep_time') ? (int) $entity->get('field_prep_time')->value : 0;
+  $cook = $entity->hasField('field_cooking_time') ? (int) $entity->get('field_cooking_time')->value : 0;
+  $entity->set('field_total_time', $prep + $cook);
+}
+
+
+/**
+ * Implements hook_preprocess_HOOK() for node templates.
+ */
+function flavourful_nutrition_preprocess_node(array &$variables): void
+{
+  $node = $variables['node'] ?? NULL;
+  if (!$node || $node->bundle() !== 'recipe') {
+    return;
+  }
+
+  $total = (int) $node->get('field_total_time')->value;
+
+  // 1. A computed variable available in Twig as {{ is_quick }}.
+  $variables['is_quick'] = $total > 0 && $total <= 30;
+
+  // 2. Add a class the Drupal way (the attributes object handles escaping).
+  if ($variables['is_quick']) {
+    $variables['attributes']['class'][] = 'recipe--quick';
+  }
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK_alter() for nodes.
+ *
+ * Adds a per-cuisine suggestion, e.g. node--recipe--italian.html.twig.
+ */
+function flavourful_nutrition_theme_suggestions_node_alter(array &$suggestions, array $variables): void
+{
+  $node = $variables['elements']['#node'] ?? NULL;
+  if (!$node || $node->bundle() !== 'recipe' || $node->get('field_recipe_cuisine_type')->isEmpty()) {
+    return;
+  }
+  $term = $node->get('field_recipe_cuisine_type')->entity;
+  if ($term) {
+    // clean_class-style: lowercase, dashes.
+    $machine = preg_replace('/[^a-z0-9]+/', '-', strtolower($term->label()));
+    $suggestions[] = 'node__recipe__' . $machine;   // note: double underscores in the suggestion
+  }
+}

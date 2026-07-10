@@ -101,7 +101,7 @@ props:
 {{ include('flavorful_theme:button', { label: 'View recipe', url: '/recipes/x', variant: 'primary' }) }}
 ```
 
-> **Why the schema is worth it:** the `props` schema validates inputs and powers IDE autocomplete. `variant` is an `enum`, so passing `variant: 'huge'` errors loudly instead of silently rendering a broken class. That validation is a real advantage over a plain Twig include.
+> 🔎 **Test it (fast, no page needed):** the quickest way to see a component in isolation is the **Components UI** — install the core-adjacent tooling or just drop the `include` above into any rendered Twig (e.g. temporarily in `page.html.twig`), `drush cr`, and load a page — the styled button appears. To prove the **schema** works, pass `variant: 'huge'` and reload: with an `enum` you'll get a loud validation error instead of a silently-broken class. That failing-loudly behaviour is the demo-able advantage over a plain Twig include.
 
 ---
 
@@ -205,7 +205,7 @@ Render it with props, and fill the **slot** with atoms via `embed`:
 
 **In a Views listing:** the cleanest way is a **Twig field/template**. Set the Recipes view to **Fields**, add a **Global: Custom text** or use a `views-view-fields` template override, and inside it render `{{ include('flavorful_theme:recipe-card', { title: ..., url: ... }) }}` per row. (Simpler alternative: a `views-view-unformatted--recipes.html.twig` that loops rows and includes the card.)
 
-`drush cr` and confirm the same card renders on the node page and in the listing — one component, many contexts.
+> 🔎 **Test it (user-facing UI):** `drush cr`, then check **two** places: (1) open a single recipe — the `recipe-card` renders with its tag pills; (2) open your recipes listing (`/recipes`) — the *same* component renders per row. In DevTools confirm the identical `.recipe-card` / `.pill` markup in both. Edit the component's Twig or CSS once, `drush cr`, and verify the change shows up in **both** places — that's the "one component, many contexts" payoff you'd demo in the interview. If a listing row is blank, the props you passed there (title/url) don't match the component's `required` props — the schema will name the missing one in the logs.
 
 ---
 

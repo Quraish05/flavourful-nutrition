@@ -4,6 +4,8 @@
 >
 > Everything builds on the `flavorful_nutrition` module from [Day 2](day2-module-and-twig.md).
 
+> **Which hook style does this lab use?** Both — on purpose. We write each hook **procedurally first** (it's easier to read while learning, and you'll meet it in almost every existing codebase), then in §6 convert one to the **modern `#[Hook]` attribute class**, which is the preferred Drupal 11 standard (autoloaded, dependency-injectable; procedural hooks are slated for removal in Drupal 12). Note the version nuance: OOP hooks arrived for **modules in 11.1**, but **themes only in 11.3** — so procedural `.theme` preprocess (Days 2 & 8) is still normal and fine. Best interview answer = knowing *both* and when each applies.
+
 **Build target:** four working hook implementations in Flavorful — a form alter, an entity presave, a preprocess that adds a computed variable + CSS class, and a custom template suggestion — plus **one of them rewritten as a modern `#[Hook]` class** so you can compare the two styles out loud.
 
 ---
@@ -70,7 +72,7 @@ function flavorful_nutrition_form_node_recipe_form_alter(array &$form, FormState
 }
 ```
 
-`drush cr`, edit a recipe, and you'll see the new description and reordering.
+> 🔎 **Test it (Drupal Admin UI):** run `drush cr`, then go to **Content → Add content → Recipe** (or edit an existing one). You should see the help text under the Cook time field, and the Summary field moved to the top. If nothing changed, you forgot `drush cr` (Drupal caches the form/hook discovery).
 
 > **Why `hook_form_FORM_ID_alter` over `hook_form_alter`:** the FORM_ID variant only runs for that exact form, so you avoid a generic hook firing on *every* form with an `if ($form_id === …)` inside. Cleaner and faster.
 
@@ -100,7 +102,13 @@ function flavorful_nutrition_entity_presave(EntityInterface $entity): void {
 }
 ```
 
-Save a recipe → `field_total_time` is populated automatically.
+> 🔎 **Test it (two quick ways):**
+> - **Admin UI:** temporarily set `field_total_time` to **visible** on the recipe's *Manage display*, then edit + save a recipe with prep 10 / cook 20 and view it — you should see **30**. (Hide it again after.)
+> - **Command line:** `drush cr`, save a recipe, then
+>   ```bash
+>   drush php:eval "echo \Drupal\node\Entity\Node::load(1)->get('field_total_time')->value;"
+>   ```
+>   (swap `1` for your recipe's node ID) — it prints the stored total.
 
 > **Compute-and-store vs compute-at-render (a great thing to articulate):** the Day-2 preprocess computed total time *for display only*. Storing it via `presave` makes it a real field you can **sort/filter in Views** (you'll use this on Day 7's "Quickest first" sort). Rule of thumb: store it if you need to query/sort on it; compute at render if it's purely presentational.
 
@@ -140,6 +148,8 @@ In `node--recipe.html.twig` you can now do:
 {% if is_quick %}<span class="badge">Quick — under 30 min</span>{% endif %}
 ```
 
+> 🔎 **Test it (user-facing UI):** `drush cr`, then open a recipe whose prep + cook ≤ 30 min — the "Quick" badge shows and the `<article>` has the `recipe--quick` class (confirm in your browser's DevTools → Elements). Open a slower recipe and the badge/class should be absent.
+
 > **Two things to know for the call:**
 > - **`$variables` is the bridge** between PHP and Twig — anything you set here is available in the template.
 > - **Add classes via `$variables['attributes']['class'][]`**, not by string-building markup — the `Attribute` object renders and escapes them safely. (You then print `{{ attributes }}` on the element in Twig.)
@@ -172,7 +182,9 @@ function flavorful_nutrition_theme_suggestions_node_alter(array &$suggestions, a
 }
 ```
 
-Now create `templates/node--recipe--italian.html.twig` in your theme and Italian recipes will use it (falling back to `node--recipe.html.twig`, then `node.html.twig`). Turn on Twig debug (Day 2) to see the suggestion listed in the page-source comments.
+Now create `templates/node--recipe--italian.html.twig` in your theme and Italian recipes will use it (falling back to `node--recipe.html.twig`, then `node.html.twig`).
+
+> 🔎 **Test it (user-facing UI + Twig debug):** turn on Twig debug (Day 2), `drush cr`, then open an **Italian** recipe and **View Source** — the HTML comments list `node--recipe--italian.html.twig` among the *FILE NAME SUGGESTIONS* and show which template was actually used. Open a non-Italian recipe and that suggestion won't appear. (If you added the Italian template file, "x" marks it as chosen.)
 
 > **Naming gotcha:** in PHP suggestions use **double underscores** (`node__recipe__italian`); the corresponding **filename** uses **double dashes** (`node--recipe--italian.html.twig`). Drupal maps between them.
 
@@ -217,9 +229,75 @@ class RecipeHooks {
 
 Then **delete** the procedural `flavorful_nutrition_preprocess_node()` from §4 so you don't run it twice. `drush cr`.
 
+> 🔎 **Test it (confirm the swap worked):** after deleting the procedural version and `drush cr`, reload a quick recipe — the "Quick" badge/`recipe--quick` class should still appear, now driven by the `#[Hook]` class. To prove the class is registered, run `drush php:eval "var_dump(\Drupal::service('module_handler')->hasImplementations('preprocess_node'));"` (or just confirm the badge still renders). If the badge disappears, the class isn't discovered — check it's under `src/Hook/` and you ran `drush cr`.
+
 > **What just happened (say this):** "Drupal 11.1+ auto-discovers any class under the module's `src/Hook/` with `#[Hook('…')]` methods and registers it as a service — no `.module` function, no manual service registration. Because it's a real class, I can inject services into the constructor and unit-test it. Since Drupal 11.2, even preprocess hooks work this way."
 >
 > **Dependency injection bonus:** if this hook needed a service (say the current user), you'd add a constructor with that service injected — impossible with a procedural hook, which is exactly why the OOP form exists.
+
+### What the new hooks actually give you (that procedural didn't)
+
+Procedural hooks worked, but they had real limits. Here's what the `#[Hook]` approach adds — and *why each one matters*:
+
+Each capability below is shown with a concrete **🍳 Flavorful example** so it's not abstract:
+
+**1. Dependency injection**
+- **Old:** to use a service inside a hook you called it statically — `\Drupal::service('flavorful_nutrition.client')`.
+- **New:** inject it through the class constructor.
+- **🍳 Flavorful:** imagine a `preprocess_node` that shows *live* nutrition on the recipe page — it needs our `NutritionClient`. Procedural forces a hidden `\Drupal::service('flavorful_nutrition.client')` call inside the function; the OOP `RecipeHooks` class just takes `NutritionClient` as a constructor argument. **Why it helps:** the dependency is explicit and swappable, and the class stops secretly reaching into globals.
+
+**2. Unit testing**
+- **Old:** testing a hook meant a full Drupal bootstrap (a kernel/functional test that actually saves a node).
+- **New:** instantiate the class with mock services and call the method directly.
+- **🍳 Flavorful:** to verify "prep 10 + cook 20 → total_time 30" from our `entity_presave`, the OOP version lets me `new RecipeHooks(...)` with a mock node and assert the result in a fast unit test. **Why it helps:** faster, isolated tests → safer refactors.
+
+**3. Bootstrap performance**
+- **Old:** Drupal scanned and loaded **every** `.module` file on each request just to discover hooks.
+- **New:** hook classes are PSR-4 autoloaded and found via the attribute — loaded only when needed.
+- **🍳 Flavorful:** our `.module` already holds `form_alter` + `entity_presave` + `preprocess_node` + `theme_suggestions_alter`, and it'll only grow. As classes, that code doesn't have to load on requests that never fire those hooks. **Why it helps:** less file I/O and memory per request.
+
+**4. Code organisation**
+- **Old:** hooks pile up as loose functions in one big `.module` file.
+- **New:** group related hooks in purpose-named classes that can share private helpers.
+- **🍳 Flavorful:** split into `RecipeHooks` (form, presave, preprocess, suggestions) and `NutritionHooks` (API/block logic), sharing a private `isRecipe($node)` helper instead of repeating the `bundle() === 'recipe'` check in every function. **Why it helps:** readable, navigable, DRY.
+
+**5. Execution order**
+- **Old:** ordering was indirect — module *weight* or `hook_module_implements_alter()`.
+- **New:** an explicit **`order`** parameter on the attribute (run first/last, or before/after another module) — added in 11.2.
+- **🍳 Flavorful:** if a contrib module also alters the recipe form, `#[Hook('form_node_recipe_form_alter', order: Order::Last)]` guarantees Flavorful's tweaks apply last and win. **Why it helps:** you declare intent in code, right next to the hook.
+
+**6. Naming**
+- **Old:** the function name *must* be exactly `MODULE_hook_name`.
+- **New:** the method name is arbitrary; the attribute says which hook it implements.
+- **🍳 Flavorful:**
+
+  ```php
+  // Old — long, rigid, typo-prone:
+  function flavorful_nutrition_form_node_recipe_form_alter(&$form, $fs, $id) { … }
+
+  // New — readable method name, hook declared by the attribute:
+  #[Hook('form_node_recipe_form_alter')]
+  public function tweakRecipeForm(array &$form, FormStateInterface $fs, string $id): void { … }
+  ```
+  **Why it helps:** no more brittle function names.
+
+**7. One method, many hooks**
+- **Old:** one function per hook (often near-duplicates).
+- **New:** stack multiple `#[Hook(...)]` attributes on a single method.
+- **🍳 Flavorful:** re-fetch a recipe's nutrition whenever it's created *or* edited — one method, two attributes:
+
+  ```php
+  #[Hook('node_insert')]
+  #[Hook('node_update')]
+  public function refreshNutrition(NodeInterface $node): void { … }
+  ```
+  **Why it helps:** one handler instead of two copy-pasted functions.
+
+**The one-line summary for the interview:**
+
+> "Same hook *system*, better *ergonomics*: OOP hooks add dependency injection, unit-testability, autoloading (so Drupal stops scanning every `.module` file), explicit ordering, and proper class organisation — none of which procedural hooks could offer. That's why Drupal is moving to them and deprecating the procedural form in Drupal 12."
+
+**Backward compatibility:** a module can support older cores by keeping a tiny procedural shim that delegates to the class, marked with the `#[LegacyHook]` attribute — so you're never forced to choose one or the other during a transition.
 
 ---
 
@@ -240,6 +318,8 @@ function flavorful_nutrition_update_10001(): void {
 ```
 
 This runs during `drush updb` (which, remember, runs **before** `drush cim` on deploy). You don't call it directly — Drupal tracks which `_N` numbers have run.
+
+> 🔎 **Test it (local):** check the update is *pending* at `/admin/reports/status/php`? No — pending updates show at `/update.php` or via `drush updbst` (update status). Run `drush updb -y`, watch it report `flavorful_nutrition_update_10001` executed, then spot-check an old recipe's `field_total_time` is now populated (via the Manage-display or `drush php:eval` trick from §3). Re-running `drush updb` should say "No pending updates" — proof Drupal tracked it.
 
 ---
 

@@ -7,9 +7,11 @@ dependencies:
     - field.field.node.recipe.field_cooking_time
     - field.field.node.recipe.field_difficulty
     - field.field.node.recipe.field_hero
+    - field.field.node.recipe.field_prep_time
     - field.field.node.recipe.field_recipe_cuisine_type
     - field.field.node.recipe.field_recipe_ingredients
     - field.field.node.recipe.field_summary
+    - field.field.node.recipe.field_total_time
     - field.field.node.recipe.field_type_of_diet
     - node.type.recipe
   module:
@@ -58,6 +60,15 @@ content:
     third_party_settings: {  }
     weight: 104
     region: content
+  field_prep_time:
+    type: number_integer
+    label: inline
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 21
+    region: content
   field_recipe_cuisine_type:
     type: entity_reference_label
     label: above
@@ -80,6 +91,15 @@ content:
     settings: {  }
     third_party_settings: {  }
     weight: 101
+    region: content
+  field_total_time:
+    type: number_integer
+    label: inline
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 22
     region: content
   field_type_of_diet:
     type: entity_reference_label

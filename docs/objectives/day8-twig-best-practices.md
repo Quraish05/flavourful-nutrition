@@ -167,7 +167,7 @@ One card definition, used on the node page, the listing, the "related" block —
 </div>
 ```
 
-`drush cr`, open a recipe, confirm it renders — same output, far less markup, and the card/buttons are now reused everywhere.
+> 🔎 **Test it (user-facing UI):** `drush cr`, then open a recipe page. It should render the same as before the refactor — the card, the tag pills, the buttons — just from far less markup. In your browser DevTools, confirm the `.card--recipe`, `.pill`, and `.btn` classes are present. With **Twig debug** on, View Source will show the `recipe-card.html.twig` / `base-card.html.twig` partials being loaded (proof the include/embed chain resolved). If it's unstyled or blank, check the template path in the `include`/`embed` matches your theme name.
 
 ---
 
