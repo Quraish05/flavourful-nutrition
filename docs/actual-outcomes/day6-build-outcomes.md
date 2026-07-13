@@ -96,4 +96,29 @@ Where the build departed from the plan, and why. Format matches [`lessons-learne
 
 ---
 
+## Update — 2026-07-13 (rename cascade, OOP swap, backfill)
+
+> A later session resolved several open items above and surfaced two failures the 2026-07-09 tables predate. This block is additive — the tables above stay the record of the initial build; read them first. The REST-export follow-on is in [`day7-build-outcomes.md`](day7-build-outcomes.md).
+
+### Open items now resolved
+
+| Original | What changed | Status now |
+|---|---|---|
+| Deviation 5 — §6 `#[Hook]` swap was a no-op | `RecipeHooks.php` namespace corrected `Drupal\flavorful_nutrition\Hook` → `Drupal\flavourful\Hook` (commit `8185640`); it is now discovered and run as a **theme** OOP hook. The wrong namespace had also made the file load twice, throwing a `Cannot declare class … already in use` fatal on `drush en eva`. | Partially resolved — the class works, but the procedural `flavourful_nutrition_preprocess_node()` was not deleted, so both now run (see new deviation 10). |
+| Supporting change — "Twig debug enabled" | `development.services.yml` in fact had **no** `twig.config` block, so debug was silently off despite the note. Added `debug` / `auto_reload` / `cache: false`. | Resolved — the §5 suggestion comments now actually render in page source. |
+| Deviation 7 — no backfill | Backfilled all 21 recipes with a one-off re-save (preserving `changed`, no new revision) rather than a `hook_update_N`. | Resolved pragmatically — the update hook still doesn't exist; the data is fixed. |
+| — (CI) | `RecipeHooks.php` carried three `Drupal,DrupalPractice` violations (brace placement, trailing blank line); fixed with `phpcbf` and shipped with the namespace fix (`8185640`). | Resolved — phpcs exits 0 across custom modules and themes. |
+
+### New deviations (not in the 2026-07-09 tables)
+
+| # | What happened | Cause | What we did / open item |
+|---|---|---|---|
+| 8 | **Site would not bootstrap** — every `drush` and web request threw `AssertionError: flavorful_nutrition.info.yml does not exist`. | Active config was already fully on `flavourful_nutrition`, but the compiled DI **container cache** still referenced the pre-rename module; the rename never cleared it. | Truncated `cache_container` / `cache_bootstrap` / `cache_discovery` / `cache_default` / `cache_config` directly (bootstrap-independent). Boot restored — no file or DB rename was needed. |
+| 9 | **Preprocess hook silently never fired** — the `is_quick` badge showed for no recipe. | The function was `flavorful_nutrition_preprocess_node()` (old spelling); Drupal only invokes preprocess hooks whose prefix matches the module machine name `flavourful_nutrition`. | Renamed to `flavourful_nutrition_preprocess_node()` + `drush cr`. A concrete instance of deviation 1 — `grep -rn 'flavorful' docroot/{modules,themes}/custom` is the cheap guard, since these fail only at runtime. |
+| 10 | **Duplicate preprocess logic** — after fixing deviation 5, both `RecipeHooks::preprocessNode()` (theme OOP) and `flavourful_nutrition_preprocess_node()` (module procedural) set `is_quick` / `recipe--quick`. | The §6 conversion added the OOP class without removing the procedural one. | Harmless today (the rendered class de-duplicates) but they will drift. Open item: keep one — recommended the OOP class, delete the procedural block. |
+
+Deviations 8–10, plus deviation 5's fatal, all trace to the single `flavorful` → `flavourful` rename (commit `7c47b17`) landing across module name, theme name, namespace, hook prefix, and the container cache. Every one is a runtime-only failure — none is caught by phpcs or the compiled container until the code path executes.
+
+---
+
 *Add to this file — or a new `dayN-build-outcomes.md` — whenever a later day lands, so the objectives and outcomes stay in step.*

@@ -44,7 +44,8 @@ Enterprise Drupal solutions on **Acquia Cloud**: building content types, fields,
 - [`../actual-outcomes/acquia-deployment-guide.md`](../actual-outcomes/acquia-deployment-guide.md) — the original, real deployment runbook for this project (Drupal 11, DDEV, Acquia Cloud Next). Day 3 and the lessons-learned log are grounded in it.
 - [`../actual-outcomes/lessons-learned.md`](../actual-outcomes/lessons-learned.md) — problem → root cause → fix log across deployment, config, Views, theming, modules, and Site Studio.
 - [`../actual-outcomes/day4-5-build-outcomes.md`](../actual-outcomes/day4-5-build-outcomes.md) — objective→outcome map for the Day 4 Site Studio install and Day 5 nutrition-API build, with a deviation log for where reality diverged from the plan.
-- [`../actual-outcomes/day6-build-outcomes.md`](../actual-outcomes/day6-build-outcomes.md) — objective→outcome map for the Day 6 hooks & preprocess build (form alter, presave, preprocess, theme suggestion), noting the British-spelling rename, the fields that had to be created, and the `#[Hook]` swap that didn't land.
+- [`../actual-outcomes/day6-build-outcomes.md`](../actual-outcomes/day6-build-outcomes.md) — objective→outcome map for the Day 6 hooks & preprocess build (form alter, presave, preprocess, theme suggestion), noting the British-spelling rename, the fields that had to be created, and the `#[Hook]` swap that didn't land. A 2026-07-13 update logs the rename-cascade fallout (boot-breaking stale container cache, a preprocess hook that never fired, the OOP swap finally wired up) and the `field_total_time` backfill.
+- [`../actual-outcomes/day7-build-outcomes.md`](../actual-outcomes/day7-build-outcomes.md) — objective→outcome map for the Day 7 REST-export slice (`/api/recipes`): the empty-`field_total_time` backfill, why titles/cuisines arrived as escaped HTML links, and the per-display field override that cleans the JSON without touching the page displays.
 
 ## Practice project: Flavorful
 
