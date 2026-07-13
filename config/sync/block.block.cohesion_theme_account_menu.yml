@@ -1,4 +1,4 @@
-uuid: ae6e3865-2680-4a0c-815e-e190063d747b
+uuid: 6ca9076e-b499-4c10-a0a6-8ce2aa2f54cb
 langcode: en
 status: true
 dependencies:
@@ -7,12 +7,12 @@ dependencies:
   module:
     - system
   theme:
-    - flavourful
+    - cohesion_theme
 _core:
   default_config_hash: gmxYWWHmgbe0Pnv8y48ZLSLH5mEHejOjAP6RLxUfdzU
-id: flavourful_account_menu
-theme: flavourful
-region: secondary_menu
+id: cohesion_theme_account_menu
+theme: cohesion_theme
+region: header
 weight: -4
 provider: null
 plugin: 'system_menu_block:account'

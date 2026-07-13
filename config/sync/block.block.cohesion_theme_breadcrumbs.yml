@@ -1,16 +1,16 @@
-uuid: cf0621c6-acc3-4f72-8110-cc7a33af189d
+uuid: 45fd14e9-4974-49bc-b1a7-43c1d1297c73
 langcode: en
 status: true
 dependencies:
   module:
     - system
   theme:
-    - flavourful
+    - cohesion_theme
 _core:
   default_config_hash: VhBzWb7lMRtIOg9G7VSw_0uopi-7zXeHq4vXqqV1HFE
-id: flavourful_breadcrumbs
-theme: flavourful
-region: breadcrumb
+id: cohesion_theme_breadcrumbs
+theme: cohesion_theme
+region: header
 weight: 0
 provider: null
 plugin: system_breadcrumb_block
