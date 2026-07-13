@@ -1,16 +1,16 @@
-uuid: 73cf4b0d-2c65-4b02-8458-2a4f833022c4
+uuid: 67e23b0c-762e-4cc0-a0c3-9021b41d22d2
 langcode: en
 status: true
 dependencies:
   module:
     - system
   theme:
-    - flavourful
+    - cohesion_theme
 _core:
   default_config_hash: BZ5tpW7H8X4PVGRm3MImTIHd2tN0eF7zOtp4SpRYUA0
-id: flavourful_messages
-theme: flavourful
-region: highlighted
+id: cohesion_theme_messages
+theme: cohesion_theme
+region: header
 weight: -5
 provider: null
 plugin: system_messages_block

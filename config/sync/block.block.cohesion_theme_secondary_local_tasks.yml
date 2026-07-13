@@ -1,14 +1,14 @@
-uuid: 6fb97eba-c4c1-45e2-9b2f-40985cdc9a7d
+uuid: 05fc1b26-b83c-483e-9308-43d5035761bf
 langcode: en
 status: true
 dependencies:
   theme:
-    - flavourful
+    - cohesion_theme
 _core:
   default_config_hash: ydSxdq7R66I8UMC460rOzlfzvlUL4VRbdwc6z9DWaUI
-id: flavourful_secondary_local_tasks
-theme: flavourful
-region: highlighted
+id: cohesion_theme_secondary_local_tasks
+theme: cohesion_theme
+region: header
 weight: -2
 provider: null
 plugin: local_tasks_block

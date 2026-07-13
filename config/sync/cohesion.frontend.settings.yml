@@ -1,0 +1,9 @@
+_core:
+  default_config_hash: sBdzTJe44Wgo3Mn_Xchw8yTkuMoyeVm1WQYgz9UqEjc
+js:
+  matchHeight: 1
+  parallax_scrolling: 1
+  cohMatchHeights: 1
+css:
+  custom_styles_on_page: 0
+  element_styles_on_page: 0

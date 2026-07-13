@@ -1,0 +1,15 @@
+uuid: 9dc4a9da-22e5-4f2f-8841-850e5e4bce5d
+langcode: en
+status: true
+dependencies:
+  config:
+    - node.type.recipe
+  module:
+    - node
+id: chef
+label: Chef
+weight: 4
+is_admin: false
+permissions:
+  - 'delete own recipe content'
+  - 'edit own recipe content'

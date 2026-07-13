@@ -1,13 +1,13 @@
-uuid: 9d0ecba6-77c9-4bd9-a785-a4fdbc8d39e6
+uuid: df7b8e62-ae31-4124-a8d2-349272581b78
 langcode: en
 status: true
 dependencies:
   theme:
-    - flavourful
+    - cohesion_theme
 _core:
   default_config_hash: 6aOgWsNTXjqrDm98TXSAjP6qd2nCijD1xw45MrnbK-Y
-id: flavourful_page_title
-theme: flavourful
+id: cohesion_theme_page_title
+theme: cohesion_theme
 region: sidebar_first
 weight: -5
 provider: null

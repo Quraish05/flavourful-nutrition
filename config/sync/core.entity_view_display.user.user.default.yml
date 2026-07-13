@@ -3,6 +3,7 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.field.user.user.field_bio
     - field.field.user.user.user_picture
     - image.style.thumbnail
   module:
@@ -15,7 +16,21 @@ targetEntityType: user
 bundle: user
 mode: default
 content:
+  chef_recipes_eva_entity_view_1:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 10
+    region: content
+  field_bio:
+    type: basic_string
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 6
+    region: content
   member_for:
+    settings: {  }
+    third_party_settings: {  }
     weight: 5
     region: content
   user_picture:

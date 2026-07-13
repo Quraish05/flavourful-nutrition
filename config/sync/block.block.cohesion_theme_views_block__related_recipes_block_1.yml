@@ -1,4 +1,4 @@
-uuid: 84159278-2806-40ba-9dbd-b1952725ded6
+uuid: 253943ec-0f36-4453-9bdc-195ec0f4a2e6
 langcode: en
 status: true
 dependencies:
@@ -8,9 +8,9 @@ dependencies:
     - node
     - views
   theme:
-    - flavourful
-id: flavourful_views_block__related_recipes_block_1
-theme: flavourful
+    - cohesion_theme
+id: cohesion_theme_views_block__related_recipes_block_1
+theme: cohesion_theme
 region: sidebar_first
 weight: 0
 provider: null

@@ -8,6 +8,16 @@ module:
   block_content: 0
   breakpoint: 0
   ckeditor5: 0
+  cohesion: 0
+  cohesion_base_styles: 0
+  cohesion_breakpoint_indicator: 0
+  cohesion_custom_styles: 0
+  cohesion_elements: 0
+  cohesion_style_guide: 0
+  cohesion_style_helpers: 0
+  cohesion_sync: 0
+  cohesion_templates: 0
+  cohesion_website_settings: 0
   config: 0
   contextual: 0
   datetime: 0
@@ -15,6 +25,8 @@ module:
   devel_generate: 0
   dynamic_page_cache: 0
   editor: 0
+  entity_reference_revisions: 0
+  eva: 0
   field: 0
   field_ui: 0
   file: 0
@@ -22,6 +34,9 @@ module:
   flavourful_nutrition: 0
   help: 0
   image: 0
+  imce: 0
+  jquery_ui: 0
+  jsonapi: 0
   layout_builder: 0
   layout_discovery: 0
   link: 0
@@ -34,6 +49,10 @@ module:
   page_cache: 0
   path: 0
   path_alias: 0
+  rest: 0
+  serialization: 0
+  sitestudio_data_transformers: 0
+  sitestudio_page_builder: 0
   system: 0
   taxonomy: 0
   text: 0
@@ -47,5 +66,7 @@ module:
 theme:
   olivero: 0
   claro: 0
+  stable: 0
+  cohesion_theme: 0
   flavourful: 0
 profile: standard
