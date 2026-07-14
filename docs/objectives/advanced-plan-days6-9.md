@@ -153,12 +153,29 @@ The progression is deliberate: **extend behaviour (hooks) → shape data (Views)
 
 ## The hands-on labs
 
-Each day now has a full step-by-step lab (how / what / why + code), like Days 1–5:
+Each day has a full step-by-step lab (how / what / why + code), like Days 1–5:
 
 - [`day6-hooks-preprocess.md`](day6-hooks-preprocess.md)
 - [`day7-advanced-views.md`](day7-advanced-views.md)
 - [`day8-twig-best-practices.md`](day8-twig-best-practices.md)
 - [`day9-atomic-sdc.md`](day9-atomic-sdc.md)
+
+---
+
+## Further extension — Days 10–13 (closing the question-bank gaps)
+
+After Days 6–9, a review of the NMQ interview question bank showed four weighted areas still uncovered. These days close them:
+
+| Day | Topic | Bank gap it closes |
+|---|---|---|
+| **[Day 10](day10-search-solr-searchstax.md)** | Search API + Solr + **SearchStax** | §4 Search — entirely uncovered; NMQ is migrating to SearchStax |
+| **[Day 11](day11-performance-caching-debugging.md)** | Performance, caching & the debugging method | §3 Performance & Caching — heavily weighted; "systematic debugging" |
+| **[Day 12](day12-javascript-in-drupal.md)** | JavaScript in Drupal (behaviors, once, AJAX, React island) | §5 Frontend/JS + the React-in-Site-Studio question |
+| **[Day 13](day13-multisite-governance.md)** | Multisite & CMS governance | §1 multisite gap + the JD's governance line |
+
+**By the end you can also answer:** "Have you used Solr / Search API? `fq` vs `q`? boosts? facets? SearchStax?" (Day 10); "How do you diagnose a slow search / approach performance?" (Day 11); "How does JS work in Drupal — behaviors, once, AJAX, React?" (Day 12); "How do you set up a multisite / handle CMS governance?" (Day 13).
+
+> Naming note: Days 10–13 use your **real project names** (`flavourful` theme, `flavourful_nutrition` module, and real fields like `field_recipe_cuisine_type`, `field_type_of_diet`, `field_recipe_ingredients`). Days 6–9 still use the generic `flavorful_*` names — reconcile if you want full consistency.
 
 ---
 

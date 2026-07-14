@@ -67,7 +67,45 @@
  *
  */
 #}
-<article{{attributes}}>
+<article{{attributes.addClass('recipe-full')}}>
+
+	{#
+	  The same `recipe-card` SDC that renders each row of the /recipes listing,
+	  reused here as the page hero. Diet terms fill the `tags` slot as tag-pill
+	  atoms; the hero image fills the `media` slot as a rendered field.
+	#}
+	{% set card_props = {
+		title: label,
+		url: url,
+		eyebrow: node.field_recipe_cuisine_type.entity.label|default(''),
+		summary: node.field_summary.value|default(''),
+		cooking_time: (total_time|default(0)) + 0,
+	} %}
+	{% if node.field_difficulty.value %}
+		{% set card_props = card_props|merge({ difficulty: node.field_difficulty.value }) %}
+	{% endif %}
+	{% embed 'flavourful:recipe-card' with card_props %}
+		{% block media %}
+			{% if content.field_hero|render|trim is not empty %}
+				{{ content.field_hero }}
+			{% else %}
+				<span class="recipe-card__placeholder">🍽️</span>
+			{% endif %}
+		{% endblock %}
+
+		{% block tags %}
+			{% for tag in node.field_type_of_diet %}
+				{{ include('flavourful:tag-pill', { label: tag.entity.label }, with_context = false) }}
+			{% endfor %}
+		{% endblock %}
+	{% endembed %}
+
+	<div class="recipe-full__method">
+		<h2>{{ 'Method'|t }}</h2>
+		{{ content.field_summary }}
+	</div>
+
+	{{ include('flavourful:button', { label: 'Print recipe'|t, url: '#', variant: 'ghost' }) }}
 
 	{{ title_prefix }}
 	{% if not page %}

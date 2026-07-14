@@ -1,0 +1,45 @@
+{#
+/**
+ * @file
+ * Recipe card molecule. See recipe-card.component.yml for the props/slots
+ * contract. Rendered from both node--recipe.html.twig (full page) and
+ * node--recipe--teaser.html.twig (rows of the /recipes View) — one component,
+ * many contexts.
+ */
+#}
+<article class="recipe-card"{{ attributes }}>
+
+  <a class="recipe-card__media" href="{{ url }}" tabindex="-1" aria-hidden="true">
+    {% block media %}{% endblock %}
+
+    {% if difficulty %}
+      <span class="badge badge--difficulty badge--{{ difficulty }}">{{ difficulty|capitalize }}</span>
+    {% endif %}
+  </a>
+
+  <div class="recipe-card__body">
+    {% if eyebrow %}
+      <p class="recipe-card__eyebrow">{{ eyebrow }}</p>
+    {% endif %}
+
+    <h3 class="recipe-card__title">
+      <a href="{{ url }}" rel="bookmark">{{ title }}</a>
+    </h3>
+
+    {% if summary %}
+      <p class="recipe-card__summary">{{ summary }}</p>
+    {% endif %}
+
+    {% if cooking_time %}
+      <ul class="recipe-card__meta">
+        <li class="recipe-meta">
+          <span class="recipe-meta__icon" aria-hidden="true">⏱️</span>
+          <span class="recipe-meta__value">{{ cooking_time|round }}</span>&nbsp;{{ 'min'|t }}
+        </li>
+      </ul>
+    {% endif %}
+
+    <div class="recipe-card__tags">{% block tags %}{% endblock %}</div>
+  </div>
+
+</article>

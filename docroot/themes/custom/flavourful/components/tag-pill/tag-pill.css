@@ -1,0 +1,17 @@
+/**
+ * Tag pill atom.
+ * Auto-attached by SDC when rendered. Uses the global --fr-* design tokens.
+ */
+.pill {
+  display: inline-block;
+  padding: 0.25rem var(--fr-space-xs);
+  border-radius: 999px;
+  background-color: var(--fr-color-cream);
+  border: 1px solid var(--fr-color-line);
+  color: var(--fr-color-slate);
+  font-family: var(--fr-font-heading);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  line-height: 1.4;
+}

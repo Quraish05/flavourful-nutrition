@@ -38,6 +38,10 @@ Enterprise Drupal solutions on **Acquia Cloud**: building content types, fields,
 - [`day7-advanced-views.md`](day7-advanced-views.md) — aggregation, EVA, attachments, grouped exposed filters + sorts, and a JSON feed.
 - [`day8-twig-best-practices.md`](day8-twig-best-practices.md) — inheritance (`extends`/`block`), `include`, `embed`, macros, and the Drupal-specific Twig toolkit.
 - [`day9-atomic-sdc.md`](day9-atomic-sdc.md) — atomic design with Single Directory Components: button/tag atoms, a recipe-card molecule (props + slots), and SDC vs Site Studio vs Paragraphs.
+- [`day10-search-solr-searchstax.md`](day10-search-solr-searchstax.md) — Search API + Solr in DDEV, an index over recipes, a search page, facets, boosts, and the **SearchStax** connector migration.
+- [`day11-performance-caching-debugging.md`](day11-performance-caching-debugging.md) — caching layers, Varnish, image/asset optimization, custom-component invalidation, and a systematic slow-feature debugging method.
+- [`day12-javascript-in-drupal.md`](day12-javascript-in-drupal.md) — libraries + drupalSettings, `Drupal.behaviors` + `once()`, the AJAX API, and a React island (incl. the Site Studio + React question).
+- [`day13-multisite-governance.md`](day13-multisite-governance.md) — multisite mechanics (`sites.php`, per-site config), ACSF, and CMS governance (Content Moderation, config change-control).
 
 ### Actual outcomes ([`../actual-outcomes/`](../actual-outcomes/))
 
@@ -46,6 +50,8 @@ Enterprise Drupal solutions on **Acquia Cloud**: building content types, fields,
 - [`../actual-outcomes/day4-5-build-outcomes.md`](../actual-outcomes/day4-5-build-outcomes.md) — objective→outcome map for the Day 4 Site Studio install and Day 5 nutrition-API build, with a deviation log for where reality diverged from the plan.
 - [`../actual-outcomes/day6-build-outcomes.md`](../actual-outcomes/day6-build-outcomes.md) — objective→outcome map for the Day 6 hooks & preprocess build (form alter, presave, preprocess, theme suggestion), noting the British-spelling rename, the fields that had to be created, and the `#[Hook]` swap that didn't land. A 2026-07-13 update logs the rename-cascade fallout (boot-breaking stale container cache, a preprocess hook that never fired, the OOP swap finally wired up) and the `field_total_time` backfill.
 - [`../actual-outcomes/day7-build-outcomes.md`](../actual-outcomes/day7-build-outcomes.md) — objective→outcome map for the Day 7 REST-export slice (`/api/recipes`): the empty-`field_total_time` backfill, why titles/cuisines arrived as escaped HTML links, and the per-display field override that cleans the JSON without touching the page displays.
+- [`../actual-outcomes/day8-build-outcomes.md`](../actual-outcomes/day8-build-outcomes.md) — objective→outcome map for the Day 8 Twig template kit (base-card / recipe-card / ui macros / Views row / node--recipe refactor), flagged work-in-progress: leftover `dump()` calls, an inconsistent `@flavourful/templates/…` namespace, and `twig_tweak` added but not yet enabled.
+- [`../actual-outcomes/day9-build-outcomes.md`](../actual-outcomes/day9-build-outcomes.md) — objective→outcome map for the Day 9 SDC component library (`button`/`tag-pill` atoms, `recipe-card` molecule with props + `media`/`tags` slots). The card renders live per row on `/recipes`; notes that Site Studio owns the full recipe display (so the node-page embed is superseded), that empty fields must be guarded against enum/type validation, and that it supersedes the Day 8 macro/partial card.
 
 ## Practice project: Flavorful
 

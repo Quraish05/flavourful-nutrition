@@ -1,0 +1,7 @@
+{% macro button(text, url, variant = 'primary') %}
+	<a href="{{ url }}" class="btn btn--{{ variant }}">{{ text }}</a>
+{% endmacro %}
+
+{% macro tag_pill(label) %}
+	<span class="pill">{{ label }}</span>
+{% endmacro %}
