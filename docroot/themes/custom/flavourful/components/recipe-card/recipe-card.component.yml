@@ -1,0 +1,41 @@
+$schema: 'https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json'
+name: Recipe card
+status: stable
+description: >-
+  Molecule — a recipe summary card. Takes typed props for its scalar data and
+  free-form slots for its media and tag areas (the latter holds tag-pill atoms).
+props:
+  type: object
+  required: [title, url]
+  properties:
+    title:
+      type: string
+      title: Title
+    url:
+      type: string
+      title: URL
+      description: 'Canonical link to the recipe.'
+    eyebrow:
+      type: string
+      title: Eyebrow
+      description: 'Small label above the title, e.g. the cuisine.'
+    summary:
+      type: string
+      title: Summary
+      description: 'Short teaser copy, clamped to 3 lines.'
+    cooking_time:
+      type: integer
+      title: Cooking time (minutes)
+      default: 0
+    difficulty:
+      type: string
+      title: Difficulty
+      description: 'Renders a coloured badge. Constrained to the field_difficulty values.'
+      enum: [easy, medium, hard, expert]
+slots:
+  media:
+    title: Media
+    description: 'Hero image (a rendered image field) or a placeholder.'
+  tags:
+    title: Tags
+    description: 'Dietary/cuisine pills — fill with tag-pill atoms.'

@@ -1,0 +1,18 @@
+{#
+/**
+ * @file
+ * Base card skeleton. Children override the blocks.
+ */
+#}
+<article{{attributes.addClass('card')}}>
+	<div class="card__media"> {% block media %}{% endblock %}
+		</div>
+		<div class="card__body">
+			<h3 class="card__title"> {% block title %}{% endblock %}
+				</h3>
+				<div class="card__meta"> {% block meta %}{% endblock %}
+					</div>
+					<div class="card__tags"> {% block tags %}{% endblock %}
+						</div>
+					</div>
+				</article>

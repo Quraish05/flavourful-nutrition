@@ -1,0 +1,38 @@
+/**
+ * Button atom.
+ * Auto-attached by SDC whenever the component renders. Consumes the global
+ * --fr-* design tokens emitted in :root by css/global.css.
+ */
+.btn {
+  display: inline-block;
+  padding: var(--fr-space-2xs) var(--fr-space-sm);
+  border-radius: var(--fr-radius-md);
+  font-family: var(--fr-font-heading);
+  font-weight: 700;
+  line-height: 1;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.btn--primary {
+  background-color: var(--fr-color-paprika);
+  color: var(--fr-color-white);
+}
+
+.btn--primary:hover,
+.btn--primary:focus {
+  background-color: var(--fr-color-paprika-dark);
+}
+
+.btn--ghost {
+  background-color: transparent;
+  border: 1px solid var(--fr-color-paprika);
+  color: var(--fr-color-paprika);
+}
+
+.btn--ghost:hover,
+.btn--ghost:focus {
+  background-color: var(--fr-color-paprika);
+  color: var(--fr-color-white);
+}

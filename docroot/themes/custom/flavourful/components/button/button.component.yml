@@ -1,0 +1,24 @@
+$schema: 'https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json'
+name: Button
+status: stable
+description: 'Atom — a link styled as a button. All props, no slots.'
+props:
+  type: object
+  required:
+    - label
+  properties:
+    label:
+      type: string
+      title: Label
+      description: 'Visible text of the button.'
+    url:
+      type: string
+      title: URL
+      description: 'Destination of the link.'
+      default: '#'
+    variant:
+      type: string
+      title: Variant
+      description: 'Visual style. Constrained by enum so a typo fails loudly.'
+      enum: [primary, ghost]
+      default: primary

@@ -1,0 +1,5 @@
+<div class="recipe-grid">
+	{% for item in recipes %}
+		{% include '@flavourful/partials/recipe-card.html.twig' with { recipe: item } only %}
+	{% endfor %}
+</div>

@@ -1,0 +1,19 @@
+{#
+/**
+ * @file
+ * A recipe card. Expects: recipe (node).
+ */
+#}
+{% embed '@flavourful/templates/partials/base-card.html.twig' with { recipe: recipe, attributes: create_attribute().addClass('card--recipe') } only %}
+	{% block media %}
+		{{ recipe.field_hero|view }}
+	{% endblock %}
+	{% block title %}
+		<a href="{{ path('entity.node.canonical', { node: recipe.id }) }}">{{ recipe.label }}</a>
+	{% endblock %}
+	{% block meta %}
+		{{ recipe.field_total_time.value }}
+		min ·
+		{{ recipe.field_difficulty.value }}
+	{% endblock %}
+{% endembed %}

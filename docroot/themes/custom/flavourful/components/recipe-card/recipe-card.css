@@ -1,0 +1,188 @@
+/**
+ * Recipe card molecule.
+ * Auto-attached by SDC wherever the card renders (node page, View rows), so its
+ * styles travel with the markup. Consumes the global --fr-* design tokens.
+ * This file is the single source of truth for the card, its difficulty badge
+ * and its meta row (previously scss/components/_recipe-card.scss + _badge.scss).
+ */
+.recipe-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  background-color: var(--fr-color-white);
+  border: 1px solid var(--fr-color-line);
+  border-radius: var(--fr-radius-lg);
+  box-shadow: var(--fr-shadow-card);
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.recipe-card:hover,
+.recipe-card:focus-within {
+  transform: translateY(-4px);
+  box-shadow: var(--fr-shadow-card-hover);
+}
+
+/* -- Media ----------------------------------------------------------------- */
+.recipe-card__media {
+  position: relative;
+  display: block;
+  aspect-ratio: 3 / 2;
+  overflow: hidden;
+  background-color: var(--fr-color-line);
+}
+
+.recipe-card__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.recipe-card:hover .recipe-card__media img {
+  transform: scale(1.05);
+}
+
+/* Placeholder shown when no hero image is supplied to the media slot. */
+.recipe-card__placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  font-size: 3rem;
+  background: linear-gradient(135deg, var(--fr-color-saffron), var(--fr-color-paprika));
+}
+
+/* -- Difficulty badge (overlaid on the media) ------------------------------ */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem var(--fr-space-xs);
+  border-radius: 999px;
+  background-color: var(--fr-color-slate);
+  color: var(--fr-color-white);
+  font-family: var(--fr-font-heading);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+.badge--difficulty.badge--easy {
+  background-color: var(--fr-difficulty-easy);
+}
+
+.badge--difficulty.badge--medium {
+  background-color: var(--fr-difficulty-medium);
+}
+
+.badge--difficulty.badge--hard {
+  background-color: var(--fr-difficulty-hard);
+}
+
+.badge--difficulty.badge--expert {
+  background-color: var(--fr-difficulty-expert);
+}
+
+.recipe-card__media .badge {
+  position: absolute;
+  inset-block-start: var(--fr-space-2xs);
+  inset-inline-end: var(--fr-space-2xs);
+  box-shadow: 0 2px 6px rgba(36, 32, 28, 0.25);
+}
+
+/* -- Body ------------------------------------------------------------------ */
+.recipe-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--fr-space-2xs);
+  padding: var(--fr-space-md);
+}
+
+.recipe-card__eyebrow {
+  margin: 0;
+  color: var(--fr-color-paprika);
+  font-family: var(--fr-font-heading);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.recipe-card__title {
+  margin: 0;
+  font-size: 1.3rem;
+}
+
+.recipe-card__title a {
+  color: var(--fr-color-ink);
+}
+
+.recipe-card__title a:hover,
+.recipe-card__title a:focus {
+  color: var(--fr-color-paprika-dark);
+  text-decoration: none;
+}
+
+/* Stretch the title link across the whole card for easier clicking. */
+.recipe-card__title a::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+}
+
+.recipe-card__summary {
+  margin: 0;
+  color: var(--fr-color-slate);
+  font-size: 0.95rem;
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+}
+
+/* -- Meta row -------------------------------------------------------------- */
+.recipe-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--fr-space-xs) var(--fr-space-md);
+  margin: var(--fr-space-2xs) 0 0;
+  padding: var(--fr-space-sm) 0 0;
+  border-top: 1px solid var(--fr-color-line);
+  list-style: none;
+}
+
+.recipe-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  color: var(--fr-color-slate);
+  font-family: var(--fr-font-heading);
+  font-size: 0.85rem;
+}
+
+.recipe-meta__icon {
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.recipe-meta__value {
+  color: var(--fr-color-ink);
+  font-weight: 600;
+}
+
+/* -- Tags slot ------------------------------------------------------------- */
+.recipe-card__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+.recipe-card__tags:empty {
+  display: none;
+}
