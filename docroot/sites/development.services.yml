@@ -14,25 +14,17 @@
 # sites/default/default.services.yml or from core/core.services.yml file.
 parameters:
   http.response.debug_cacheability_headers: true
-  # Turn on Twig debugging: emits THEME DEBUG / FILE NAME SUGGESTIONS HTML
-  # comments in the page source and disables the Twig template cache so
-  # template edits show up without a rebuild. All three keys are set because
-  # Drupal does a shallow merge of the twig.config parameter array.
-  twig.config:
-    debug: true
-    auto_reload: true
-    cache: false
 services:
   cache.backend.null:
     class: Drupal\Core\Cache\NullBackendFactory
   logger.channel.config_schema:
     parent: logger.channel_base
-    arguments: ["config_schema"]
+    arguments: [ 'config_schema' ]
   config.schema_checker:
     class: Drupal\Core\Config\Development\LenientConfigSchemaChecker
     arguments:
-      - "@config.typed"
-      - "@messenger"
-      - "@logger.channel.config_schema"
+      - '@config.typed'
+      - '@messenger'
+      - '@logger.channel.config_schema'
     tags:
       - { name: event_subscriber }

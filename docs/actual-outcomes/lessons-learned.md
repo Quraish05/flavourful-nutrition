@@ -94,4 +94,16 @@
 
 ---
 
+## 8. Search (Solr / DDEV services)
+
+| Symptom | Root cause | Fix |
+|---|---|---|
+| `ddev start` fails: router "unhealthy, Detected N configuration error(s)" | Shared DDEV router (Traefik) has dangling routes from other **paused** projects pointing at entrypoints the recreated router no longer defines | `ddev poweroff && ddev start`; to prevent recurrence, `ddev stop <other-project>` (fully) rather than leaving projects paused |
+| Search API: "Solr server could not be reached / core could not be accessed" | Server `host` set to `localhost` — inside the web container that is the web container, not Solr | Set host to the service name `solr` (`drush cset search_api.server.<id> backend_config.connector_config.host solr`) |
+| DDEV Solr core name isn't what config expects | `ddev/ddev-drupal-solr` defaults `SOLR_CORENAME=dev`, not the project name | Add a merge-in `.ddev/docker-compose.solr_*.yaml` setting `SOLR_CORENAME`; drop the old solr volume and restart so the core is precreated |
+| `drush en facets_range_widget` — "missing its dependency module jquery_ui_slider / jquery_ui_touch_punch" | jQuery UI left Drupal core in D9+; its slider pieces are separate contrib projects, not shipped with base `jquery_ui` | `composer require drupal/jquery_ui_slider drupal/jquery_ui_touch_punch`, then enable |
+| Scaffold files (`.htaccess`, `.editorconfig`, `.gitattributes`, `development.services.yml`…) show as modified after `composer require` | `drupal/core-composer-scaffold` re-applies its file mapping on any composer op | Expected; review the diffs and keep/revert deliberately before committing |
+
+---
+
 *Add to this file as you hit new issues — a good lessons-learned log is the fastest onboarding doc a team can have, and the source of the most credible interview stories.*

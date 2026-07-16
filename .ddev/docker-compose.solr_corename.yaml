@@ -1,0 +1,9 @@
+# Override for the Solr addon: name the auto-created core "flavourful" instead
+# of the addon default "dev", to match the Drupal Search API server config
+# (search_api.server.solr → core: flavourful). ddev merges all
+# docker-compose.*.yaml files, so this appends to the solr service environment
+# without editing the #ddev-generated docker-compose.solr.yaml.
+services:
+  solr:
+    environment:
+      - SOLR_CORENAME=flavourful

@@ -1,0 +1,34 @@
+uuid: 842827a0-c10e-4101-801b-e4803386a138
+langcode: en
+status: true
+dependencies:
+  config:
+    - facets.facet.recipe_cuisine_type
+  module:
+    - cohesion
+    - facets
+    - system
+  theme:
+    - flavourful
+id: flavourful_recipecuisinetype
+theme: flavourful
+region: sidebar_second
+weight: 0
+provider: null
+plugin: 'facet_block:recipe_cuisine_type'
+settings:
+  id: 'facet_block:recipe_cuisine_type'
+  label: 'Recipe Cuisine Type'
+  label_display: visible
+  provider: facets
+  context_mapping: {  }
+  block_id: flavourful_recipecuisinetype
+visibility:
+  cohesion_master_template:
+    id: cohesion_master_template
+    using_master_template: 0
+    negate: 0
+  request_path:
+    id: request_path
+    negate: false
+    pages: /recipe-search
