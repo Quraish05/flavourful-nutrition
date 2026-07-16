@@ -2,7 +2,7 @@
 
 > Branch: `feat/nutrition-api-and-vetting-docs` · Last updated: 2026-07-09
 >
-> What actually got built when the [Day 6 lab](../objectives/day6-hooks-preprocess.md) met the running project. This is the **outcome** companion to the plan — it does not re-teach the hook system or repeat the code comments already in the objective; it records what shipped, what diverged, and why. Read [Day 6](../objectives/day6-hooks-preprocess.md) first, then this. Sits alongside the [Day 4–5 outcomes](day4-5-build-outcomes.md) and the cross-cutting [`lessons-learned.md`](lessons-learned.md).
+> What actually got built when the [Day 6 lab](../objectives/day6-hooks-preprocess.md) met the running project. This is the **outcome** companion to the plan — it does not re-teach the hook system or repeat the code comments already in the objective; it records what shipped, what diverged, and why. Read [Day 6](../objectives/day6-hooks-preprocess.md) first, then this. Sits alongside the [Day 4–5 outcomes](day4-5-site-studio-nutrition.md) and the cross-cutting [`lessons-learned.md`](lessons-learned.md).
 
 ---
 
@@ -98,7 +98,7 @@ Where the build departed from the plan, and why. Format matches [`lessons-learne
 
 ## Update — 2026-07-13 (rename cascade, OOP swap, backfill)
 
-> A later session resolved several open items above and surfaced two failures the 2026-07-09 tables predate. This block is additive — the tables above stay the record of the initial build; read them first. The REST-export follow-on is in [`day7-build-outcomes.md`](day7-build-outcomes.md).
+> A later session resolved several open items above and surfaced two failures the 2026-07-09 tables predate. This block is additive — the tables above stay the record of the initial build; read them first. The REST-export follow-on is in [`day7-rest-export.md`](day7-rest-export.md).
 
 ### Open items now resolved
 
@@ -121,4 +121,4 @@ Deviations 8–10, plus deviation 5's fatal, all trace to the single `flavorful`
 
 ---
 
-*Add to this file — or a new `dayN-build-outcomes.md` — whenever a later day lands, so the objectives and outcomes stay in step.*
+*Add to this file — or a new `dayN-<topic>.md` — whenever a later day lands, so the objectives and outcomes stay in step.*

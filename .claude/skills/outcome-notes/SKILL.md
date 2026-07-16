@@ -22,7 +22,7 @@ Run `/dev-notes` exactly as written, but apply the project rules below. They ove
 
 4. **Default section set for this repo** (still confirm via the base skill's step-3 menu, but lead with these): an **objective→outcome map** table (objective link · what shipped · status done/partial/deviated), a **deviation log** table (divergence · why · what we did), and only then the base skill's flowchart / deltas-only walkthrough. Prefer a **deltas-only** walkthrough — annotate just what changed against the objective's baseline, never the whole file.
 
-5. **Match the house style of `docs/actual-outcomes/`** — sentence-case headings, `>` intro blockquote, `---` dividers, problem→cause→fix tables, no emojis. Keep each outcome doc scoped to one build slice (e.g. `day4-5-build-outcomes.md`); don't mix unrelated days into one file.
+5. **Match the house style of `docs/actual-outcomes/`** — sentence-case headings, `>` intro blockquote, `---` dividers, problem→cause→fix tables, no emojis. Keep each outcome doc scoped to one build slice (e.g. `day4-5-site-studio-nutrition.md`); don't mix unrelated days into one file.
 
 ## Everything else
 
