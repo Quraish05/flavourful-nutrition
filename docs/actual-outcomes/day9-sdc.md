@@ -2,7 +2,7 @@
 
 > Branch: `feat/day7-views-config-and-full-export` · Last updated: 2026-07-13
 >
-> What actually got built when the [Day 9 lab](../objectives/day9-atomic-sdc.md) met the running project. This is the **outcome** companion to the plan — it does not re-teach atoms/molecules, SDC anatomy, or props-vs-slots, nor repeat the component listings already in the objective. It records what shipped, what diverged, and why. Read [Day 9](../objectives/day9-atomic-sdc.md) first, then this. It directly **supersedes** several [Day 8](day8-build-outcomes.md) open items (the macro/partial card is replaced by SDCs); sits alongside the cross-cutting [`lessons-learned.md`](lessons-learned.md).
+> What actually got built when the [Day 9 lab](../objectives/day9-atomic-sdc.md) met the running project. This is the **outcome** companion to the plan — it does not re-teach atoms/molecules, SDC anatomy, or props-vs-slots, nor repeat the component listings already in the objective. It records what shipped, what diverged, and why. Read [Day 9](../objectives/day9-atomic-sdc.md) first, then this. It directly **supersedes** several [Day 8](day8-twig-templates.md) open items (the macro/partial card is replaced by SDCs); sits alongside the cross-cutting [`lessons-learned.md`](lessons-learned.md).
 >
 > **Status: shipped and verified on the listing.** Three components render live per row on `/recipes` (HTTP 200, 12 cards, no watchdog errors); the button and enum-validation were verified in isolation. The one deviation that matters: the **full** recipe display is owned by Site Studio, so the node-page embed is in place but not what the front end renders (deviation 2).
 
@@ -90,4 +90,4 @@ Where the build departed from the plan, and why. Format matches [`lessons-learne
 
 ---
 
-*Add to this file — or a new `dayN-build-outcomes.md` — whenever a later day lands, so the objectives and outcomes stay in step.*
+*Add to this file — or a new `dayN-<topic>.md` — whenever a later day lands, so the objectives and outcomes stay in step.*
