@@ -1,0 +1,7 @@
+name: "Flavourful Recipe"
+type: module
+description: "Recipe presentation helpers (e.g. the chef's-recipes sidebar block)."
+package: Flavourful
+core_version_requirement: ^10 || ^11
+dependencies:
+  - drupal:node

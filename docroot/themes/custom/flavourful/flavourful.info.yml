@@ -25,3 +25,17 @@ libraries-extend:
 description: ""
 core_version_requirement: ^11
 generator: "starterkit_theme:11.4.0"
+# Regions are declared explicitly (rather than inherited from Olivero) so the
+# left/right sidebars used by page.html.twig and the block layout actually
+# exist. Without these, sidebar_first/sidebar_second blocks render unpositioned.
+regions:
+  header: "Header"
+  primary_menu: "Primary menu"
+  secondary_menu: "Secondary menu"
+  breadcrumb: "Breadcrumb"
+  highlighted: "Highlighted"
+  help: "Help"
+  content: "Content"
+  sidebar_first: "Sidebar first (left)"
+  sidebar_second: "Sidebar second (right)"
+  footer: "Footer"

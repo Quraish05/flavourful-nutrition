@@ -16,11 +16,6 @@ targetEntityType: user
 bundle: user
 mode: default
 content:
-  chef_recipes_eva_entity_view_1:
-    settings: {  }
-    third_party_settings: {  }
-    weight: 10
-    region: content
   field_bio:
     type: basic_string
     label: above
@@ -45,5 +40,6 @@ content:
     weight: 0
     region: content
 hidden:
+  chef_recipes_eva_entity_view_1: true
   langcode: true
   search_api_excerpt: true

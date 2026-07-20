@@ -3,17 +3,84 @@
 // =============================================================================
 @use '../abstracts' as *;
 
-.page-wrapper,
-main {
+.page-wrapper {
   display: block;
 }
 
-// Constrain and centre the main content column.
+// `main` becomes the three-column shell: left sidebar · content · right
+// sidebar. The regions are declared in flavourful.info.yml and rendered by
+// templates/layout/page.html.twig in the DOM order content → sidebar_first →
+// sidebar_second; flex `order` puts them back in visual left-to-right order.
+// Absent sidebars collapse gracefully — content simply takes the freed space.
 main {
   @include container;
   padding-block: $space-lg;
+  display: flex;
+  flex-direction: column;
+  gap: $space-md;
 
   @include respond-to('lg') {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: $space-xl;
     padding-block: $space-xl;
+  }
+}
+
+.layout-content {
+  order: 2;
+  flex: 1 1 auto;
+  min-width: 0; // Prevent overflow from long content / wide media.
+}
+
+.layout-sidebar-first {
+  order: 1;
+
+  @include respond-to('lg') {
+    flex: 0 0 15rem;
+  }
+}
+
+.layout-sidebar-second {
+  order: 3;
+
+  @include respond-to('lg') {
+    flex: 0 0 18rem;
+  }
+}
+
+// Sidebar surfacing: each block reads as a distinct card so the sidebars feel
+// intentional rather than a loose stack of links.
+.layout-sidebar-first,
+.layout-sidebar-second {
+  display: flex;
+  flex-direction: column;
+  gap: $space-md;
+
+  .block {
+    padding: $space-md;
+    background: $color-white;
+    border: 1px solid $color-line;
+    border-radius: $radius-md;
+    box-shadow: $shadow-card;
+  }
+
+  .block__title,
+  h2 {
+    margin-block: 0 $space-sm;
+    font-family: $font-heading;
+    font-size: 1.1rem;
+    color: $color-ink;
+  }
+
+  // Sidebar link/item lists: airy, no default bullets.
+  ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  li + li {
+    margin-top: $space-2xs;
   }
 }

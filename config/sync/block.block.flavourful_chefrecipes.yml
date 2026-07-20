@@ -1,0 +1,28 @@
+uuid: 3f5c9a1e-2b7d-4c8a-9e6f-1a2b3c4d5e6f
+langcode: en
+status: true
+dependencies:
+  module:
+    - flavourful_recipe
+    - node
+  theme:
+    - flavourful
+id: flavourful_chefrecipes
+theme: flavourful
+region: sidebar_second
+weight: 10
+provider: null
+plugin: flavourful_recipe_chef_recipes
+settings:
+  id: flavourful_recipe_chef_recipes
+  label: "Chef's other recipes"
+  label_display: '0'
+  provider: flavourful_recipe
+visibility:
+  'entity_bundle:node':
+    id: 'entity_bundle:node'
+    negate: false
+    context_mapping:
+      node: '@node.node_route_context:node'
+    bundles:
+      recipe: recipe

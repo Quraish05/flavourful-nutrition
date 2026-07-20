@@ -8,8 +8,8 @@ _core:
   default_config_hash: 6aOgWsNTXjqrDm98TXSAjP6qd2nCijD1xw45MrnbK-Y
 id: flavourful_page_title
 theme: flavourful
-region: sidebar_first
-weight: -5
+region: content
+weight: -50
 provider: null
 plugin: page_title_block
 settings:
