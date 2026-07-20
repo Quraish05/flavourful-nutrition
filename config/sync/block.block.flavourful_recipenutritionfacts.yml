@@ -8,13 +8,13 @@ dependencies:
     - flavourful
 id: flavourful_recipenutritionfacts
 theme: flavourful
-region: content
+region: sidebar_second
 weight: 0
 provider: null
 plugin: flavourful_nutrition_facts
 settings:
   id: flavourful_nutrition_facts
   label: 'Recipe nutrition facts'
-  label_display: visible
+  label_display: '0'
   provider: flavourful_nutrition
 visibility: {  }

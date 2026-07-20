@@ -17,11 +17,6 @@ targetEntityType: user
 bundle: user
 mode: compact
 content:
-  chef_recipes_eva_entity_view_1:
-    settings: {  }
-    third_party_settings: {  }
-    weight: 10
-    region: content
   user_picture:
     type: image
     label: hidden
@@ -34,6 +29,7 @@ content:
     weight: 0
     region: content
 hidden:
+  chef_recipes_eva_entity_view_1: true
   field_bio: true
   langcode: true
   member_for: true
