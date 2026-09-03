@@ -57,7 +57,7 @@
 
   {{ page.help }}
 
-  <main>
+  <main aria-label="{{ 'Main content'|t }}">
     <a id="main-content" tabindex="-1"></a>{# link is in html.html.twig #}
 
     <div class="layout-content">
@@ -65,13 +65,13 @@
     </div>{# /.layout-content #}
 
     {% if page.sidebar_first %}
-      <aside class="layout-sidebar-first">
+      <aside class="layout-sidebar-first" aria-label="{{ 'Recipe details'|t }}">
         {{ page.sidebar_first }}
       </aside>
     {% endif %}
 
     {% if page.sidebar_second %}
-      <aside class="layout-sidebar-second" >
+      <aside class="layout-sidebar-second" aria-label="{{ 'Related content'|t }}">
         {{ page.sidebar_second }}
       </aside>
     {% endif %}
