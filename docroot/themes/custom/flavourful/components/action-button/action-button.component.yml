@@ -1,0 +1,24 @@
+$schema: 'https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json'
+name: Action button
+status: stable
+description: >-
+  Atom — a real <button type="button"> for in-page actions (toggles, steppers,
+  step navigation), as opposed to the button atom which is a styled link.
+  Pass data-* hooks, extra classes, or `disabled` via the attributes object.
+props:
+  type: object
+  required:
+    - label
+  properties:
+    label:
+      type: string
+      title: Label
+      description: 'Visible button text.'
+    variant:
+      type: string
+      title: Variant
+      description: >-
+        Visual style. "plain" carries no colours so a host context (e.g. an
+        overlay) can style it via a passed class.
+      enum: [primary, ghost, plain]
+      default: plain

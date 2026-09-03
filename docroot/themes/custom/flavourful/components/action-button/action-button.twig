@@ -1,0 +1,13 @@
+{#
+/**
+ * @file
+ * Action button atom. See action-button.component.yml for the props contract.
+ *
+ * Renders a real <button type="button"> (not a link). Callers attach behaviour
+ * hooks and state through the attributes object, e.g.:
+ *   include('flavourful:action-button', {
+ *     label: 'Next'|t,
+ *     attributes: create_attribute({ 'data-cook-next': true }),
+ *   })
+ #}
+<button type="button"{{ attributes.addClass('btn-action', 'btn-action--' ~ variant|default('plain')) }}>{{ label }}</button>

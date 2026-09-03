@@ -1,0 +1,39 @@
+$schema: 'https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json'
+name: Recipe tools
+status: stable
+description: >-
+  Interactive recipe helpers — a servings scaler that proportionally recomputes
+  ingredient amounts, and a full-screen Cook Mode that walks the method steps
+  and keeps the screen awake. Fully readable without JS; the JS in the
+  flavourful/recipe-tools library progressively enhances it.
+props:
+  type: object
+  required: [steps]
+  properties:
+    base_servings:
+      type: integer
+      title: Base servings
+      description: 'The yield the ingredient amounts are written for.'
+      default: 4
+    ingredients:
+      type: array
+      title: Ingredients
+      description: 'Parsed ingredient rows; qty is omitted for non-numeric items.'
+      items:
+        type: object
+        required: [name]
+        properties:
+          qty:
+            type: number
+            title: Quantity
+          unit:
+            type: string
+            title: Unit
+          name:
+            type: string
+            title: Name
+    steps:
+      type: array
+      title: Method steps
+      items:
+        type: string
