@@ -1,6 +1,6 @@
 # Drupal / Acquia Vetting Prep
 
-This folder and its companion [`../actual-outcomes/`](../actual-outcomes/) hold everything prepared to get ready for a **vetting call and project engagement** on an enterprise Drupal-on-Acquia role. They use the `foodrecipes-drupal` project as the practice ground.
+This folder and its companions [`../actual-outcomes/`](../actual-outcomes/) and [`../future-scope/`](../future-scope/) hold everything prepared to get ready for a **vetting call and project engagement** on an enterprise Drupal-on-Acquia role. They use the `foodrecipes-drupal` project as the practice ground.
 
 ## Objectives
 
@@ -12,10 +12,11 @@ The plan is built around one running practice project, **Flavorful** (a recipe p
 
 Enterprise Drupal solutions on **Acquia Cloud**: building content types, fields, views, taxonomies and custom modules; developing themes, Twig templates, and **Acquia Site Studio** components; working from a front-end developer's assets; using Composer, Drush, configuration management and environment-based deployment; supporting external-API integrations and user-identity/profile mapping; and upholding performance, security, SEO and accessibility (WCAG) — all within a cross-functional, code-reviewed, CI/CD workflow.
 
-## How the two folders differ
+## How the three folders differ
 
 - **`objectives/` (this folder)** — the **preparation guideline**: the objectives, the high-level 5-day plan, and the detailed day-by-day hands-on labs. Start here.
 - **`../actual-outcomes/`** — **what actually happened** when the plan met reality: the real Acquia deployment runbook and a **lessons-learned** log of the mistakes hit during the build and how they were solved.
+- **`../future-scope/`** — **scoped but not built**: task docs for work that is gated on something outside the repo (an Acquia licence, a hosted product, an LLM key) or simply not started. Each carries a status, dependencies, tasks, and acceptance criteria rather than lab instructions.
 
 ## Index
 
@@ -53,6 +54,15 @@ Enterprise Drupal solutions on **Acquia Cloud**: building content types, fields,
 - [`../actual-outcomes/day8-twig-templates.md`](../actual-outcomes/day8-twig-templates.md) — objective→outcome map for the Day 8 Twig template kit (base-card / recipe-card / ui macros / Views row / node--recipe refactor), flagged work-in-progress: leftover `dump()` calls, an inconsistent `@flavourful/templates/…` namespace, and `twig_tweak` added but not yet enabled.
 - [`../actual-outcomes/day9-sdc.md`](../actual-outcomes/day9-sdc.md) — objective→outcome map for the Day 9 SDC component library (`button`/`tag-pill` atoms, `recipe-card` molecule with props + `media`/`tags` slots). The card renders live per row on `/recipes`; notes that Site Studio owns the full recipe display (so the node-page embed is superseded), that empty fields must be guarded against enum/type validation, and that it supersedes the Day 8 macro/partial card.
 - [`../actual-outcomes/day10-solr-search.md`](../actual-outcomes/day10-solr-search.md) — objective→outcome map for the Day 10 search bring-up (partial: Solr up, server connected, Facets modules installed; index/views/facets-config/boosts/SearchStax not yet built). Records the add-on core defaulting to `dev` not `flavourful`, the `host: localhost` → `solr` fix, and the jQuery-UI slider/touch-punch contrib packages Facets needs. Cross-cutting infra gotchas (router outage, scaffold churn) are in `lessons-learned.md` §8.
+
+### Future scope ([`../future-scope/`](../future-scope/))
+
+Reframed from the original Day 14–17 lab plans, since all four are blocked or unstarted. See that folder's [`README.md`](../future-scope/README.md) for the status board and suggested order.
+
+- [`../future-scope/drupal-canvas.md`](../future-scope/drupal-canvas.md) — 🟢 **ready to build, no licence needed**: scaffold a Canvas project with the `acquia/nebula` template and rebuild the nutrition card as a Code Component. Canvas is the go-forward successor to Site Studio, so this produces the concrete "how would we migrate?" answer.
+- [`../future-scope/site-factory.md`](../future-scope/site-factory.md) — 🟡 the local two-edition multisite baseline is buildable now (reusing Day 13); ACSF itself can't run locally, so that layer stays design + vocabulary.
+- [`../future-scope/acquia-dam.md`](../future-scope/acquia-dam.md) — 🔴 blocked on a DAM/Widen account: swap the recipe hero to a DAM-referenced remote media entity and surface rights/expiry metadata.
+- [`../future-scope/canvas-ai.md`](../future-scope/canvas-ai.md) — 🔴 blocked on a Canvas project plus an LLM provider key: prompt-build a recipe landing page and generate a Code Component, then evaluate where AI generation helps.
 
 ## Practice project: Flavorful
 
