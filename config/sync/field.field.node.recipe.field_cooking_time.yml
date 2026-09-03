@@ -9,7 +9,7 @@ id: node.recipe.field_cooking_time
 field_name: field_cooking_time
 entity_type: node
 bundle: recipe
-label: 'cooking time'
+label: 'Cooking Time'
 description: 'Cooking time in minutes'
 required: false
 translatable: false
@@ -19,5 +19,5 @@ settings:
   min: null
   max: null
   prefix: ''
-  suffix: ''
+  suffix: ' min'
 field_type: decimal
