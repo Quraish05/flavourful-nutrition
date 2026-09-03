@@ -1,0 +1,39 @@
+/**
+ * Action button atom.
+ * Auto-attached by SDC whenever the component renders. Base styles stay
+ * intentionally minimal so the "plain" variant defers fully to the host
+ * context's own class; the primary/ghost variants use the global --fr-* tokens.
+ */
+.btn-action {
+  font: inherit;
+  cursor: pointer;
+}
+
+.btn-action--primary {
+  padding: var(--fr-space-2xs) var(--fr-space-sm);
+  border: 0;
+  border-radius: var(--fr-radius-md);
+  background-color: var(--fr-color-paprika);
+  color: var(--fr-color-white);
+  font-weight: 700;
+}
+.btn-action--primary:hover,
+.btn-action--primary:focus {
+  background-color: var(--fr-color-paprika-dark);
+}
+
+.btn-action--ghost {
+  padding: var(--fr-space-2xs) var(--fr-space-sm);
+  border: 1px solid var(--fr-color-paprika);
+  border-radius: var(--fr-radius-md);
+  background-color: transparent;
+  color: var(--fr-color-paprika);
+  font-weight: 700;
+}
+.btn-action--ghost:hover,
+.btn-action--ghost:focus {
+  background-color: var(--fr-color-paprika);
+  color: var(--fr-color-white);
+}
+
+/* "plain" adds no visual opinion — the host (e.g. Cook Mode overlay) styles it. */

@@ -20,6 +20,26 @@ recipes:
     component:
       css/recipes.css: {}
 
+recipe-interactions:
+  version: 1.x
+  js:
+    js/recipe-interactions.js: {}
+  dependencies:
+    - core/drupal # gives you Drupal.behaviors
+    - core/once # gives you once()
+    - core/drupalSettings
+
+recipe-tools:
+  version: 1.x
+  css:
+    component:
+      css/recipe-tools.css: {}
+  js:
+    js/recipe-tools.js: {}
+  dependencies:
+    - core/drupal # Drupal.behaviors + Drupal.t
+    - core/once
+
 base:
   version: VERSION
   css:
@@ -86,12 +106,12 @@ image-widget:
   version: VERSION
   css:
     component:
-      css/components/image-widget.css: {  }
+      css/components/image-widget.css: {}
 indented:
   version: VERSION
   css:
     component:
-      css/components/indented.css: {  }
+      css/components/indented.css: {}
 messages:
   version: VERSION
   css:
@@ -126,7 +146,7 @@ search-results:
   version: VERSION
   css:
     component:
-      css/components/search-results.css: {  }
+      css/components/search-results.css: {}
 user:
   version: VERSION
   css:

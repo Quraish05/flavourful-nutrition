@@ -73,13 +73,17 @@
 	  The same `recipe-card` SDC that renders each row of the /recipes listing,
 	  reused here as the page hero. Diet terms fill the `tags` slot as tag-pill
 	  atoms; the hero image fills the `media` slot as a rendered field.
+
+	  `cooking_time` reads field_total_time directly: it is populated server-side
+	  at hook_entity_presave, so the field is the single source of truth (rather
+	  than a preprocess-computed variable).
 	#}
 	{% set card_props = {
 		title: label,
 		url: url,
 		eyebrow: node.field_recipe_cuisine_type.entity.label|default(''),
 		summary: node.field_summary.value|default(''),
-		cooking_time: (total_time|default(0)) + 0,
+		cooking_time: (node.field_total_time.value|default(0)) + 0,
 	} %}
 	{% if node.field_difficulty.value %}
 		{% set card_props = card_props|merge({ difficulty: node.field_difficulty.value }) %}
