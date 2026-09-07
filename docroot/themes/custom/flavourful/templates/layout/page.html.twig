@@ -64,15 +64,25 @@
       {{ page.content }}
     </div>{# /.layout-content #}
 
-    {% if page.sidebar_first %}
+    {#
+      Render each sidebar first and test the *markup*, not the render array.
+      `{% if page.sidebar_second %}` is true whenever the region exists at all
+      (a render array carries #cache and block metadata), so regions whose
+      blocks produce no output still emitted an empty <aside> — an unnamed-but-
+      present `complementary` landmark cluttering the landmark list on every
+      page that has no sidebar content.
+    #}
+    {% set sidebar_first = page.sidebar_first|render %}
+    {% if sidebar_first|trim is not empty %}
       <aside class="layout-sidebar-first" aria-label="{{ 'Recipe details'|t }}">
-        {{ page.sidebar_first }}
+        {{ sidebar_first }}
       </aside>
     {% endif %}
 
-    {% if page.sidebar_second %}
+    {% set sidebar_second = page.sidebar_second|render %}
+    {% if sidebar_second|trim is not empty %}
       <aside class="layout-sidebar-second" aria-label="{{ 'Related content'|t }}">
-        {{ page.sidebar_second }}
+        {{ sidebar_second }}
       </aside>
     {% endif %}
 

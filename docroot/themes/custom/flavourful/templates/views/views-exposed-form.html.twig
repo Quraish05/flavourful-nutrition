@@ -17,5 +17,8 @@
 {{ q }}
 {% endif %}
 <div class="form--inline clearfix">
-  {{ form }}
+  <fieldset class="form--inline clearfix">
+    <legend>{{ 'Filter recipes'|t }}</legend>
+      {{ form }}
+  </fieldset>
 </div>

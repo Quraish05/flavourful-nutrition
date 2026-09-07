@@ -84,11 +84,17 @@
 		eyebrow: node.field_recipe_cuisine_type.entity.label|default(''),
 		summary: node.field_summary.value|default(''),
 		cooking_time: (node.field_total_time.value|default(0)) + 0,
+		heading_level: 0,
 	} %}
 	{% if node.field_difficulty.value %}
 		{% set card_props = card_props|merge({ difficulty: node.field_difficulty.value }) %}
 	{% endif %}
-	{% embed 'flavourful:recipe-card' with card_props %}
+	{#
+	  A clean attributes object: the outer <article> above already consumed the
+	  node's attributes (recipe-full, recipe--quick). Letting them reach the card
+	  too would style the hero as if it were the whole page.
+	#}
+	{% embed 'flavourful:recipe-card' with card_props|merge({ attributes: create_attribute() }) %}
 		{% block media %}
 			{% if content.field_hero|render|trim is not empty %}
 				{{ content.field_hero }}
@@ -109,7 +115,7 @@
 		{{ content.field_summary }}
 	</div>
 
-	{{ include('flavourful:button', { label: 'Print recipe'|t, url: '#', variant: 'ghost' }) }}
+	{{ include('flavourful:button', { label: 'Print recipe'|t, url: '#', variant: 'ghost' }, with_context = false) }}
 
 	{{ title_prefix }}
 	{% if not page %}

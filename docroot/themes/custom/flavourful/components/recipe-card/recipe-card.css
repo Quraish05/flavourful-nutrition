@@ -55,7 +55,7 @@
   background: linear-gradient(135deg, var(--fr-color-saffron), var(--fr-color-paprika));
 }
 
-/* -- Difficulty badge (overlaid on the media) ------------------------------ */
+/* -- Difficulty badge ------------------------------------------------------ */
 .badge {
   display: inline-flex;
   align-items: center;
@@ -88,7 +88,12 @@
   background-color: var(--fr-difficulty-expert);
 }
 
-.recipe-card__media .badge {
+/*
+ * Still overlaid on the media area, but positioned against .recipe-card rather
+ * than .recipe-card__media, because the badge markup now lives in the body —
+ * it must stay outside the aria-hidden media link. Do not move it back.
+ */
+.recipe-card .badge--difficulty {
   position: absolute;
   inset-block-start: var(--fr-space-2xs);
   inset-inline-end: var(--fr-space-2xs);

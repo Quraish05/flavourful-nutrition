@@ -3,6 +3,7 @@ langcode: en
 status: true
 dependencies:
   config:
+    - node.type.chef
     - node.type.recipe
   module:
     - eva
@@ -125,15 +126,13 @@ display:
           exposed: false
           granularity: second
       arguments:
-        uid:
-          id: uid
-          table: node_field_data
-          field: uid
+        field_chef_target_id:
+          id: field_chef_target_id
+          table: node__field_chef
+          field: field_chef_target_id
           relationship: none
           group_type: group
           admin_label: ''
-          entity_type: node
-          entity_field: uid
           plugin_id: entity_target_id
           default_action: 'not found'
           exception:
@@ -154,11 +153,16 @@ display:
             sort_order: asc
             number_of_records: 0
             format: default_summary
-          specify_validation: false
+          specify_validation: true
           validate:
-            type: none
+            type: 'entity:node'
             fail: 'not found'
-          validate_options: {  }
+          validate_options:
+            bundles:
+              chef: chef
+            access: false
+            operation: view
+            multiple: 0
           break_phrase: false
           not: false
       filters:
@@ -183,12 +187,14 @@ display:
           value:
             recipe: recipe
       style:
-        type: default
+        type: html_list
         options:
           grouping: {  }
           row_class: ''
           default_row_class: true
-          uses_fields: false
+          type: ul
+          wrapper_class: item-list
+          class: ''
       row:
         type: fields
         options:
@@ -224,9 +230,13 @@ display:
     display_plugin: entity_view
     position: 1
     display_options:
+      title: 'Recipes by this chef'
       display_extenders: {  }
-      entity_type: user
-      bundles: {  }
+      entity_type: node
+      bundles:
+        - chef
+      show_title: true
+      eva_hide_empty: true
     cache_metadata:
       max-age: -1
       contexts:

@@ -4,4 +4,4 @@
  * Button atom. See button.component.yml for the props contract.
  */
 #}
-<a href="{{ url }}" class="btn btn--{{ variant }}"{{ attributes }}>{{ label }}</a>
+<a href="{{ url }}"{{ attributes.addClass('btn', 'btn--' ~ variant) }}>{{ label }}</a>
