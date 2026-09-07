@@ -27,6 +27,16 @@ props:
       type: integer
       title: Cooking time (minutes)
       default: 0
+    heading_level:
+      type: integer
+      title: Heading level
+      description: >-
+        Level for the card title. Pass the level the host context needs, not a
+        constant: 2 directly under a page h1, 3 under an h2 section. Pass 0 to
+        render the title without a heading wrapper at all, for contexts where an
+        h1 already names the same recipe.
+      enum: [0, 2, 3, 4, 5, 6]
+      default: 3
     difficulty:
       type: string
       title: Difficulty

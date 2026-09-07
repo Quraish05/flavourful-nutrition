@@ -23,6 +23,7 @@
   eyebrow: node.field_recipe_cuisine_type.entity.label|default(''),
   summary: node.field_summary.value|default(''),
   cooking_time: (node.field_cooking_time.value|default(0)) + 0,
+  heading_level: card_heading_level|default(3),
 } %}
 {# difficulty is an enum prop: only pass it when set, or schema validation fails. #}
 {% if node.field_difficulty.value %}
