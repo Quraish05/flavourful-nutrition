@@ -2,10 +2,18 @@ $schema: 'https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schem
 name: Recipe tools
 status: stable
 description: >-
-  Interactive recipe helpers — a servings scaler that proportionally recomputes
-  ingredient amounts, and a full-screen Cook Mode that walks the method steps
-  and keeps the screen awake. Fully readable without JS; the JS in the
-  flavourful/recipe-tools library progressively enhances it.
+  Organism — the interactive half of a recipe: a servings stepper that
+  proportionally recomputes the ingredient amounts, the ingredient and method
+  lists themselves, and a full-screen Cook Mode that walks the steps and keeps
+  the screen awake.
+
+  It composes the ingredient-list and method-steps molecules rather than
+  restating their markup, so the lists look and read identically whether they
+  render here or on their own.
+
+  Fully usable without JavaScript: every list is server-rendered and the Cook
+  Mode trigger stays hidden until the flavourful/recipe-tools library reveals
+  it. Attach that library from whatever renders this.
 props:
   type: object
   required: [steps]
@@ -15,25 +23,52 @@ props:
       title: Base servings
       description: 'The yield the ingredient amounts are written for.'
       default: 4
+      minimum: 1
     ingredients:
       type: array
       title: Ingredients
-      description: 'Parsed ingredient rows; qty is omitted for non-numeric items.'
+      description: >-
+        Rows passed straight through to the ingredient-list molecule — see its
+        contract for how `qty`/`unit` differ from a free-text `amount`.
       items:
         type: object
         required: [name]
         properties:
-          qty:
-            type: number
-            title: Quantity
-          unit:
-            type: string
-            title: Unit
           name:
             type: string
-            title: Name
+          qty:
+            type: number
+          unit:
+            type: string
+          amount:
+            type: string
     steps:
       type: array
       title: Method steps
       items:
         type: string
+    ingredients_heading:
+      type: string
+      title: Ingredients heading
+      default: Ingredients
+    method_heading:
+      type: string
+      title: Method heading
+      default: Method
+    heading_level:
+      type: integer
+      title: Heading level
+      description: >-
+        Level for the Ingredients and Method headings, given where this sits —
+        2 directly under the recipe''s h1.
+      enum: [2, 3, 4]
+      default: 2
+
+# The Cook Mode overlay and the servings stepper are inert without their
+# behaviour, and the Cook Mode trigger is rendered `hidden` on the assumption
+# that the JS will reveal it. Declaring the dependency here means placing this
+# component is enough — no caller has to remember an attach_library() call, and
+# there is no way to render the markup without the script that completes it.
+libraryOverrides:
+  dependencies:
+    - flavourful/recipe-tools

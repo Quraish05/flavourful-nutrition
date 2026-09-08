@@ -1,0 +1,14 @@
+{#
+/**
+ * @file
+ * Pairing note molecule. See pairing-note.component.yml for the contract.
+ */
+#}
+<aside{{ attributes.addClass('pairing-note') }} aria-label="{{ label }}">
+  {{ include('flavourful:micro-label', {
+    text: label,
+    tone: 'brass',
+    tag: 'span',
+  }, with_context = false) }}
+  <p class="pairing-note__text">{{ text }}</p>
+</aside>

@@ -1,69 +1,152 @@
 {#
 /**
  * @file
- * Recipe tools: servings scaler + Cook Mode.
- *
- * Props:
- * - base_servings: int — the yield the amounts are written for (default 4).
- * - ingredients: list of { qty?, unit?, name } — qty omitted for non-numeric rows.
- * - steps: list of strings — the method, one step each.
+ * Recipe tools organism: servings stepper, ingredients, method, Cook Mode.
+ * See recipe-tools.component.yml for the props contract.
  *
  * Progressive enhancement: everything here is meaningful without JS. The
  * flavourful/recipe-tools library adds live scaling and the Cook Mode overlay;
- * the Cook Mode button is hidden until JS reveals it.
+ * the Cook Mode trigger is `hidden` in the markup and revealed by the JS, so it
+ * never appears as a dead control.
+ *
+ * The data-* attributes are the JS contract and deliberately sit on wrappers
+ * rather than on component-owned classes — that way js/recipe-tools.js has no
+ * knowledge of any component's internals, and restyling cannot break it.
  */
 #}
-<section class="recipe-tools" data-recipe-tools data-base-servings="{{ base_servings|default(4) }}">
-  <div class="recipe-tools__bar">
-    <div class="recipe-tools__servings" role="group" aria-label="{{ 'Servings'|t }}">
-      <button type="button" class="recipe-tools__step-btn" data-servings-dec aria-label="{{ 'Fewer servings'|t }}">&minus;</button>
-      <span class="recipe-tools__servings-label">
-        <output class="recipe-tools__servings-value" data-servings>{{ base_servings|default(4) }}</output>&nbsp;{{ 'servings'|t }}
-      </span>
-      <button type="button" class="recipe-tools__step-btn" data-servings-inc aria-label="{{ 'More servings'|t }}">+</button>
-    </div>
-    {% if steps is not empty %}
-      <button type="button" class="recipe-tools__cook-btn" data-cook-start hidden>{{ '👩‍🍳 Cook mode'|t }}</button>
-    {% endif %}
-  </div>
+{% set level = heading_level|default(2) %}
+{% set base = base_servings|default(4) %}
+
+<div{{ attributes.addClass('recipe-tools') }} data-recipe-tools data-base-servings="{{ base }}">
 
   {% if ingredients is not empty %}
-    <ul class="recipe-tools__ingredients">
-      {% for ing in ingredients %}
-        <li class="recipe-tools__ingredient">
-          {% if ing.qty is defined %}
-            <span class="recipe-tools__qty" data-qty="{{ ing.qty }}" data-unit="{{ ing.unit|default('') }}">{{ ing.qty }}{{ ing.unit|default('') }}</span>
-          {% endif %}
-          <span class="recipe-tools__name">{{ ing.name }}</span>
-        </li>
-      {% endfor %}
-    </ul>
-    <p class="recipe-tools__note" data-scale-note hidden aria-live="polite"></p>
+    <section class="recipe-tools__section">
+      {{ include('flavourful:section-header', {
+        title: ingredients_heading|default('Ingredients'|t),
+        heading_level: level,
+        tone: 'brass',
+      }, with_context = false) }}
+
+      {#
+        The stepper is a group, not a spinbutton: it has no editable field, and
+        an <output> is the right element for a value the page computes. The
+        role="group" + aria-label pair is what stops the two bare +/- buttons
+        being announced without any indication of what they step.
+      #}
+      <div class="servings" role="group" aria-label="{{ 'Servings'|t }}">
+        {{ include('flavourful:action-button', {
+          label: '−',
+          variant: 'plain',
+          attributes: create_attribute({
+            'data-servings-dec': true,
+            'aria-label': 'Fewer servings'|t,
+          }).addClass('servings__step'),
+        }, with_context = false) }}
+
+        <span class="servings__readout">
+          <output class="servings__value" data-servings>{{ base }}</output>
+          <span class="servings__unit">{{ 'servings'|t }}</span>
+        </span>
+
+        {{ include('flavourful:action-button', {
+          label: '+',
+          variant: 'plain',
+          attributes: create_attribute({
+            'data-servings-inc': true,
+            'aria-label': 'More servings'|t,
+          }).addClass('servings__step'),
+        }, with_context = false) }}
+      </div>
+
+      {{ include('flavourful:ingredient-list', {
+        items: ingredients,
+        columns: 2,
+      }, with_context = false) }}
+
+      {#
+        aria-live so the scale factor is announced when the stepper changes it.
+        polite, not assertive: it is a confirmation, not an alert, and the user
+        just pressed the button that caused it.
+      #}
+      <p class="recipe-tools__note" data-scale-note hidden aria-live="polite"></p>
+    </section>
   {% endif %}
 
   {% if steps is not empty %}
-    <div class="recipe-tools__cook" data-cook-panel hidden>
-      <div class="recipe-tools__cook-inner">
-        <button type="button" class="recipe-tools__cook-close" data-cook-end aria-label="{{ 'Exit cook mode'|t }}">&times;</button>
-        <p class="recipe-tools__progress" data-cook-progress aria-live="polite"></p>
-        <ol class="recipe-tools__steps">
-          {% for step in steps %}
-            <li class="recipe-tools__step" data-step>{{ step }}</li>
-          {% endfor %}
-        </ol>
-        <div class="recipe-tools__cook-nav">
+    <section class="recipe-tools__section">
+      <div class="recipe-tools__method-head">
+        {{ include('flavourful:section-header', {
+          title: method_heading|default('Method'|t),
+          heading_level: level,
+          tone: 'brass',
+        }, with_context = false) }}
+
+        {{ include('flavourful:action-button', {
+          label: 'Cook mode'|t,
+          variant: 'brass',
+          size: 'sm',
+          attributes: create_attribute({ 'data-cook-start': true, hidden: true }),
+        }, with_context = false) }}
+      </div>
+
+      {{ include('flavourful:method-steps', {
+        steps: steps,
+        numeral: 'roman',
+      }, with_context = false) }}
+    </section>
+
+    {#
+      Cook Mode. A modal overlay, so it is marked role="dialog" aria-modal with
+      its own accessible name — without that, a screen reader would keep reading
+      the page behind it. The JS handles Escape and the arrow keys.
+    #}
+    <div
+      class="cook-mode"
+      data-cook-panel
+      hidden
+      role="dialog"
+      aria-modal="true"
+      aria-label="{{ 'Cook mode'|t }}">
+      <div class="cook-mode__inner">
+        {{ include('flavourful:action-button', {
+          label: '×',
+          variant: 'plain',
+          attributes: create_attribute({
+            'data-cook-end': true,
+            'aria-label': 'Exit cook mode'|t,
+          }).addClass('cook-mode__close'),
+        }, with_context = false) }}
+
+        <p class="cook-mode__progress" data-cook-progress aria-live="polite"></p>
+
+        {#
+          The same method-steps molecule again. Cook Mode shows one step at a
+          time by dimming the rest in CSS rather than by rendering a second,
+          different list — one source of truth for the step markup, and the JS
+          walks the same [data-step] hooks in both places.
+        #}
+        {{ include('flavourful:method-steps', {
+          steps: steps,
+          numeral: 'roman',
+          attributes: create_attribute().addClass('cook-mode__steps'),
+        }, with_context = false) }}
+
+        <div class="cook-mode__nav">
           {{ include('flavourful:action-button', {
-            label: '← Previous'|t,
-            variant: 'plain',
-            attributes: create_attribute({ 'data-cook-prev': true }).addClass('recipe-tools__nav-btn'),
-          }) }}
+            label: 'Previous'|t,
+            variant: 'outline',
+            size: 'sm',
+            attributes: create_attribute({ 'data-cook-prev': true }),
+          }, with_context = false) }}
           {{ include('flavourful:action-button', {
-            label: 'Next →'|t,
-            variant: 'plain',
-            attributes: create_attribute({ 'data-cook-next': true }).addClass('recipe-tools__nav-btn'),
-          }) }}
+            label: 'Next'|t,
+            variant: 'brass',
+            size: 'sm',
+            attributes: create_attribute({ 'data-cook-next': true }),
+          }, with_context = false) }}
         </div>
       </div>
     </div>
   {% endif %}
-</section>
+
+</div>

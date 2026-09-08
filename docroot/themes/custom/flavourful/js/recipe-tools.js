@@ -30,7 +30,14 @@
       amounts.forEach((el) => {
         const baseQty = parseFloat(el.dataset.qty);
         const unit = el.dataset.unit || '';
-        el.textContent = format(baseQty * factor) + unit;
+        // Rebuild the text exactly as the ingredient-list component rendered it
+        // server-side: "<qty> <unit>", space only when there is a unit. Without
+        // the space the first click would reflow every row from "40 cloves" to
+        // "40cloves".
+        el.textContent = unit ? `${format(baseQty * factor)} ${unit}` : format(baseQty * factor);
+        // Marks the amounts the stepper has changed, so it is visible which
+        // numbers are no longer the ones the recipe was written for.
+        el.classList.toggle('is-scaled', factor !== 1);
       });
       if (note) {
         note.hidden = factor === 1;

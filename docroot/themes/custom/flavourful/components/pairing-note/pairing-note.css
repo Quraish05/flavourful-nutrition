@@ -1,0 +1,28 @@
+/**
+ * Pairing note molecule.
+ * The label is set on the leading edge and the text beside it, so the note
+ * reads as one line at desktop width and stacks below 36rem.
+ */
+.pairing-note {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--fr-space-2xs) var(--fr-space-md);
+  padding: var(--fr-space-xs) var(--fr-space-sm);
+  border: 1px solid var(--fr-rule-strong);
+  background-color: var(--fr-ink-raised);
+}
+
+.pairing-note .micro-label {
+  flex: 0 0 auto;
+}
+
+.pairing-note__text {
+  flex: 1 1 16ch;
+  margin: 0;
+  max-width: 60ch;
+  color: var(--fr-bone);
+  font-size: var(--fr-size-body-sm);
+  font-style: italic;
+  line-height: 1.6;
+}

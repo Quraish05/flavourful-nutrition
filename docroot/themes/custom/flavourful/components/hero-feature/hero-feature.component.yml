@@ -1,0 +1,81 @@
+$schema: 'https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json'
+name: Hero feature
+status: stable
+description: >-
+  Molecule — the lead story: an eyebrow, a large display headline, a meta row,
+  and an optional media well. Used for the homepage lead and for the recipe
+  detail header, which is the same shape with the media beside it rather than
+  under it.
+props:
+  type: object
+  required:
+    - title
+    - heading_level
+  properties:
+    title:
+      type: string
+      title: Title
+    heading_level:
+      type: integer
+      title: Heading level
+      description: >-
+        1 when this hero *is* the page heading (a recipe detail page); 2 when
+        the page already has an h1 elsewhere (a homepage with a site h1). Pass
+        0 to render the title as a link with no heading at all — for a hero
+        that duplicates a heading already on the page.
+      enum: [0, 1, 2, 3]
+    url:
+      type: string
+      title: URL
+      description: 'Links the title. Omit on a page that already *is* the item.'
+    eyebrow:
+      type: string
+      title: Eyebrow
+      description: 'The tracked label above the headline, e.g. "The long cook · Mains".'
+    summary:
+      type: string
+      title: Summary
+      description: 'Intro paragraph under the meta row.'
+    meta:
+      type: array
+      title: Meta items
+      description: 'Passed straight through to the meta-list atom.'
+      items:
+        type: object
+        required: [value]
+        properties:
+          label:
+            type: string
+          value:
+            type: string
+          url:
+            type: string
+    rating:
+      type: number
+      title: Rating
+      description: 'Optional — renders stars after the meta row when present.'
+      minimum: 0
+    layout:
+      type: string
+      title: Layout
+      description: >-
+        stacked puts the media above the text (homepage lead);
+        split sets them side by side, media first (recipe detail).
+      enum: [stacked, split]
+      default: stacked
+slots:
+  media:
+    title: Media
+    description: 'The hero image, as a rendered image field.'
+  media_overlay:
+    title: Media overlay
+    description: 'Content laid over the media — an "Editor''s pick" chip.'
+  caption:
+    title: Caption
+    description: 'Photo credit line above the media.'
+  actions:
+    title: Actions
+    description: 'Buttons under the text column.'
+  aside:
+    title: Aside
+    description: 'Anything after the text — a spec table, an ingredient list.'

@@ -1,0 +1,56 @@
+/**
+ * Ingredient list molecule.
+ *
+ * Two-column layout uses CSS columns, not grid: columns flow the rows down one
+ * side then the other, which is how a printed ingredient list reads. A grid
+ * with `grid-auto-flow: row` would order them across, so item 2 would sit
+ * beside item 1 instead of beneath it.
+ */
+.ingredients {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  column-gap: var(--fr-space-xl);
+}
+
+@media (min-width: 48rem) {
+  .ingredients--cols-2 {
+    column-count: 2;
+  }
+}
+
+.ingredients__row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--fr-space-sm);
+  margin: 0;
+  padding-block: var(--fr-space-2xs);
+  border-block-end: 1px solid var(--fr-rule);
+  /* Stops a row splitting across the column break mid-way. */
+  break-inside: avoid;
+}
+
+.ingredients__name {
+  color: var(--fr-bone);
+  font-size: var(--fr-size-body-sm);
+  line-height: 1.5;
+}
+
+.ingredients__amount {
+  flex: 0 0 auto;
+  color: var(--fr-bone-muted);
+  font-family: var(--fr-font-label);
+  font-size: var(--fr-size-label);
+  font-variant-numeric: tabular-nums lining-nums;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+/*
+ * A scaled amount is highlighted so it is obvious which numbers the servings
+ * stepper just changed. js/recipe-tools.js adds the class.
+ */
+.ingredients__amount.is-scaled {
+  color: var(--fr-brass);
+}

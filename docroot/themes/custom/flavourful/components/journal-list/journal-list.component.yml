@@ -1,0 +1,44 @@
+$schema: 'https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json'
+name: Journal list
+status: stable
+description: >-
+  Molecule — the rule-separated article rail ("From the journal"): a serif
+  title per row with a tracked kicker beneath it (ESSAY · 6 MIN).
+
+  There is no Journal content type in this site yet, so nothing feeds this
+  automatically. It takes a plain array of rows, which means it works today
+  from a custom block or a Views field rewrite and will work unchanged the day
+  an Article type exists.
+props:
+  type: object
+  required: [items, heading_level]
+  properties:
+    items:
+      type: array
+      title: Items
+      items:
+        type: object
+        required: [title, url]
+        properties:
+          title:
+            type: string
+            title: Title
+          url:
+            type: string
+            title: URL
+          kicker:
+            type: string
+            title: Kicker
+            description: 'The category, e.g. "Essay".'
+          meta:
+            type: string
+            title: Meta
+            description: 'A second fact, e.g. "6 min read".'
+    heading_level:
+      type: integer
+      title: Heading level
+      description: >-
+        Level for each row title, given the section this rail sits in — 3 under
+        an h2 "From the journal" header. Pass 0 for no headings, when the rail
+        is a plain list of links rather than a set of articles.
+      enum: [0, 3, 4, 5, 6]

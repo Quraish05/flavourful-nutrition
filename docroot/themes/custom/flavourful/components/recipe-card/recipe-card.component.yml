@@ -4,9 +4,14 @@ status: stable
 description: >-
   Molecule — a recipe summary card. Takes typed props for its scalar data and
   free-form slots for its media and tag areas (the latter holds tag-pill atoms).
+
+  Three variants cover every card in the design, because they differ in
+  proportion rather than in content: `compact` is the square-thumbnail row of
+  the "Recently added" grid, `stacked` is a wider card with a 3:2 image, and
+  `list` drops the image entirely for a text-only row.
 props:
   type: object
-  required: [title, url]
+  required: [title, url, heading_level]
   properties:
     title:
       type: string
@@ -18,15 +23,27 @@ props:
     eyebrow:
       type: string
       title: Eyebrow
-      description: 'Small label above the title, e.g. the cuisine.'
+      description: 'Small label above the title, e.g. the cuisine or course.'
     summary:
       type: string
       title: Summary
-      description: 'Short teaser copy, clamped to 3 lines.'
-    cooking_time:
-      type: integer
-      title: Cooking time (minutes)
-      default: 0
+      description: 'Short teaser copy, clamped to 2 lines in the stacked variant.'
+    meta:
+      type: array
+      title: Meta items
+      description: >-
+        The byline row — chef, time, servings. Passed to the meta-list atom, so
+        supply a `label` on any value that is not self-describing.
+      items:
+        type: object
+        required: [value]
+        properties:
+          label:
+            type: string
+          value:
+            type: string
+          url:
+            type: string
     heading_level:
       type: integer
       title: Heading level
@@ -36,12 +53,18 @@ props:
         render the title without a heading wrapper at all, for contexts where an
         h1 already names the same recipe.
       enum: [0, 2, 3, 4, 5, 6]
-      default: 3
     difficulty:
       type: string
       title: Difficulty
-      description: 'Renders a coloured badge. Constrained to the field_difficulty values.'
+      description: >-
+        Renders a small ruled badge. Constrained to the field_difficulty values
+        so a typo fails at render rather than styling silently to nothing.
       enum: [easy, medium, hard, expert]
+    variant:
+      type: string
+      title: Variant
+      enum: [compact, stacked, list]
+      default: compact
 slots:
   media:
     title: Media

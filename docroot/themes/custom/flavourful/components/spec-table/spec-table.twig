@@ -1,0 +1,25 @@
+{#
+/**
+ * @file
+ * Spec table molecule. See spec-table.component.yml for the props contract.
+ *
+ * <dl> with one <div> wrapper per pair — the wrapper is permitted inside a <dl>
+ * and is what lets each pair be a grid cell without breaking the dt/dd
+ * association a screen reader relies on.
+ */
+#}
+{% set items = items|filter(item => item.value is not empty) %}
+
+{% if items is not empty %}
+  <dl{{ attributes.addClass('spec-table') }} aria-label="{{ label|default('At a glance'|t) }}">
+    {% for item in items %}
+      <div class="spec-table__cell">
+        <dt class="spec-table__label">{{ item.label }}</dt>
+        <dd class="spec-table__value">
+          {{- item.value -}}
+          {%- if item.suffix %} <span class="spec-table__suffix">{{ item.suffix }}</span>{% endif -%}
+        </dd>
+      </div>
+    {% endfor %}
+  </dl>
+{% endif %}

@@ -1,0 +1,25 @@
+$schema: 'https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json'
+name: Method steps
+status: stable
+description: >-
+  Molecule — the numbered method. An <ol>, so the order is carried by the
+  markup and a screen reader announces "1 of 6" without help.
+
+  The design numbers steps in roman numerals. Those are drawn with a CSS
+  counter rather than written into the text, so the underlying list stays a
+  plain ordered list — copy-paste, reader modes and print all still see 1, 2, 3.
+props:
+  type: object
+  required: [steps]
+  properties:
+    steps:
+      type: array
+      title: Steps
+      description: 'The method, one step per item. May contain inline markup.'
+      items:
+        type: string
+    numeral:
+      type: string
+      title: Numeral style
+      enum: [roman, decimal]
+      default: roman

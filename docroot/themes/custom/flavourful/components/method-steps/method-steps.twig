@@ -1,0 +1,16 @@
+{#
+/**
+ * @file
+ * Method steps molecule. See method-steps.component.yml for the contract.
+ *
+ * `data-step` is the hook the Cook Mode behaviour in js/recipe-tools.js walks;
+ * it stays on the <li> so the JS never has to know this component's classes.
+ */
+#}
+{% if steps is not empty %}
+  <ol{{ attributes.addClass('method', 'method--' ~ numeral|default('roman')) }}>
+    {% for step in steps %}
+      <li class="method__step" data-step>{{ step }}</li>
+    {% endfor %}
+  </ol>
+{% endif %}

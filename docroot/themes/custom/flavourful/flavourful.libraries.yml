@@ -29,11 +29,14 @@ recipe-interactions:
     - core/once # gives you once()
     - core/drupalSettings
 
+# Behaviour for the recipe-tools component: the servings scaler and Cook Mode.
+# JS only — the component's CSS lives beside its Twig in
+# components/recipe-tools/recipe-tools.css and SDC attaches it on render.
+# Nothing needs to attach this library by hand either: the component declares it
+# as a dependency in its .component.yml, so placing the component brings the
+# behaviour with it.
 recipe-tools:
   version: 1.x
-  css:
-    component:
-      css/recipe-tools.css: {}
   js:
     js/recipe-tools.js: {}
   dependencies:
