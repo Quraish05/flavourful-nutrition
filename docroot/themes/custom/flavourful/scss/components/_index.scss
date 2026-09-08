@@ -1,4 +1,10 @@
-// NOTE: the recipe card and its difficulty badge now live as a Single Directory
-// Component (components/recipe-card/recipe-card.css) so their styles travel with
-// the component wherever it renders. Only the listing *layout* remains here.
+// Layout and arrangement partials only.
+//
+// Every *component* in this theme is a Single Directory Component under
+// components/, so its CSS travels with its markup and loads only on pages that
+// render it. What is forwarded here is the page-level arrangement those
+// components sit in — grids, bands and column splits, which belong to a page
+// rather than to any one component.
 @forward 'recipes-listing';
+@forward 'home';
+@forward 'recipe-page';

@@ -1,3 +1,6 @@
+// Order matters: @font-face before anything that sets a font-family, tokens
+// before the rules that consume them, reset before the element defaults.
+@forward 'fonts';
 @forward 'root';
 @forward 'reset';
 @forward 'typography';
