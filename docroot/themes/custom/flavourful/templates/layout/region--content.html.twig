@@ -1,0 +1,23 @@
+{#
+/**
+ * @file
+ * The content region.
+ *
+ * Overrides Olivero's same-named template, which added `grid-full` and
+ * `layout--pass--content-medium` — classes from a grid system this theme does
+ * not use. `id="content"` is kept: it is a documented landmark target and
+ * costs nothing.
+ *
+ * The class is `region-content`, single-dashed, matching this theme's own
+ * region.html.twig. Olivero emitted `region--content`, which is why the
+ * `.region-highlighted` / `.region-help` rules in scss/layout/_page.scss never
+ * matched anything.
+ *
+ * @see \Drupal\Core\Theme\ThemePreprocess::preprocessRegion()
+ */
+#}
+{% if content %}
+  <div{{ attributes.addClass('region', 'region-' ~ region|clean_class) }} id="content">
+    {{ content }}
+  </div>
+{% endif %}

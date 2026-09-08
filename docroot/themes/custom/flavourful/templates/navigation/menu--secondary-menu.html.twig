@@ -1,0 +1,19 @@
+{#
+/**
+ * @file
+ * The secondary-menu — rendered by this theme's generic menu template.
+ *
+ * Exists only to displace Olivero's template of the same name, which this theme
+ * would otherwise inherit. Olivero's version emits its own mobile-navigation
+ * markup — `primary-nav__*` classes, `data-drupal-selector` hooks, a caret
+ * span — and attaches `olivero/navigation-secondary`, whose CSS
+ * absolutely positions the menu and fights the site-masthead component that is
+ * laying it out.
+ *
+ * Delegating keeps one menu implementation. The site-masthead component styles
+ * the plain `ul` / `li` / `a` this produces.
+ *
+ * @see templates/navigation/menu.html.twig
+ */
+#}
+{% include '@flavourful/navigation/menu.html.twig' %}
