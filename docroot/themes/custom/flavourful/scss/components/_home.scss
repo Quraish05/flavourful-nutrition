@@ -75,6 +75,6 @@
 
 .home__grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
-  gap: $space-lg $space-xl;
+  grid-template-columns: repeat(auto-fill, minmax(22rem, 1fr));
+  gap: $space-xl;
 }
