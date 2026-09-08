@@ -79,11 +79,21 @@ function flavourful_nutrition_preprocess_node(array &$variables): void
  * Implements hook_theme_suggestions_HOOK_alter() for nodes.
  *
  * Adds a per-cuisine suggestion, e.g. node--recipe--italian.html.twig.
+ *
+ * Restricted to the `full` view mode. Suggestions added here land at the end of
+ * the list, which makes them the *highest* priority — so an unrestricted
+ * `node__recipe__italian` outranked core's `node__recipe__teaser` and every
+ * Italian recipe in a listing rendered through the full-page template instead
+ * of its card. Cuisine and view mode are orthogonal, and the theme only
+ * provides cuisine templates for the full page.
  */
 function flavourful_nutrition_theme_suggestions_node_alter(array &$suggestions, array $variables): void
 {
   $node = $variables['elements']['#node'] ?? NULL;
   if (!$node || $node->bundle() !== 'recipe' || $node->get('field_recipe_cuisine_type')->isEmpty()) {
+    return;
+  }
+  if (($variables['elements']['#view_mode'] ?? '') !== 'full') {
     return;
   }
   $term = $node->get('field_recipe_cuisine_type')->entity;

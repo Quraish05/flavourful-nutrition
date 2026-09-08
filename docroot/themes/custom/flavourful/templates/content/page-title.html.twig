@@ -13,7 +13,17 @@
  */
 #}
 {{ title_prefix }}
-{% if title %}
-  <h1{{ title_attributes.addClass('page-title') }}>{{ title }}</h1>
+{#
+  Test the *markup*, not the variable. `title` is often a render array rather
+  than a string — the frontpage view hands over one that carries only
+  #allowed_tags and produces no output — and a non-empty array is truthy, so
+  `{% if title %}` let it through and the page-title block emitted
+  `<h1 class="page-title"></h1>` on the front page. An empty heading is
+  announced as a heading with no name, and every heading-navigation shortcut
+  lands on it (WCAG 1.3.1).
+#}
+{% set title_markup = title|render|trim %}
+{% if title_markup is not empty %}
+  <h1{{ title_attributes.addClass('page-title') }}>{{ title_markup }}</h1>
 {% endif %}
 {{ title_suffix }}
