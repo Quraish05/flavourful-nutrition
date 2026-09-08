@@ -1,11 +1,55 @@
 /**
  * @file
  * Table sort indicator.
+ *
+ * Hand-written, not compiled from scss/ — it belongs to the starterkit's
+ * `flavourful/drupal.tablesort` library, which libraries-extend attaches
+ * alongside core/drupal.tablesort. It uses the --fr-* custom properties that
+ * css/global.css publishes in :root.
+ *
+ * Two things were wrong here before the redesign:
+ *
+ * 1. `td.is-active { background-color: #ddd }` painted the sorted column light
+ *    grey — on a near-black page, a solid pale block with pale text in it.
+ * 2. `th.is-active img` targeted an <img> that core has not rendered for years;
+ *    it emits `<span class="tablesort tablesort--asc">`. So no sort indicator
+ *    appeared at all, in either direction.
  */
 
-th.is-active img {
-  display: inline;
-}
+/*
+ * The sorted column is marked by a slightly raised ground and a brass rule
+ * under its header — not by colour alone. `aria-sort` on the <th> is what
+ * carries the state to assistive tech; core sets it.
+ */
 td.is-active {
-  background-color: #ddd;
+  background-color: var(--fr-ink-raised);
+}
+
+th.is-active {
+  border-block-end-color: var(--fr-brass);
+  color: var(--fr-bone);
+}
+
+/*
+ * The indicator core actually renders. Its own visually-hidden text names the
+ * *next* action rather than the current state (core computes
+ * `$initial = ($order == 'asc') ? 'desc' : 'asc'`), so this is decorative and
+ * the real state comes from aria-sort.
+ */
+.tablesort {
+  display: inline-block;
+  width: 0.7em;
+  height: 0.7em;
+  margin-inline-start: 0.4em;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+
+.tablesort--asc {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath fill='%23c9a24a' d='M5 0l5 6H0z'/%3E%3C/svg%3E");
+}
+
+.tablesort--desc {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath fill='%23c9a24a' d='M5 6L0 0h10z'/%3E%3C/svg%3E");
 }

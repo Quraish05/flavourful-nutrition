@@ -43,13 +43,40 @@ recipe-tools:
     - core/drupal # Drupal.behaviors + Drupal.t
     - core/once
 
+# An intentionally empty library.
+#
+# Olivero's own `libraries-extend` is inherited by this theme, and it bolts
+# Olivero CSS onto core libraries wherever they are attached — the AJAX glossary
+# view, for instance, pulled in olivero/drupal.message and olivero/progress.
+# There is no way to un-extend an inherited key.
+#
+# Setting those libraries to `false` in libraries-override is not the answer:
+# the inherited libraries-extend still names them, and Drupal then throws
+# InvalidLibrariesExtendSpecificationException on every page. They have to keep
+# existing while carrying nothing, which is what this redirects them to.
+# A library needs at least one of css / js / drupalSettings / dependencies to be
+# a valid definition, so it declares an empty dependency list — the only one of
+# the four that adds nothing at all to the page.
+noop:
+  version: VERSION
+  dependencies: {  }
+
+# Structural CSS inherited from the starterkit, for markup this theme does not
+# own: forms, field wrappers, file/tabledrag widgets, dialogs.
+#
+# Six files were removed when the theme was redesigned — breadcrumb, menu, tabs,
+# pager, links and more-link. Each of them is now styled in
+# scss/layout/_page.scss, and leaving them loaded actively broke the dark
+# palette: they load in the `component` group, which comes *after* the `base`
+# group that global.css sits in, so they won on equal specificity. Worse,
+# `ul.menu a.is-active { color: #000 }` is *higher* specificity than the theme's
+# own rule, which rendered the active nav item black on a near-black ground.
+# Do not add them back without checking both of those things.
 base:
   version: VERSION
   css:
     component:
       css/components/action-links.css:
-        weight: -10
-      css/components/breadcrumb.css:
         weight: -10
       css/components/button.css:
         weight: -10
@@ -69,19 +96,9 @@ base:
         weight: -10
       css/components/link.css:
         weight: -10
-      css/components/links.css:
-        weight: -10
-      css/components/menu.css:
-        weight: -10
-      css/components/more-link.css:
-        weight: -10
-      css/components/pager.css:
-        weight: -10
       css/components/tabledrag.css:
         weight: -10
       css/components/tableselect.css:
-        weight: -10
-      css/components/tabs.css:
         weight: -10
       css/components/textarea.css:
         weight: -10

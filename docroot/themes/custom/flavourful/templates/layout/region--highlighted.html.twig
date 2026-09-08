@@ -1,0 +1,16 @@
+{#
+/**
+ * @file
+ * The highlighted region.
+ *
+ * Overrides Olivero's same-named template for its grid classes, and emits the
+ * single-dashed `region-highlighted` class that scss/layout/_page.scss styles.
+ *
+ * @see \Drupal\Core\Theme\ThemePreprocess::preprocessRegion()
+ */
+#}
+{% if content %}
+  <div{{ attributes.addClass('region', 'region-' ~ region|clean_class) }}>
+    {{ content }}
+  </div>
+{% endif %}
