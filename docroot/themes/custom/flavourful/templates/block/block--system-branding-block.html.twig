@@ -1,30 +1,26 @@
-{% extends "block.html.twig" %}
 {#
 /**
  * @file
- * Theme override for a branding block.
+ * The site-branding block — deliberately renders nothing.
  *
- * Each branding element variable (logo, name, slogan) is only available if
- * enabled in the block configuration.
+ * The site-masthead component renders the wordmark itself: centred between the
+ * two navigation groups, with its brass rules and wide tracking. That
+ * composition *is* the design, and the branding block cannot produce it.
+ * Leaving the block to render as well printed the site name a second time,
+ * beside the wordmark, with Drupal's default logo above it.
  *
- * Available variables:
+ * Suppressed here rather than in hook_preprocess_page(): blocks in the header
+ * region reach preprocess as `#lazy_builder` placeholders that carry no
+ * `#plugin_id` yet, so they cannot be identified and unset there.
+ *
+ * If you would rather the block were simply not placed, unplace it at
+ * /admin/structure/block — this template makes it harmless either way.
+ *
+ * Available variables (all unused, listed for whoever restores this):
  * - site_logo: Logo for site as defined in Appearance or theme settings.
  * - site_name: Name for site as defined in Site information settings.
  * - site_slogan: Slogan for site as defined in Site information settings.
+ *
+ * @see components/site-masthead/site-masthead.twig
  */
 #}
-{% block content %}
-  {% if site_logo %}
-    <a href="{{ path('<front>') }}" rel="home" class="site-logo">
-      <img src="{{ site_logo }}" alt="{{ 'Home'|t }}" fetchpriority="high" />
-    </a>
-  {% endif %}
-  {% if site_name %}
-    <div class="site-name">
-      <a href="{{ path('<front>') }}" rel="home">{{ site_name }}</a>
-    </div>
-  {% endif %}
-  {% if site_slogan %}
-    <div class="site-slogan">{{ site_slogan }}</div>
-  {% endif %}
-{% endblock %}

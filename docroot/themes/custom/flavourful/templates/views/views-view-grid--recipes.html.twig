@@ -15,7 +15,12 @@
  * @see template_preprocess_views_view_grid()
  */
 #}
-<div class="recipes-grid">
+{#
+  `--compact` matches the card variant the teaser renders by default: a square
+  thumbnail beside the text needs a wider track than a stacked card, or the
+  title is squeezed into two words per line.
+#}
+<div class="recipes-grid recipes-grid--compact">
   {% for group in items %}
     {% for cell in group.content %}
       <div class="recipes-grid__item">

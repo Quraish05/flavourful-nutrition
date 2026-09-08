@@ -1,0 +1,83 @@
+{#
+/**
+ * @file
+ * The homepage — theme override for core's "frontpage" view.
+ *
+ * Structure, in DOM and outline order:
+ *   h1 (visually hidden)  — names the page
+ *   issue ornament        — the recipe count
+ *   h2  lead story        — the first row, as a `stacked` card
+ *   h2  "Recently added"  — section header with its rule and view-all link
+ *   h3  grid rows         — the rest, as `compact` cards
+ *
+ * The lead/grid split and the section header between them are in
+ * views-view-unformatted--frontpage.html.twig, because only the rows template
+ * can get between the two groups of rows. Which row leads is decided in
+ * \Drupal\flavourful\Hook\ListingHooks.
+ *
+ * @see template_preprocess_views_view()
+ * @see the base template in core: views-view.html.twig
+ */
+#}
+{{ attach_library('flavourful/recipes') }}
+{%
+  set classes = [
+    'view',
+    'home',
+    'view-' ~ id|clean_class,
+    'view-display-id-' ~ display_id,
+    dom_id ? 'js-view-dom-id-' ~ dom_id,
+  ]
+%}
+<div{{ attributes.addClass(classes) }}>
+  {{ title_prefix }}
+  {{ title_suffix }}
+
+  {#
+    The homepage carries no visible page title — the wordmark above and the lead
+    headline below do that work, and this view has no title for the page-title
+    block to render either (see templates/content/page-title.html.twig).
+
+    But a page still needs a name and an h1 to hang its outline from, so one is
+    provided here and hidden visually rather than left out. Without it the
+    document starts at h2 and the page has nothing a screen reader can announce
+    as its heading.
+  #}
+  <h1 class="visually-hidden">{{ 'Latest recipes'|t }}</h1>
+
+  {% if rows %}
+    {#
+      The issue ornament. There is no issue field in this content model, so the
+      number is the count of published recipes — a real, changing figure the
+      site can stand behind, rather than a decorative "41".
+    #}
+    {% if recipe_count_number %}
+      <div class="home__ornament">
+        {{ include('flavourful:issue-mark', {
+          number: recipe_count_number,
+          label: 'Recipes'|t,
+          url: recipes_url,
+        }, with_context = false) }}
+      </div>
+    {% endif %}
+
+    {{ rows }}
+  {% elseif empty %}
+    <div class="view-empty">
+      {{ empty }}
+    </div>
+  {% endif %}
+
+  {% if pager %}
+    {{ pager }}
+  {% endif %}
+
+  {#
+    `feed_icons` is deliberately not printed. Core renders it as a fixed orange
+    RSS bitmap that cannot be recoloured from CSS, and it was the last piece of
+    stock Drupal chrome left on the page.
+
+    The feed itself is untouched and still served at the display's own path —
+    only the icon is dropped. Print `{{ feed_icons }}` here to bring it back.
+  #}
+</div>

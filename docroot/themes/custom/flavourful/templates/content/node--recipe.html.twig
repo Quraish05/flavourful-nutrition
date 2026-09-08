@@ -1,149 +1,235 @@
 {#
 /**
  * @file
- * Theme override to display a node.
+ * Recipe — full node page.
  *
- * Available variables:
- * - node: The node entity with limited access to object properties and methods.
- *   Only method names starting with "get", "has", or "is" and a few common
- *   methods such as "id", "label", and "bundle" are available. For example:
- *   - node.getCreatedTime() will return the node creation timestamp.
- *   - node.hasField('field_example') returns TRUE if the node bundle includes
- *     field_example. (This does not indicate the presence of a value in this
- *     field.)
- *   - node.isPublished() will return whether the node is published or not.
- *   Calling other methods, such as node.delete(), will result in an exception.
- *   See \Drupal\node\Entity\Node for a full list of public properties and
- *   methods for the node object.
+ * Composes the designed page out of components: the split hero (image beside
+ * the text column), the chef byline, the spec strip, the interactive
+ * ingredients/method, the pairing note and the tag row. Every scalar comes from
+ * src/Hook/RecipeHooks.php, so this template is a layout, not a query.
+ *
+ * ── Site Studio ────────────────────────────────────────────────────────────
+ * When Site Studio (Cohesion) owns a content template for the recipe bundle,
+ * its template takes over this view mode and nothing below renders. That is a
+ * configuration question, not a code one: check
+ * /admin/cohesion/templates/content_templates for an enabled recipe template.
+ * The teaser view mode is unaffected either way.
+ *
+ * Available variables — the full list from core's node.html.twig applies; the
+ * ones this template uses are:
+ * - node: The node entity, with limited access to object properties.
  * - label: The title of the node.
- * - content: All node items. Use {{ content }} to print them all,
- *   or print a subset such as {{ content.field_example }}. Use
- *   {{ content|without('field_example') }} to temporarily suppress the printing
- *   of a given child element.
- * - author_picture: The node author user entity, rendered using the "compact"
- *   view mode.
- * - metadata: Metadata for this node.
- * - date: Themed creation date field.
- * - author_name: Themed author name field.
+ * - content: All node items, so `content|without(...)` can render the remainder.
  * - url: Direct URL of the current node.
- * - display_submitted: Whether submission information should be displayed.
- * - attributes: HTML attributes for the containing element.
- *   The attributes.class element may contain one or more of the following
- *   classes:
- *   - node: The current template type (also known as a "theming hook").
- *   - node--type-[type]: The current node type. For example, if the node is an
- *     "Article" it would result in "node--type-article". Note that the machine
- *     name will often be in a short form of the human readable label.
- *   - node--view-mode-[view_mode]: The View Mode of the node; for example, a
- *     teaser would result in: "node--view-mode-teaser", and
- *     full: "node--view-mode-full".
- *   The following are controlled through the node publishing options.
- *   - node--promoted: Appears on nodes promoted to the front page.
- *   - node--sticky: Appears on nodes ordered above other non-sticky nodes in
- *     teaser listings.
- *   - node--unpublished: Appears on unpublished nodes visible only to site
- *     admins.
- * - title_attributes: Same as attributes, except applied to the main title
- *   tag that appears in the template.
- * - content_attributes: Same as attributes, except applied to the main
- *   content tag that appears in the template.
- * - author_attributes: Same as attributes, except applied to the author of
- *   the node tag that appears in the template.
- * - title_prefix: Additional output populated by modules, intended to be
- *   displayed in front of the main title tag that appears in the template.
- * - title_suffix: Additional output populated by modules, intended to be
- *   displayed after the main title tag that appears in the template.
- * - view_mode: View mode; for example, "teaser" or "full".
- * - teaser: Flag for the teaser state. Will be true if view_mode is 'teaser'.
- * - page: Flag for the full page state. Will be true if view_mode is 'full'.
- * - readmore: Flag for more state. Will be true if the teaser content of the
- *   node cannot hold the main body content.
- * - logged_in: Flag for authenticated user status. Will be true when the
- *   current user is a logged-in member.
- * - is_admin: Flag for admin user status. Will be true when the current user
- *   is an administrator.
+ * - page: TRUE when rendered as its own page (rather than embedded).
+ * - attributes, title_prefix, title_suffix: as core documents them.
+ *
+ * Added by src/Hook/RecipeHooks.php:
+ * - recipe_eyebrow: the cuisine label above the headline.
+ * - recipe_meta: the meta-list rows (chef, total time, difficulty).
+ * - recipe_spec: the spec-strip rows (total, prep, cook, level).
+ * - recipe_tags: tag-pill rows from the diet and ingredient terms.
+ * - recipe_ingredients, recipe_steps: rows for the recipe-tools organism.
+ *   Both are empty on the current content model — see the note below.
+ * - chef_name, chef_url: the byline.
+ * - is_quick: total time is 30 minutes or under.
  *
  * @see template_preprocess_node()
- *
+ * @see \Drupal\flavourful\Hook\RecipeHooks
  */
 #}
-<article{{attributes.addClass('recipe-full')}}>
+{{ attach_library('flavourful/recipes') }}
 
-	{#
-	  The same `recipe-card` SDC that renders each row of the /recipes listing,
-	  reused here as the page hero. Diet terms fill the `tags` slot as tag-pill
-	  atoms; the hero image fills the `media` slot as a rendered field.
+<article{{ attributes.addClass('recipe-page', page ? 'recipe-page--bleed') }}>
 
-	  `cooking_time` reads field_total_time directly: it is populated server-side
-	  at hook_entity_presave, so the field is the single source of truth (rather
-	  than a preprocess-computed variable).
-	#}
-	{% set card_props = {
-		title: label,
-		url: url,
-		eyebrow: node.field_recipe_cuisine_type.entity.label|default(''),
-		summary: node.field_summary.value|default(''),
-		cooking_time: (node.field_total_time.value|default(0)) + 0,
-		heading_level: 0,
-	} %}
-	{% if node.field_difficulty.value %}
-		{% set card_props = card_props|merge({ difficulty: node.field_difficulty.value }) %}
-	{% endif %}
-	{#
-	  A clean attributes object: the outer <article> above already consumed the
-	  node's attributes (recipe-full, recipe--quick). Letting them reach the card
-	  too would style the hero as if it were the whole page.
-	#}
-	{% embed 'flavourful:recipe-card' with card_props|merge({ attributes: create_attribute() }) %}
-		{% block media %}
-			{% if content.field_hero|render|trim is not empty %}
-				{{ content.field_hero }}
-			{% else %}
-				<span class="recipe-card__placeholder">🍽️</span>
-			{% endif %}
-		{% endblock %}
+  {{ title_prefix }}
 
-		{% block tags %}
-			{% for tag in node.field_type_of_diet %}
-				{{ include('flavourful:tag-pill', { label: tag.entity.label }, with_context = false) }}
-			{% endfor %}
-		{% endblock %}
-	{% endembed %}
+  {#
+    The hero. `split` sets the image beside the text column, as the design does.
 
-	<div class="recipe-full__method">
-		<h2>{{ 'Method'|t }}</h2>
-		{{ content.field_summary }}
-	</div>
+    heading_level is 1 when this is the page — the hero's headline *is* the page
+    heading, and this template is why the page-title block is hidden on recipe
+    nodes. Embedded (page is FALSE, e.g. in a search result), it drops to 2 and
+    keeps the title a link.
+  #}
+  {#
+    `|filter(v => v is not null)`: SDC rejects an explicitly-passed null for a
+    prop declared `type: string`, so the nulls this content model produces
+    (no cuisine term, no chef) are dropped rather than guarded field by field.
+    See the same note in node--recipe--teaser.html.twig — including why every
+    value here comes from RecipeHooks rather than from `node.field_*`.
+  #}
+  {% embed 'flavourful:hero-feature' with {
+    title: label,
+    heading_level: page ? 1 : 2,
+    url: page ? null : url,
+    eyebrow: recipe_eyebrow,
+    summary: recipe_summary,
+    meta: recipe_meta,
+    layout: 'split',
+    hero_media: content.field_hero,
+    spec: recipe_spec,
+    chef_name: chef_name,
+    chef_url: chef_url,
+    chef_picture: content.field_chef,
+    ingredients: recipe_ingredients,
+    steps: recipe_steps,
+    is_quick: is_quick,
+  }|filter(v => v is not null) only %}
 
-	{{ include('flavourful:button', { label: 'Print recipe'|t, url: '#', variant: 'ghost' }, with_context = false) }}
+    {% block caption %}
+      {#
+        The design's photo credit. There is no credit field, so the image's own
+        alt text is not repurposed for it — that would put the same words in the
+        accessibility tree twice. The slot stays empty until a field exists.
+      #}
+    {% endblock %}
 
-	{{ title_prefix }}
-	{% if not page %}
-		<h2{{title_attributes}}>
-			<a href="{{ url }}" rel="bookmark">{{ label }}</a>
-		</h2>
-	{% endif %}
-	{{ title_suffix }}
+    {% block media %}
+      {% if hero_media|render|trim is not empty %}
+        {{ hero_media }}
+      {% else %}
+        <span class="recipe-card__placeholder" aria-hidden="true">◍</span>
+      {% endif %}
+    {% endblock %}
 
-	{% if display_submitted %}
-		<footer>
-			{{ author_picture }}
-			<div{{author_attributes}}>
-				{% trans %}Submitted by
-				{{ author_name }}
-				on
-				{{ date }}{% endtrans %}
-				{{ metadata }}
-			</div>
-		</footer>
-	{% endif %}
+    {% block media_overlay %}
+      {#
+        The design's "Editor's pick" chip. There is no editorial-flag field, so
+        the one real distinction this content model can make stands in: a recipe
+        that is genuinely quick to cook.
+      #}
+      {% if is_quick %}
+        {{ include('flavourful:tag-pill', {
+          label: 'Under 30 minutes'|t,
+          variant: 'brass',
+        }, with_context = false) }}
+      {% endif %}
+    {% endblock %}
 
-	{% if is_quick %}
-		<span class="badge">Quick — under 30 min</span>
-	{% endif %}
+    {% block aside %}
+      {#
+        The byline sits under the meta row in the design. It is rendered here
+        rather than folded into `meta` because it carries an avatar and a
+        rating, which a flat meta list cannot hold.
+      #}
+      {% if chef_name %}
+        {% embed 'flavourful:chef-byline' with {
+          name: chef_name,
+          url: chef_url,
+          picture: chef_picture,
+        }|filter(v => v is not null) only %}
+          {% block avatar %}
+            {#
+              field_chef renders as a link to the chef node, not a portrait —
+              there is no image field on the chef type. Left empty so the
+              component's ruled placeholder circle shows, which is what the
+              design does for a chef with no photo.
+            #}
+          {% endblock %}
+        {% endembed %}
+      {% endif %}
 
-	<div{{content_attributes}}>
-		{{ content }}
-	</div>
+      {% if spec is not empty %}
+        {{ include('flavourful:spec-table', {
+          items: spec,
+          label: 'Recipe at a glance'|t,
+        }, with_context = false) }}
+      {% endif %}
+
+      {#
+        Ingredients, method, servings scaler and Cook Mode. Renders nothing
+        unless the recipe has method steps — and the current content model has
+        no ingredient-row or method-step field at all, so on this site it is
+        silent. RecipeHooks reads field_ingredient_rows / field_method_steps by
+        name, so adding those two fields to the recipe type is all it takes.
+      #}
+      {% if steps is not empty or ingredients is not empty %}
+        {{ include('flavourful:recipe-tools', {
+          base_servings: 4,
+          ingredients: ingredients,
+          steps: steps,
+          heading_level: 2,
+        }, with_context = false) }}
+      {% else %}
+        {#
+          No structured method to show. field_summary is the only prose the
+          recipe has and the hero already prints it, so nothing is repeated
+          here — an empty "Method" heading would be worse than no heading.
+        #}
+      {% endif %}
+    {% endblock %}
+
+  {% endembed %}
+
+  <div class="recipe-page__body">
+
+    {#
+      An extension point for the per-cuisine templates. flavourful_nutrition's
+      hook_theme_suggestions_node_alter() adds a `node--recipe--<cuisine>`
+      suggestion for the full view mode, and those templates `{% extends %}`
+      this one and fill this block — so an Italian recipe gets its own editorial
+      note without a second copy of this whole layout going stale beside it.
+
+      @see templates/content/node--recipe--italian.html.twig
+    #}
+    {% block cuisine_note %}{% endblock %}
+
+    {#
+      The tag row. Each chip links to its term page, so the row is a way into
+      the related listings rather than decoration.
+    #}
+    {% if recipe_tags is not empty %}
+      <div class="recipe-page__tags">
+        {% for tag in recipe_tags %}
+          {{ include('flavourful:tag-pill', {
+            label: tag.label,
+            url: tag.url,
+          }, with_context = false) }}
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    {#
+      Whatever the node's display adds that is not placed above: extra fields, a
+      contributed module's output, comments. Rendered with `without` so nothing
+      appears twice — the fields listed here are all already on the page.
+
+      Kept rather than dropped because silently swallowing a field an editor has
+      just enabled is the worst kind of theme bug to debug.
+    #}
+    {% set rest = content|without(
+      'field_hero',
+      'field_summary',
+      'field_chef',
+      'field_recipe_cuisine_type',
+      'field_type_of_diet',
+      'field_recipe_ingredients',
+      'field_difficulty',
+      'field_prep_time',
+      'field_cooking_time',
+      'field_total_time'
+    ) %}
+    {% if rest|render|trim is not empty %}
+      <div{{ content_attributes.addClass('recipe-page__rest') }}>
+        {{ rest }}
+      </div>
+    {% endif %}
+
+    {#
+      author_name and date are already-rendered markup (a user link, a <time>
+      element), so they are printed rather than passed through t() as
+      placeholders — t() escapes placeholder values, which would print the
+      markup as visible text.
+    #}
+    {% if display_submitted %}
+      <p class="recipe-page__submitted">
+        {% trans %}Submitted by {{ author_name }} on {{ date }}{% endtrans %}
+      </p>
+    {% endif %}
+
+  </div>
+
+  {{ title_suffix }}
 
 </article>
