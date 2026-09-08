@@ -1,0 +1,43 @@
+$schema: 'https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json'
+name: Section header
+status: stable
+description: >-
+  Molecule — a section's tracked uppercase title with a rule running to the
+  edge and an optional "View all" link ("Recently added ———— View all →").
+
+  The heading level is a required prop, not a constant: this component is used
+  at several depths on the same page and a fixed level would break the document
+  outline the first time two sections nested.
+props:
+  type: object
+  required:
+    - title
+    - heading_level
+  properties:
+    title:
+      type: string
+      title: Title
+    heading_level:
+      type: integer
+      title: Heading level
+      description: >-
+        The level this section sits at: 2 directly under the page h1, 3 inside
+        an h2 section. Pass 0 for a purely decorative strip label with no
+        section behind it — no heading is emitted then.
+      enum: [0, 2, 3, 4, 5, 6]
+    url:
+      type: string
+      title: Link URL
+      description: 'Destination of the trailing link.'
+    link_label:
+      type: string
+      title: Link label
+      description: >-
+        Text of the trailing link. Make it self-describing — "View all
+        recipes", not "View all" — because screen reader users routinely pull
+        up a link list stripped of its surrounding context.
+    tone:
+      type: string
+      title: Tone
+      enum: [brass, bone, muted]
+      default: brass

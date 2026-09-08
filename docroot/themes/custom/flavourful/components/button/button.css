@@ -4,35 +4,89 @@
  * --fr-* design tokens emitted in :root by css/global.css.
  */
 .btn {
-  display: inline-block;
-  padding: var(--fr-space-2xs) var(--fr-space-sm);
-  border-radius: var(--fr-radius-md);
-  font-family: var(--fr-font-heading);
-  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  border: 1px solid transparent;
+  font-family: var(--fr-font-label);
+  font-weight: 500;
+  letter-spacing: var(--fr-track-label);
   line-height: 1;
   text-decoration: none;
+  text-transform: uppercase;
+  white-space: nowrap;
   cursor: pointer;
-  transition: background-color 0.15s ease, color 0.15s ease;
+  transition: border-color var(--fr-duration) var(--fr-ease),
+    background-color var(--fr-duration) var(--fr-ease),
+    color var(--fr-duration) var(--fr-ease);
 }
 
-.btn--primary {
-  background-color: var(--fr-color-paprika);
-  color: var(--fr-color-white);
+.btn:focus-visible {
+  outline: 2px solid var(--fr-brass);
+  outline-offset: 2px;
 }
 
-.btn--primary:hover,
-.btn--primary:focus {
-  background-color: var(--fr-color-paprika-dark);
+/* -- Sizes ----------------------------------------------------------------- */
+.btn--sm {
+  padding: 0.5em 0.85em;
+  font-size: var(--fr-size-label);
 }
 
-.btn--ghost {
-  background-color: transparent;
-  border: 1px solid var(--fr-color-paprika);
-  color: var(--fr-color-paprika);
+.btn--md {
+  padding: 0.7em 1.15em;
+  font-size: var(--fr-size-label-lg);
 }
 
-.btn--ghost:hover,
-.btn--ghost:focus {
-  background-color: var(--fr-color-paprika);
-  color: var(--fr-color-white);
+/* -- Variants -------------------------------------------------------------- */
+.btn--outline {
+  border-color: var(--fr-rule-strong);
+  color: var(--fr-bone);
+}
+
+.btn--outline:hover {
+  border-color: var(--fr-bone-muted);
+  color: var(--fr-bone);
+}
+
+.btn--brass {
+  border-color: var(--fr-brass);
+  color: var(--fr-brass);
+}
+
+.btn--brass:hover {
+  border-color: var(--fr-brass-bright);
+  background-color: rgba(201, 162, 74, 0.1);
+  color: var(--fr-brass-bright);
+}
+
+.btn--solid {
+  border-color: var(--fr-brass);
+  background-color: var(--fr-brass);
+  /* Near-black on brass reads at 8.9:1; white on brass would fail. */
+  color: var(--fr-ink);
+  font-weight: 600;
+}
+
+.btn--solid:hover {
+  border-color: var(--fr-brass-bright);
+  background-color: var(--fr-brass-bright);
+  color: var(--fr-ink);
+}
+
+.btn--quiet {
+  padding-inline: 0;
+  color: var(--fr-bone-muted);
+}
+
+.btn--quiet:hover {
+  color: var(--fr-brass);
+}
+
+.btn__icon {
+  /* Nudges the arrow on hover — the only motion any button carries. */
+  transition: transform var(--fr-duration) var(--fr-ease);
+}
+
+.btn:hover .btn__icon {
+  transform: translateX(2px);
 }

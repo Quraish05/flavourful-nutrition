@@ -1,39 +1,24 @@
 /**
  * Action button atom.
- * Auto-attached by SDC whenever the component renders. Base styles stay
- * intentionally minimal so the "plain" variant defers fully to the host
- * context's own class; the primary/ghost variants use the global --fr-* tokens.
+ * The non-plain variants reuse the button atom's own .btn/.btn--* classes
+ * (added in the Twig) rather than restating them here, so a link and an action
+ * with the same variant can never drift apart visually. This file carries only
+ * what a <button> needs on top of that, plus the bare "plain" reset.
  */
 .btn-action {
   font: inherit;
   cursor: pointer;
 }
 
-.btn-action--primary {
-  padding: var(--fr-space-2xs) var(--fr-space-sm);
+/* "plain" adds no visual opinion — the host (e.g. Cook Mode) styles it. */
+.btn-action--plain {
+  padding: 0;
   border: 0;
-  border-radius: var(--fr-radius-md);
-  background-color: var(--fr-color-paprika);
-  color: var(--fr-color-white);
-  font-weight: 700;
-}
-.btn-action--primary:hover,
-.btn-action--primary:focus {
-  background-color: var(--fr-color-paprika-dark);
+  background: none;
+  color: inherit;
 }
 
-.btn-action--ghost {
-  padding: var(--fr-space-2xs) var(--fr-space-sm);
-  border: 1px solid var(--fr-color-paprika);
-  border-radius: var(--fr-radius-md);
-  background-color: transparent;
-  color: var(--fr-color-paprika);
-  font-weight: 700;
+.btn-action--plain:focus-visible {
+  outline: 2px solid var(--fr-brass);
+  outline-offset: 2px;
 }
-.btn-action--ghost:hover,
-.btn-action--ghost:focus {
-  background-color: var(--fr-color-paprika);
-  color: var(--fr-color-white);
-}
-
-/* "plain" adds no visual opinion — the host (e.g. Cook Mode overlay) styles it. */

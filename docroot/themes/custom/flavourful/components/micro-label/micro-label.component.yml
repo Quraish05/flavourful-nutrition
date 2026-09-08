@@ -1,0 +1,40 @@
+$schema: 'https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json'
+name: Micro label
+status: stable
+description: >-
+  Atom — the wide-tracked uppercase label that carries most of Cellar's
+  structure: eyebrows above headlines, field labels, kickers, section names.
+  Purely presentational; if the text names a region or a group, wrap it in a
+  real heading or use section-header instead of reaching for this.
+props:
+  type: object
+  required:
+    - text
+  properties:
+    text:
+      type: string
+      title: Text
+      description: >-
+        Label text. Uppercasing is done in CSS, not here, so the accessible
+        name and the copy stay in normal case for screen readers.
+    tone:
+      type: string
+      title: Tone
+      description: >-
+        brass for the accent label, bone for a primary label, muted for a
+        de-emphasised one. All three pass 4.5:1 on every ground token.
+      enum: [brass, bone, muted]
+      default: muted
+    size:
+      type: string
+      title: Size
+      enum: [sm, md]
+      default: sm
+    tag:
+      type: string
+      title: Wrapper element
+      description: >-
+        span keeps it inline (inside a meta row); p makes it a block (above a
+        headline). Constrained so it can never emit a heading by accident.
+      enum: [span, p, div]
+      default: span

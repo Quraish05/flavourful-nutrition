@@ -1,7 +1,10 @@
 $schema: 'https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json'
 name: Tag pill
 status: stable
-description: 'Atom — a small dietary/cuisine label pill.'
+description: >-
+  Atom — a small ruled chip for a dietary, cuisine or technique term
+  ("Slow", "One pot", "Make ahead"). Square-cornered and outlined, matching the
+  design's chip row; pass a `url` to make it a filter link.
 props:
   type: object
   required: [label]
@@ -9,4 +12,18 @@ props:
     label:
       type: string
       title: Label
-      description: 'Text shown inside the pill.'
+      description: 'Text shown inside the chip.'
+    url:
+      type: string
+      title: URL
+      description: >-
+        Makes the chip a link — e.g. to the term page or a filtered listing.
+        Without it the chip renders as a plain span.
+    variant:
+      type: string
+      title: Variant
+      description: >-
+        outline is the default ruled chip; brass fills it for the one chip that
+        needs to lead, as "Editor''s pick" does over the recipe hero.
+      enum: [outline, brass]
+      default: outline

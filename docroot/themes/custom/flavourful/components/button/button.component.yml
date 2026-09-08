@@ -1,7 +1,13 @@
 $schema: 'https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json'
 name: Button
 status: stable
-description: 'Atom — a link styled as a button. All props, no slots.'
+description: >-
+  Atom — a link styled as a button. Cellar's buttons are ruled rectangles with
+  tracked uppercase labels, not filled pills; the only filled variant is for
+  the single primary action on a page.
+
+  Use this for navigation (it emits an <a>). For an in-page action that changes
+  state, use the action-button atom, which emits a real <button>.
 props:
   type: object
   required:
@@ -19,6 +25,20 @@ props:
     variant:
       type: string
       title: Variant
-      description: 'Visual style. Constrained by enum so a typo fails loudly.'
-      enum: [primary, ghost]
-      default: primary
+      description: >-
+        outline is the default ruled button; brass is the ruled-in-brass
+        emphasis ("Cook mode", "Save list"); solid fills with brass for the one
+        primary action; quiet drops the rule entirely for a bare tracked link.
+      enum: [outline, brass, solid, quiet]
+      default: outline
+    size:
+      type: string
+      title: Size
+      enum: [sm, md]
+      default: md
+    icon_after:
+      type: string
+      title: Trailing glyph
+      description: >-
+        A decorative character placed after the label, e.g. the arrow on
+        "View all". Rendered aria-hidden — never put meaning in it.

@@ -1,0 +1,46 @@
+/**
+ * Section header molecule.
+ * A three-part flex row: title, elastic rule, optional link.
+ */
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: var(--fr-space-sm);
+  margin-block-end: var(--fr-space-md);
+}
+
+.section-header__title {
+  margin: 0;
+  max-width: none; /* Overrides the 68ch prose cap when rendered as a <p>. */
+  font-family: var(--fr-font-label);
+  font-size: var(--fr-size-label);
+  font-weight: 500;
+  letter-spacing: var(--fr-track-label);
+  line-height: 1.2;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.section-header--brass .section-header__title {
+  color: var(--fr-brass);
+}
+
+.section-header--bone .section-header__title {
+  color: var(--fr-bone);
+}
+
+.section-header--muted .section-header__title {
+  color: var(--fr-bone-muted);
+}
+
+/* The elastic rule. Purely decorative, hence aria-hidden in the Twig. */
+.section-header__rule {
+  flex: 1 1 auto;
+  height: 1px;
+  min-width: var(--fr-space-sm);
+  background-color: var(--fr-rule);
+}
+
+.section-header .btn--quiet {
+  flex: 0 0 auto;
+}
