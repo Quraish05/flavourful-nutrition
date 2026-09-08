@@ -1,0 +1,89 @@
+/**
+ * Utility bar molecule.
+ * Three columns on wide screens; the centre slot is the first thing dropped on
+ * narrow ones, because the issue line is the least load-bearing of the three.
+ */
+.utility-bar {
+  border-block-end: 1px solid var(--fr-rule);
+  font-family: var(--fr-font-label);
+  font-size: var(--fr-size-label);
+  font-weight: 500;
+  letter-spacing: var(--fr-track-label);
+  text-transform: uppercase;
+}
+
+.utility-bar--deep {
+  background-color: var(--fr-ink-deep);
+}
+
+.utility-bar--flush {
+  background-color: transparent;
+}
+
+.utility-bar__inner {
+  display: flex;
+  /*
+   * Wraps rather than overflows. The date is a long run of tracked uppercase —
+   * "Tuesday, 8 September 2026" is ~250px at this size — so on a narrow screen
+   * it and the account links need two lines rather than one.
+   */
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--fr-space-2xs) var(--fr-space-sm);
+  width: 100%;
+  max-width: var(--fr-container-max);
+  min-height: 2.25rem;
+  margin-inline: auto;
+  padding-inline: var(--fr-space-sm);
+}
+
+@media (min-width: 48rem) {
+  .utility-bar__inner {
+    padding-inline: var(--fr-space-lg);
+  }
+}
+
+.utility-bar__start,
+.utility-bar__center,
+.utility-bar__end {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--fr-space-2xs) var(--fr-space-md);
+  color: var(--fr-bone-muted);
+  /* Lets a long slot shrink rather than widen its parent — see the note on
+     .category-bar__list for why a flex item needs this spelled out. */
+  min-width: 0;
+}
+
+/* An empty slot must not eat its share of the row. */
+.utility-bar__start:empty,
+.utility-bar__center:empty,
+.utility-bar__end:empty {
+  display: none;
+}
+
+.utility-bar__center {
+  color: var(--fr-brass);
+}
+
+/*
+ * Below 64rem there is no room for three columns of tracked uppercase text.
+ * The centre slot is decorative editorial furniture, so it goes first and the
+ * start/end pair keeps the bar useful.
+ */
+@media (max-width: 63.99rem) {
+  .utility-bar__center {
+    display: none;
+  }
+}
+
+.utility-bar a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.utility-bar a:hover {
+  color: var(--fr-brass);
+}

@@ -1,0 +1,46 @@
+$schema: 'https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json'
+name: Category bar
+status: stable
+description: >-
+  Molecule — the horizontal category strip under the masthead ("All · Mains ·
+  Fish · Pasta …"), with an optional count on the trailing edge.
+
+  It is real navigation, so it renders a labelled <nav> around a <ul> and marks
+  the current item with aria-current. Feed it from a taxonomy term list or a
+  Views attachment.
+props:
+  type: object
+  required:
+    - items
+  properties:
+    items:
+      type: array
+      title: Items
+      description: 'Categories in display order.'
+      items:
+        type: object
+        required: [label, url]
+        properties:
+          label:
+            type: string
+            title: Label
+          url:
+            type: string
+            title: URL
+          is_active:
+            type: boolean
+            title: Is the current category
+            default: false
+    label:
+      type: string
+      title: Accessible label
+      description: >-
+        Names this navigation landmark. A page can hold several <nav>s, and an
+        unnamed one is announced as just "navigation".
+      default: Categories
+    count:
+      type: string
+      title: Count
+      description: >-
+        Trailing tally, e.g. "214 recipes". Pass the whole phrase, already
+        pluralised and translated by the caller, which knows the number.

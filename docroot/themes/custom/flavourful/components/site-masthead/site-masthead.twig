@@ -1,0 +1,39 @@
+{#
+/**
+ * @file
+ * Site masthead molecule. See site-masthead.component.yml for the contract.
+ *
+ * The wordmark is a link to the front page, and on the front page itself it is
+ * still a link — consistent with every other site, and cheaper than teaching
+ * the component about is_front.
+ *
+ * No <nav> wrapper is emitted around the slots: the menu blocks placed into
+ * them already render their own labelled <nav>. Wrapping them would produce
+ * nested navigation landmarks, which screen reader users have to step through
+ * twice.
+ */
+#}
+<div{{ attributes.addClass('masthead', 'masthead--' ~ layout|default('centered')) }}>
+  <div class="masthead__inner">
+
+    <div class="masthead__nav masthead__nav--start">{% block nav_start %}{% endblock %}</div>
+
+    {#
+      A <p>, not a heading. The site name is not the heading of the page — the
+      page's own h1 is — and an h1 here would give every page two.
+    #}
+    <p class="masthead__wordmark">
+      <a class="masthead__wordmark-link" href="{{ home_url|default('/') }}" rel="home">
+        <span class="masthead__name">{{ site_name }}</span>
+        {% if established and layout|default('centered') == 'centered' %}
+          <span class="masthead__established">{{ established }}</span>
+        {% endif %}
+      </a>
+    </p>
+
+    <div class="masthead__nav masthead__nav--end">{% block nav_end %}{% endblock %}</div>
+
+    <div class="masthead__actions">{% block actions %}{% endblock %}</div>
+
+  </div>
+</div>

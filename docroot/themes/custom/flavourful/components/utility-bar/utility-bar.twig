@@ -1,0 +1,22 @@
+{#
+/**
+ * @file
+ * Utility bar molecule. See utility-bar.component.yml for the slots contract.
+ *
+ * Deliberately a plain <div>, not a <nav> or a <section>: the bar is a layout
+ * strip, and its contents bring their own semantics (the breadcrumb is already
+ * a <nav>, the date is already a <time>). Wrapping it again would add a second
+ * landmark around a landmark. Pass `label` only if you put bare links in it,
+ * in which case it upgrades to a named <nav>.
+ */
+#}
+{% set tag = label ? 'nav' : 'div' %}
+<{{ tag }}
+  {{ attributes.addClass('utility-bar', 'utility-bar--' ~ tone|default('deep')) }}
+  {%- if label %} aria-label="{{ label }}"{% endif %}>
+  <div class="utility-bar__inner">
+    <div class="utility-bar__start">{% block start %}{% endblock %}</div>
+    <div class="utility-bar__center">{% block center %}{% endblock %}</div>
+    <div class="utility-bar__end">{% block end %}{% endblock %}</div>
+  </div>
+</{{ tag }}>

@@ -1,0 +1,102 @@
+/**
+ * Site footer molecule.
+ */
+.site-footer {
+  border-block-start: 1px solid var(--fr-rule);
+  background-color: var(--fr-ink-deep);
+}
+
+.site-footer__inner {
+  width: 100%;
+  max-width: var(--fr-container-max);
+  margin-inline: auto;
+  padding: var(--fr-space-lg) var(--fr-space-sm);
+}
+
+@media (min-width: 48rem) {
+  .site-footer__inner {
+    padding-inline: var(--fr-space-lg);
+  }
+}
+
+/* Region blocks, above the strip and separated from it. */
+.site-footer__content {
+  margin-block-end: var(--fr-space-lg);
+  color: var(--fr-bone-muted);
+}
+
+.site-footer__content :is(h2, h3) {
+  font-family: var(--fr-font-label);
+  font-size: var(--fr-size-label);
+  font-weight: 500;
+  letter-spacing: var(--fr-track-label);
+  text-transform: uppercase;
+  color: var(--fr-brass);
+}
+
+.site-footer__strip {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--fr-space-sm) var(--fr-space-lg);
+}
+
+.site-footer__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--fr-space-sm) var(--fr-space-md);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.site-footer__links li {
+  margin: 0;
+}
+
+.site-footer__links a {
+  color: var(--fr-bone-muted);
+  font-family: var(--fr-font-label);
+  font-size: var(--fr-size-label);
+  font-weight: 500;
+  letter-spacing: var(--fr-track-label);
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.site-footer__links a:hover {
+  color: var(--fr-brass);
+}
+
+/* --fr-bone-muted, not --fr-bone-faint: the tagline is a line of copy someone
+   is meant to read, and bone-faint is below AA for text. */
+.site-footer__tagline {
+  margin: 0;
+  max-width: none;
+  color: var(--fr-bone-muted);
+  font-family: var(--fr-font-label);
+  font-size: var(--fr-size-label);
+  font-weight: 500;
+  letter-spacing: var(--fr-track-label);
+  text-transform: uppercase;
+}
+
+.site-footer__action {
+  flex: 0 0 auto;
+}
+
+/*
+ * On narrow screens the three parts stack and centre. The tagline goes last:
+ * it is the only decorative one of the three.
+ */
+@media (max-width: 47.99rem) {
+  .site-footer__strip {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .site-footer__tagline {
+    order: 3;
+  }
+}

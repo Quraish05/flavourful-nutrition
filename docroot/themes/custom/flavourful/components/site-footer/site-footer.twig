@@ -1,0 +1,41 @@
+{#
+/**
+ * @file
+ * Site footer molecule. See site-footer.component.yml for the contract.
+ *
+ * Region blocks land in the `content` slot above the strip, so the design's
+ * link/tagline/action row stays intact however many blocks an editor places.
+ */
+#}
+<div{{ attributes.addClass('site-footer') }}>
+  <div class="site-footer__inner">
+
+    {# Inline-block capture — see the note in hero-feature.twig. #}
+    {% set content %}{% block content %}{% endblock %}{% endset %}
+    {% if content|trim is not empty %}
+      <div class="site-footer__content">{{ content }}</div>
+    {% endif %}
+
+    <div class="site-footer__strip">
+      {% if links is not empty %}
+        <nav class="site-footer__nav" aria-label="{{ links_label|default('Footer'|t) }}">
+          <ul class="site-footer__links">
+            {% for link in links %}
+              <li><a href="{{ link.url }}">{{ link.label }}</a></li>
+            {% endfor %}
+          </ul>
+        </nav>
+      {% endif %}
+
+      {% if tagline %}
+        <p class="site-footer__tagline">{{ tagline }}</p>
+      {% endif %}
+
+      {% set action %}{% block action %}{% endblock %}{% endset %}
+      {% if action|trim is not empty %}
+        <div class="site-footer__action">{{ action }}</div>
+      {% endif %}
+    </div>
+
+  </div>
+</div>

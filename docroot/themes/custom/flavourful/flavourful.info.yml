@@ -25,6 +25,12 @@ libraries-extend:
     - flavourful/drupal.tablesort
 description: ""
 core_version_requirement: ^11
+# Makes prop schemas mandatory for this theme's components rather than optional.
+# All 22 already ship one, and the schemas are load-bearing — they are what
+# turns a typo in a `variant` or a missing `heading_level` into a loud failure
+# at render instead of silently unstyled markup. Without this key a component
+# added later could quietly opt out of that.
+enforce_prop_schemas: true
 generator: "starterkit_theme:11.4.0"
 # Regions are declared explicitly (rather than inherited from Olivero) so the
 # left/right sidebars used by page.html.twig and the block layout actually

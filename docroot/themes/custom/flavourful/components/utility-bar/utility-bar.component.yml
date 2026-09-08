@@ -1,0 +1,36 @@
+$schema: 'https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json'
+name: Utility bar
+status: stable
+description: >-
+  Molecule — the thin ruled strip above the masthead. Three slots laid out
+  start / centre / end: the date and a breadcrumb trail on the left, the issue
+  line in the middle, account links on the right.
+
+  All slots, no props: what goes in the bar is entirely context-dependent
+  (a homepage shows a date, a recipe shows its trail), and every one of those
+  is already-rendered markup rather than a scalar.
+props:
+  type: object
+  properties:
+    label:
+      type: string
+      title: Accessible label
+      description: >-
+        Names the bar for assistive tech. Only supply it when the bar holds
+        navigation — an unnamed landmark is worse than no landmark.
+    tone:
+      type: string
+      title: Tone
+      description: 'deep sits on the darkest ground; flush inherits the page ground.'
+      enum: [deep, flush]
+      default: deep
+slots:
+  start:
+    title: Start
+    description: 'Leading content — a date, or a breadcrumb trail.'
+  center:
+    title: Centre
+    description: 'The issue line. Collapses out of the way on narrow screens.'
+  end:
+    title: End
+    description: 'Trailing links — newsletter, sign in, the issue name.'
