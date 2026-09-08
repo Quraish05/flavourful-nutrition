@@ -8,40 +8,77 @@
  * node fields onto it. The exact same component renders on the full node page
  * (node--recipe.html.twig) — edit the component once, both update.
  *
+ * The scalar props come from src/Hook/RecipeHooks.php rather than being read
+ * out of `node.field_*` here, so the field names live in one place and this
+ * template stays a mapping rather than a query.
+ *
  * - The hero image goes into the `media` slot as a rendered field so its image
  *   style, alt text and cacheability are preserved; a placeholder fills the
  *   slot when field_hero is empty.
- * - Diet terms go into the `tags` slot as `tag-pill` atoms (components inside a
- *   slot — the thing props can't do).
+ * - Diet and ingredient terms go into the `tags` slot as `tag-pill` atoms
+ *   (components inside a slot — the thing props can't do).
  *
  * @see template_preprocess_node()
+ * @see \Drupal\flavourful\Hook\RecipeHooks
  */
+#}
+{#
+  Every value here comes from RecipeHooks, never from `node.field_*` — see the
+  comment on RecipeHooks::addRecipeProps() for why reading a field in Twig is
+  not safe when it may be empty.
+
+  The trailing `|filter` drops the nulls a sparse recipe produces (no cuisine
+  term, no difficulty). SDC treats an absent optional prop and one passed as
+  null differently: a prop declared `type: string` rejects the null outright.
+  Filtering is what lets this map stay flat instead of becoming a chain of
+  `{% if %}`-guarded merges, one per field a recipe might not have.
 #}
 {% set card_props = {
   title: label,
   url: url,
-  eyebrow: node.field_recipe_cuisine_type.entity.label|default(''),
-  summary: node.field_summary.value|default(''),
-  cooking_time: (node.field_cooking_time.value|default(0)) + 0,
+  eyebrow: recipe_eyebrow,
+  summary: recipe_summary,
+  meta: recipe_meta,
   heading_level: card_heading_level|default(3),
-} %}
-{# difficulty is an enum prop: only pass it when set, or schema validation fails. #}
-{% if node.field_difficulty.value %}
-  {% set card_props = card_props|merge({ difficulty: node.field_difficulty.value }) %}
-{% endif %}
+  variant: card_variant|default('compact'),
+  difficulty: recipe_difficulty,
+}|filter(v => v is not null) %}
 
-{% embed 'flavourful:recipe-card' with card_props %}
+{#
+  `only` keeps this template's context out of the component, so anything the
+  blocks below need is passed explicitly — see the same note in page.html.twig.
+  Without it, a node variable sharing a prop name (`title`, `label`, `content`)
+  would silently override what is set above.
+
+  The node's own `attributes` *are* passed on purpose here: in teaser view mode
+  the card is the node's entire rendered output, so node--type-recipe,
+  recipe--quick and the contextual-links data belong on it. The full node page
+  does the opposite and hands the card a fresh attributes object, because there
+  the card is one element inside a larger article.
+#}
+{% embed 'flavourful:recipe-card' with card_props|merge({
+  attributes: attributes,
+  hero_media: content.field_hero,
+  tag_items: recipe_tags,
+}) only %}
   {% block media %}
-    {% if content.field_hero|render|trim is not empty %}
-      {{ content.field_hero }}
+    {% if hero_media|render|trim is not empty %}
+      {{ hero_media }}
     {% else %}
-      <span class="recipe-card__placeholder">🍽️</span>
+      <span class="recipe-card__placeholder" aria-hidden="true">◍</span>
     {% endif %}
   {% endblock %}
 
+  {#
+    `tag_items`, not `tags` — the component's own slot is called `tags`, and a
+    context variable of the same name would shadow it inside the component.
+  #}
   {% block tags %}
-    {% for tag in node.field_type_of_diet %}
-      {{ include('flavourful:tag-pill', { label: tag.entity.label }, with_context = false) }}
+    {% for tag in tag_items %}
+      {{ include('flavourful:tag-pill', {
+        label: tag.label,
+        url: tag.url,
+      }, with_context = false) }}
     {% endfor %}
   {% endblock %}
 {% endembed %}

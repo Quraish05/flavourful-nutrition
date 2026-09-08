@@ -1,3 +1,23 @@
+{#
+/**
+ * @file
+ * DEAD TEMPLATE — the Day 8 pre-SDC baseline. Do not build on this.
+ *
+ * Unreachable as configured: views.view.recipes uses the *grid* style, so core
+ * renders views-view-grid--recipes.html.twig and never this one. It is also
+ * broken if it ever were reached — it loops over `recipes`, and the variable
+ * views-view-unformatted templates actually receive is `rows`.
+ *
+ * Kept, along with templates/partials/ and templates/macros/, because
+ * docs/actual-outcomes/day9-sdc.md records them as the deliberate
+ * partial/macro baseline that the SDC comparison contrasts against. The live
+ * card is the `flavourful:recipe-card` component, reached through
+ * templates/content/node--recipe--teaser.html.twig.
+ *
+ * @see templates/views/views-view-grid--recipes.html.twig
+ * @see docs/actual-outcomes/day9-sdc.md
+ */
+#}
 <div class="recipe-grid">
 	{% for item in recipes %}
 		{% include '@flavourful/partials/recipe-card.html.twig' with { recipe: item } only %}
