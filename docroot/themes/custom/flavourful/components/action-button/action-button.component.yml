@@ -5,6 +5,10 @@ description: >-
   Atom — a real <button type="button"> for in-page actions (toggles, steppers,
   step navigation), as opposed to the button atom which is a styled link.
   Pass data-* hooks, extra classes, or `disabled` via the attributes object.
+
+  Variants mirror the button atom so an action and a link sitting side by side
+  look identical; "plain" carries no colours at all so a host context (an
+  overlay, a stepper) can style it through a passed class.
 props:
   type: object
   required:
@@ -17,8 +21,19 @@ props:
     variant:
       type: string
       title: Variant
-      description: >-
-        Visual style. "plain" carries no colours so a host context (e.g. an
-        overlay) can style it via a passed class.
-      enum: [primary, ghost, plain]
+      enum: [outline, brass, solid, plain]
       default: plain
+    size:
+      type: string
+      title: Size
+      enum: [sm, md]
+      default: md
+
+# The non-plain variants render with the button atom's .btn/.btn--* classes, so
+# that component's CSS has to be on the page even when no link-button renders.
+# SDC registers every component's assets as `core/components.<provider>--<name>`,
+# which makes the visual reuse an explicit, declared dependency rather than a
+# hope that some other component happened to render first.
+libraryOverrides:
+  dependencies:
+    - core/components.flavourful--button

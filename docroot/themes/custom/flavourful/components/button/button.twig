@@ -4,4 +4,19 @@
  * Button atom. See button.component.yml for the props contract.
  */
 #}
-<a href="{{ url }}"{{ attributes.addClass('btn', 'btn--' ~ variant) }}>{{ label }}</a>
+<a
+  href="{{ url|default('#') }}"
+  {{ attributes.addClass(
+    'btn',
+    'btn--' ~ variant|default('outline'),
+    'btn--' ~ size|default('md')
+  ) }}>
+  <span class="btn__label">{{ label }}</span>
+  {#
+    Decorative only: the arrow repeats what "View all" already says, so it is
+    hidden rather than announced as "right arrow" after every such link.
+  #}
+  {% if icon_after %}
+    <span class="btn__icon" aria-hidden="true">{{ icon_after }}</span>
+  {% endif %}
+</a>

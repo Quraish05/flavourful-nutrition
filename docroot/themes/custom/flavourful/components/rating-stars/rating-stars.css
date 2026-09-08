@@ -1,0 +1,62 @@
+/**
+ * Rating stars atom.
+ * The half star is drawn with a clipped overlay rather than a "half star"
+ * glyph, so it lands on the exact fraction and inherits the same colour.
+ */
+.rating {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--fr-space-2xs);
+  white-space: nowrap;
+}
+
+.rating__stars {
+  display: inline-flex;
+  gap: 0.1em;
+  font-size: 0.9375rem;
+  line-height: 1;
+}
+
+/* Unfilled is the default: a dim outline weight so the row still reads as five. */
+.rating__star {
+  color: var(--fr-bone-faint);
+}
+
+.rating__star.is-full {
+  color: var(--fr-brass);
+}
+
+/*
+ * Half star: the glyph stays dim and a brass copy of it is layered over the
+ * leading 50%. `inset-inline-end: 50%` rather than `width: 50%` so it clips
+ * from the correct side under RTL.
+ */
+.rating__star.is-half {
+  position: relative;
+}
+
+.rating__star.is-half::before {
+  content: '★';
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 0;
+  overflow: hidden;
+  width: 50%;
+  color: var(--fr-brass);
+}
+
+.rating__value {
+  color: var(--fr-brass);
+  font-family: var(--fr-font-label);
+  font-size: var(--fr-size-label-lg);
+  font-variant-numeric: tabular-nums lining-nums;
+  letter-spacing: 0.02em;
+}
+
+.rating__count {
+  color: var(--fr-bone-muted);
+  font-family: var(--fr-font-label);
+  font-size: var(--fr-size-label);
+  letter-spacing: var(--fr-track-label);
+  text-transform: uppercase;
+}

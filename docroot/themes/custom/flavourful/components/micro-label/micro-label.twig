@@ -1,0 +1,15 @@
+{#
+/**
+ * @file
+ * Micro label atom. See micro-label.component.yml for the props contract.
+ *
+ * The `tag` prop is validated by the enum, so interpolating it into the element
+ * name is safe — SDC rejects anything outside [span, p, div] before it renders.
+ */
+#}
+{% set tag = tag|default('span') %}
+<{{ tag }}{{ attributes.addClass(
+  'micro-label',
+  'micro-label--' ~ tone|default('muted'),
+  'micro-label--' ~ size|default('sm')
+) }}>{{ text }}</{{ tag }}>

@@ -9,5 +9,19 @@
  *     label: 'Next'|t,
  *     attributes: create_attribute({ 'data-cook-next': true }),
  *   })
+ *
+ * Every variant except "plain" borrows the button atom's own .btn/.btn--* rules
+ * instead of duplicating them, so an action and a link with the same variant
+ * cannot drift apart. "plain" opts out entirely for host-styled contexts.
  #}
-<button type="button"{{ attributes.addClass('btn-action', 'btn-action--' ~ variant|default('plain')) }}>{{ label }}</button>
+{% set variant = variant|default('plain') %}
+{% set styled = variant != 'plain' %}
+<button
+  type="button"
+  {{ attributes.addClass(
+    'btn-action',
+    'btn-action--' ~ variant,
+    styled ? 'btn' : null,
+    styled ? 'btn--' ~ variant : null,
+    styled ? 'btn--' ~ size|default('md') : null
+  ) }}>{{ label }}</button>

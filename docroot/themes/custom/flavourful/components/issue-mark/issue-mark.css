@@ -1,0 +1,48 @@
+/**
+ * Issue mark atom.
+ * A brass-ruled square. Fixed size rather than padding-driven so a two-digit
+ * and a three-digit issue number produce the same box.
+ */
+/*
+ * min-width, not width. A fixed 3.25rem square fits a short label like "Issue",
+ * but the label is caller-supplied and a longer one ("Recipes") overflowed the
+ * box and struck through its own border. The mark stays square for short
+ * labels and grows only as far as it must.
+ */
+.issue-mark {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.15em;
+  min-width: 3.75rem;
+  min-height: 3.75rem;
+  padding: var(--fr-space-2xs) var(--fr-space-xs);
+  border: 1px solid var(--fr-brass-dim);
+  color: var(--fr-brass);
+  text-align: center;
+  text-decoration: none;
+  transition: border-color var(--fr-duration) var(--fr-ease),
+    color var(--fr-duration) var(--fr-ease);
+}
+
+a.issue-mark:hover {
+  border-color: var(--fr-brass);
+  color: var(--fr-brass-bright);
+}
+
+.issue-mark__number {
+  font-family: var(--fr-font-display);
+  font-size: 1.625rem;
+  font-variant-numeric: lining-nums;
+  line-height: 1;
+}
+
+.issue-mark__label {
+  font-family: var(--fr-font-label);
+  font-size: 0.625rem;
+  font-weight: 500;
+  letter-spacing: var(--fr-track-label);
+  line-height: 1;
+  text-transform: uppercase;
+}

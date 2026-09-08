@@ -1,0 +1,34 @@
+/**
+ * Micro label atom.
+ * Auto-attached by SDC wherever the component renders. Reads only --fr-* tokens
+ * so it inherits any future token change without an edit here.
+ */
+.micro-label {
+  display: inline-block;
+  margin: 0;
+  font-family: var(--fr-font-label);
+  font-weight: 500;
+  letter-spacing: var(--fr-track-label);
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.micro-label--sm {
+  font-size: var(--fr-size-label);
+}
+
+.micro-label--md {
+  font-size: var(--fr-size-label-lg);
+}
+
+.micro-label--brass {
+  color: var(--fr-brass);
+}
+
+.micro-label--bone {
+  color: var(--fr-bone);
+}
+
+.micro-label--muted {
+  color: var(--fr-bone-muted);
+}

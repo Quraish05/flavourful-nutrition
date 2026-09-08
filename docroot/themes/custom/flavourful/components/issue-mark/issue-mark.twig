@@ -1,0 +1,21 @@
+{#
+/**
+ * @file
+ * Issue mark atom. See issue-mark.component.yml for the props contract.
+ *
+ * The number and its caption are two halves of one fact, so the label is joined
+ * into a single accessible name ("Issue 41") rather than left to be read as
+ * "41" then "Issue" — which is both backwards and meaningless apart.
+ */
+#}
+{% set label = label|default('Issue'|t) %}
+{% set name = label ~ ' ' ~ number %}
+{% set tag = url ? 'a' : 'span' %}
+
+<{{ tag }}
+  {{ attributes.addClass('issue-mark') }}
+  {% if url %}href="{{ url }}"{% endif %}
+  aria-label="{{ name }}">
+  <span class="issue-mark__number" aria-hidden="true">{{ number }}</span>
+  <span class="issue-mark__label" aria-hidden="true">{{ label }}</span>
+</{{ tag }}>

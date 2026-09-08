@@ -1,0 +1,50 @@
+$schema: 'https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json'
+name: Meta list
+status: stable
+description: >-
+  Atom — the separator-joined meta row under a headline: "Theo Nakamura — 4
+  hours — Serves 4". A real <ul>, because it is a list of facts and reads as
+  one; the separators are drawn in CSS so they are never announced.
+
+  Each item may carry a `label`, which is rendered visually-hidden. That is how
+  a bare "4" becomes "Serves: 4" to a screen reader without adding visible
+  chrome the design does not have.
+props:
+  type: object
+  required:
+    - items
+  properties:
+    items:
+      type: array
+      title: Items
+      description: 'Facts to list, in reading order. Empty values are skipped.'
+      items:
+        type: object
+        required: [value]
+        properties:
+          label:
+            type: string
+            title: Label
+            description: >-
+              Names the value for assistive tech only, e.g. "Serves". Supply it
+              whenever the value is not self-describing.
+          value:
+            type: string
+            title: Value
+          url:
+            type: string
+            title: URL
+            description: 'Makes this item a link, as the byline is in the design.'
+    separator:
+      type: string
+      title: Separator
+      description: >-
+        rule draws a short brass line between items (the homepage hero);
+        dot draws a middot (breadcrumb-style trails); none relies on the gap.
+      enum: [rule, dot, none]
+      default: rule
+    tone:
+      type: string
+      title: Tone
+      enum: [bone, muted]
+      default: muted
