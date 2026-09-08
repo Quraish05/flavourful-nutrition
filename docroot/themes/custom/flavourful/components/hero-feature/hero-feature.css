@@ -1,0 +1,159 @@
+/**
+ * Hero feature molecule.
+ *
+ * Both layouts are one grid with a different template, so the text column's
+ * internal rhythm is written once. `stacked` is single-column; `split` becomes
+ * two columns at 64rem and stays stacked below it — a 4:5 image next to a
+ * headline is unreadable on a phone.
+ */
+.hero {
+  display: grid;
+  gap: var(--fr-space-lg);
+}
+
+/* -- Media ----------------------------------------------------------------- */
+.hero__media {
+  position: relative;
+  overflow: hidden;
+  background-color: var(--fr-ink-deep);
+}
+
+.hero--stacked .hero__media {
+  aspect-ratio: 16 / 9;
+}
+
+.hero__media :is(img, picture) {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/*
+ * A rendered image field arrives wrapped: <div class="field field__item"><img>.
+ * A full height on the img therefore resolves against that wrapper, which is
+ * auto-height — so the image sat at its intrinsic size and left the bottom of
+ * the well empty instead of cropping to fill it. The wrapper has to be given
+ * the height first.
+ *
+ * :where() keeps the specificity at zero, so a component variant can still
+ * override any of this without a specificity fight.
+ */
+.hero__media > :where(*),
+.hero__media :where(.field, .field__item, picture) {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+
+.hero__media-overlay {
+  position: absolute;
+  inset-block-start: var(--fr-space-sm);
+  inset-inline-start: var(--fr-space-sm);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--fr-space-2xs);
+}
+
+/*
+ * Photo credit — centred over the media as in the design. Tertiary information,
+ * but still text a reader has to be able to read, so it takes --fr-bone-muted
+ * (6.8:1) and not --fr-bone-faint, which is below AA and reserved for
+ * decorative glyphs.
+ */
+.hero__caption {
+  margin: 0 0 var(--fr-space-2xs);
+  max-width: none;
+  color: var(--fr-bone-muted);
+  font-family: var(--fr-font-label);
+  font-size: var(--fr-size-label);
+  font-weight: 500;
+  letter-spacing: var(--fr-track-label);
+  text-align: center;
+  text-transform: uppercase;
+}
+
+/* -- Text column ----------------------------------------------------------- */
+.hero__text-col {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--fr-space-sm);
+  min-width: 0;
+}
+
+.hero__title {
+  margin: 0;
+  max-width: 24ch; /* Forces the 2–3 line wrap the design's headlines have. */
+  font-family: var(--fr-font-display);
+  font-size: var(--fr-size-display-lg);
+  font-weight: 400;
+  letter-spacing: var(--fr-track-tight);
+  line-height: 1.04;
+  text-wrap: balance;
+}
+
+.hero--stacked .hero__title {
+  font-size: var(--fr-size-display-xl);
+}
+
+.hero__title a {
+  color: var(--fr-bone);
+  text-decoration: none;
+}
+
+.hero__title a:hover {
+  color: var(--fr-brass);
+}
+
+.hero__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--fr-space-2xs) var(--fr-space-sm);
+}
+
+.hero__summary {
+  margin: 0;
+  max-width: 46ch;
+  color: var(--fr-bone-muted);
+  font-size: var(--fr-size-body-lg);
+  line-height: 1.6;
+}
+
+.hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--fr-space-2xs);
+}
+
+/* Anything appended below the prose — a spec table, ingredients, the method. */
+.hero__aside {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--fr-space-lg);
+}
+
+/* -- Layout: split --------------------------------------------------------- */
+@media (min-width: 64rem) {
+  .hero--split {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: var(--fr-space-2xl);
+    align-items: start;
+  }
+
+  /*
+   * The design's recipe-detail image is full-height beside a scrolling text
+   * column. `position: sticky` keeps it in view without a fixed height, and
+   * degrades to a normal block wherever sticky is unsupported.
+   */
+  .hero--split .hero__media-col {
+    position: sticky;
+    inset-block-start: var(--fr-space-sm);
+  }
+
+  .hero--split .hero__media {
+    aspect-ratio: 4 / 5;
+  }
+}

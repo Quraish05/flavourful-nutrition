@@ -1,0 +1,49 @@
+/**
+ * Chef byline molecule.
+ */
+.chef-byline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--fr-space-2xs) var(--fr-space-sm);
+}
+
+/*
+ * The avatar well. Sized and rounded here rather than on the image, so an
+ * empty slot leaves a ruled circle — which is exactly what the design shows
+ * for a chef with no portrait.
+ */
+.chef-byline__avatar {
+  display: block;
+  flex: 0 0 auto;
+  overflow: hidden;
+  width: 1.75rem;
+  height: 1.75rem;
+  border: 1px solid var(--fr-rule-strong);
+  border-radius: 50%;
+  background-color: var(--fr-ink-raised);
+}
+
+.chef-byline__avatar :is(img, picture) {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.chef-byline__name {
+  font-family: var(--fr-font-label);
+  font-size: var(--fr-size-label-lg);
+  font-weight: 500;
+  letter-spacing: var(--fr-track-label);
+  text-transform: uppercase;
+}
+
+.chef-byline__name,
+.chef-byline__name a {
+  color: var(--fr-bone);
+  text-decoration: none;
+}
+
+.chef-byline__name a:hover {
+  color: var(--fr-brass);
+}

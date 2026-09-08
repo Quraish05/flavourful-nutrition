@@ -1,0 +1,60 @@
+/**
+ * Method steps molecule.
+ *
+ * The numerals are a CSS counter on ::before, with the real list markers
+ * removed. This keeps the roman numerals decorative: assistive tech announces
+ * the list's own ordinal position, so "III" is never read as the letters
+ * "eye eye eye".
+ */
+.method {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: method;
+}
+
+.method__step {
+  display: grid;
+  grid-template-columns: 2.25rem minmax(0, 1fr);
+  gap: var(--fr-space-sm);
+  margin: 0;
+  padding-block: var(--fr-space-xs);
+  border-block-end: 1px solid var(--fr-rule);
+  counter-increment: method;
+  color: var(--fr-bone);
+  font-size: var(--fr-size-body-sm);
+  line-height: 1.7;
+}
+
+.method__step::before {
+  color: var(--fr-brass);
+  font-family: var(--fr-font-label);
+  font-size: var(--fr-size-label);
+  font-weight: 500;
+  letter-spacing: var(--fr-track-label);
+  line-height: 1.75; /* Optically aligns the numeral with the first text line. */
+  text-transform: uppercase;
+}
+
+.method--roman .method__step::before {
+  content: counter(method, upper-roman);
+}
+
+.method--decimal .method__step::before {
+  content: counter(method, decimal);
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+/* The last step needs no rule beneath it — the section boundary does that. */
+.method__step:last-child {
+  border-block-end: 0;
+}
+
+/* Paragraphs inside a step (from a formatted text field) lose their margins. */
+.method__step > :is(p, ul, ol):last-child {
+  margin-block-end: 0;
+}
+
+.method__step p {
+  max-width: none;
+}

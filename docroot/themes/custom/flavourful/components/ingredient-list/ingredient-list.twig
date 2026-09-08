@@ -1,0 +1,32 @@
+{#
+/**
+ * @file
+ * Ingredient list molecule. See ingredient-list.component.yml for the contract.
+ *
+ * The data-qty / data-unit pair is the contract with js/recipe-tools.js: the
+ * servings scaler finds every [data-qty], multiplies it, and rewrites the
+ * element's text as "<qty> <unit>". So the initial server-rendered text must be
+ * composed the same way — otherwise the first click on the stepper would
+ * silently reformat every row.
+ *
+ * Rows with a free-text amount carry no data attributes at all, which is what
+ * keeps "to taste" out of the scaler's reach.
+ */
+#}
+{% if items is not empty %}
+  <ul{{ attributes.addClass('ingredients', 'ingredients--cols-' ~ columns|default(2)) }}>
+    {% for item in items %}
+      <li class="ingredients__row">
+        <span class="ingredients__name">{{ item.name }}</span>
+
+        {% if item.qty is not null %}
+          <span class="ingredients__amount" data-qty="{{ item.qty }}" data-unit="{{ item.unit|default('') }}">
+            {{- item.qty }}{{ item.unit ? ' ' ~ item.unit -}}
+          </span>
+        {% elseif item.amount is not empty %}
+          <span class="ingredients__amount">{{ item.amount }}</span>
+        {% endif %}
+      </li>
+    {% endfor %}
+  </ul>
+{% endif %}

@@ -1,0 +1,42 @@
+$schema: 'https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json'
+name: Spec table
+status: stable
+description: >-
+  Molecule — the ruled strip of key facts on a recipe: Total / Serves / Level /
+  Cost, each a label above a value with vertical rules between.
+
+  Rendered as a <dl>, because that is exactly what it is: a list of
+  term/definition pairs. A grid of <div>s would look identical and tell a screen
+  reader nothing about which value belongs to which label.
+props:
+  type: object
+  required: [items]
+  properties:
+    items:
+      type: array
+      title: Items
+      description: >-
+        The facts, in display order. Items with an empty value are dropped, so
+        a recipe with no cost figure simply shows three columns instead of four.
+      items:
+        type: object
+        required: [label, value]
+        properties:
+          label:
+            type: string
+            title: Label
+          value:
+            type: string
+            title: Value
+          suffix:
+            type: string
+            title: Suffix
+            description: >-
+              A unit rendered smaller after the value, e.g. "hr", "min". Keep
+              units here rather than baked into `value` so the number stays
+              alone in tabular figures and the columns line up.
+    label:
+      type: string
+      title: Accessible label
+      description: 'Names the group, e.g. "Recipe at a glance".'
+      default: At a glance

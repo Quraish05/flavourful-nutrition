@@ -1,0 +1,35 @@
+{#
+/**
+ * @file
+ * Journal list molecule. See journal-list.component.yml for the contract.
+ *
+ * The kicker and meta are joined into one micro-label with a middot rather than
+ * rendered as two elements: they are read as a single line of provenance
+ * ("Essay · 6 min read"), and two separate labels would be announced as two
+ * unrelated fragments after every title.
+ */
+#}
+{% if items is not empty %}
+  <ul{{ attributes.addClass('journal') }}>
+    {% for item in items %}
+      <li class="journal__item">
+        {% if heading_level %}
+          <h{{ heading_level }} class="journal__title">
+            <a href="{{ item.url }}">{{ item.title }}</a>
+          </h{{ heading_level }}>
+        {% else %}
+          <p class="journal__title"><a href="{{ item.url }}">{{ item.title }}</a></p>
+        {% endif %}
+
+        {% set trail = [item.kicker, item.meta]|filter(v => v is not empty) %}
+        {% if trail is not empty %}
+          {{ include('flavourful:micro-label', {
+            text: trail|join(' · '),
+            tone: 'muted',
+            tag: 'p',
+          }, with_context = false) }}
+        {% endif %}
+      </li>
+    {% endfor %}
+  </ul>
+{% endif %}

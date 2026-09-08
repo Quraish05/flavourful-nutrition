@@ -3,45 +3,59 @@
  * Auto-attached by SDC wherever the card renders (node page, View rows), so its
  * styles travel with the markup. Consumes the global --fr-* design tokens.
  * This file is the single source of truth for the card, its difficulty badge
- * and its meta row (previously scss/components/_recipe-card.scss + _badge.scss).
+ * and its meta row.
+ *
+ * Cellar's cards are not cards in the material sense — no surface, no border,
+ * no shadow. They are text blocks with a cropped thumbnail, separated by the
+ * grid's own gaps. So there is no background or box here on purpose; don't add
+ * one back without changing the whole design language.
  */
 .recipe-card {
   position: relative;
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  overflow: hidden;
-  background-color: var(--fr-color-white);
-  border: 1px solid var(--fr-color-line);
-  border-radius: var(--fr-radius-lg);
-  box-shadow: var(--fr-shadow-card);
-  transition: transform 0.18s ease, box-shadow 0.18s ease;
-}
-
-.recipe-card:hover,
-.recipe-card:focus-within {
-  transform: translateY(-4px);
-  box-shadow: var(--fr-shadow-card-hover);
+  display: grid;
+  gap: var(--fr-space-sm);
+  min-width: 0;
 }
 
 /* -- Media ----------------------------------------------------------------- */
 .recipe-card__media {
   position: relative;
   display: block;
-  aspect-ratio: 3 / 2;
   overflow: hidden;
-  background-color: var(--fr-color-line);
+  background-color: var(--fr-ink-deep);
 }
 
-.recipe-card__media img {
+.recipe-card__media :is(img, picture) {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.3s ease;
+  transition: opacity var(--fr-duration) var(--fr-ease);
 }
 
-.recipe-card:hover .recipe-card__media img {
-  transform: scale(1.05);
+/*
+ * A rendered image field arrives wrapped: <div class="field field__item"><img>.
+ * A full height on the img therefore resolves against that wrapper, which is
+ * auto-height — so the image sat at its intrinsic size and left the bottom of
+ * the well empty instead of cropping to fill it. The wrapper has to be given
+ * the height first.
+ *
+ * :where() keeps the specificity at zero, so a component variant can still
+ * override any of this without a specificity fight.
+ */
+.recipe-card__media > :where(*),
+.recipe-card__media :where(.field, .field__item, picture) {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+
+/*
+ * Hover is a brightening, not a scale. The design's images are dark and
+ * closely cropped; a zoom on hover would push the subject out of frame.
+ */
+.recipe-card:hover .recipe-card__media :is(img, picture) {
+  opacity: 0.82;
 }
 
 /* Placeholder shown when no hero image is supplied to the media slot. */
@@ -51,89 +65,45 @@
   justify-content: center;
   width: 100%;
   height: 100%;
-  font-size: 3rem;
-  background: linear-gradient(135deg, var(--fr-color-saffron), var(--fr-color-paprika));
-}
-
-/* -- Difficulty badge ------------------------------------------------------ */
-.badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.25rem;
-  padding: 0.25rem var(--fr-space-xs);
-  border-radius: 999px;
-  background-color: var(--fr-color-slate);
-  color: var(--fr-color-white);
-  font-family: var(--fr-font-heading);
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.03em;
-  text-transform: uppercase;
-  line-height: 1;
-}
-
-.badge--difficulty.badge--easy {
-  background-color: var(--fr-difficulty-easy);
-}
-
-.badge--difficulty.badge--medium {
-  background-color: var(--fr-difficulty-medium);
-}
-
-.badge--difficulty.badge--hard {
-  background-color: var(--fr-difficulty-hard);
-}
-
-.badge--difficulty.badge--expert {
-  background-color: var(--fr-difficulty-expert);
-}
-
-/*
- * Still overlaid on the media area, but positioned against .recipe-card rather
- * than .recipe-card__media, because the badge markup now lives in the body —
- * it must stay outside the aria-hidden media link. Do not move it back.
- */
-.recipe-card .badge--difficulty {
-  position: absolute;
-  inset-block-start: var(--fr-space-2xs);
-  inset-inline-end: var(--fr-space-2xs);
-  box-shadow: 0 2px 6px rgba(36, 32, 28, 0.25);
+  background-color: var(--fr-ink-raised);
+  color: var(--fr-brass-dim);
+  font-size: 1.5rem;
 }
 
 /* -- Body ------------------------------------------------------------------ */
 .recipe-card__body {
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
   gap: var(--fr-space-2xs);
-  padding: var(--fr-space-md);
-}
-
-.recipe-card__eyebrow {
-  margin: 0;
-  color: var(--fr-color-paprika);
-  font-family: var(--fr-font-heading);
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  min-width: 0;
 }
 
 .recipe-card__title {
   margin: 0;
-  font-size: 1.3rem;
+  max-width: none;
+  font-family: var(--fr-font-display);
+  font-size: var(--fr-size-display-sm);
+  font-weight: 400;
+  letter-spacing: var(--fr-track-tight);
+  line-height: 1.15;
 }
 
 .recipe-card__title a {
-  color: var(--fr-color-ink);
-}
-
-.recipe-card__title a:hover,
-.recipe-card__title a:focus {
-  color: var(--fr-color-paprika-dark);
+  color: var(--fr-bone);
   text-decoration: none;
 }
 
-/* Stretch the title link across the whole card for easier clicking. */
+.recipe-card:hover .recipe-card__title a,
+.recipe-card__title a:focus-visible {
+  color: var(--fr-brass);
+}
+
+/*
+ * Stretch the title link across the whole card so the thumbnail is clickable
+ * without a second focusable element. The ::after needs a positioned ancestor,
+ * which .recipe-card provides.
+ */
 .recipe-card__title a::after {
   content: '';
   position: absolute;
@@ -142,52 +112,112 @@
 
 .recipe-card__summary {
   margin: 0;
-  color: var(--fr-color-slate);
-  font-size: 0.95rem;
+  max-width: 46ch;
+  color: var(--fr-bone-muted);
+  font-size: var(--fr-size-body-sm);
+  line-height: 1.6;
   display: -webkit-box;
   overflow: hidden;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 3;
-  line-clamp: 3;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
 }
 
-/* -- Meta row -------------------------------------------------------------- */
-.recipe-card__meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--fr-space-xs) var(--fr-space-md);
-  margin: var(--fr-space-2xs) 0 0;
-  padding: var(--fr-space-sm) 0 0;
-  border-top: 1px solid var(--fr-color-line);
-  list-style: none;
-}
-
-.recipe-meta {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.25rem;
-  color: var(--fr-color-slate);
-  font-family: var(--fr-font-heading);
-  font-size: 0.85rem;
-}
-
-.recipe-meta__icon {
-  font-size: 1rem;
+/* -- Difficulty badge ------------------------------------------------------ */
+/*
+ * A ruled chip in the difficulty colour, not a filled block: on the dark ground
+ * a solid swatch of muted green reads as an error state. The colour is paired
+ * with its own text label in the markup, so it never carries meaning alone.
+ */
+.recipe-card__difficulty {
+  display: inline-block;
+  flex: 0 0 auto;
+  padding: 0.35em 0.6em;
+  border: 1px solid currentColor;
+  font-family: var(--fr-font-label);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: var(--fr-track-label);
   line-height: 1;
+  text-transform: uppercase;
 }
 
-.recipe-meta__value {
-  color: var(--fr-color-ink);
-  font-weight: 600;
+.recipe-card__difficulty--easy {
+  color: var(--fr-difficulty-easy);
+}
+
+.recipe-card__difficulty--medium {
+  color: var(--fr-difficulty-medium);
+}
+
+.recipe-card__difficulty--hard {
+  color: var(--fr-difficulty-hard);
+}
+
+.recipe-card__difficulty--expert {
+  color: var(--fr-difficulty-expert);
+}
+
+/*
+ * The topline: category on the leading edge, difficulty on the trailing one.
+ *
+ * The badge is in the flow, not absolutely positioned over the media. It used
+ * to be — which read correctly on a square thumbnail but left the badge in the
+ * far top-right corner of a wide `stacked` card, next to nothing at all. It
+ * also had to be positioned against .recipe-card rather than
+ * .recipe-card__media, because the markup must stay outside the aria-hidden
+ * media link, which made the mismatch worse the wider the card got.
+ */
+.recipe-card__topline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--fr-space-sm);
+  width: 100%;
 }
 
 /* -- Tags slot ------------------------------------------------------------- */
 .recipe-card__tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.25rem;
+  gap: var(--fr-space-3xs);
 }
 
-.recipe-card__tags:empty {
-  display: none;
+/* -- Variant: compact ------------------------------------------------------ */
+/*
+ * The "Recently added" row: a fixed square thumbnail beside the text. Fixed
+ * rather than fractional so a row of four cards has its thumbnails aligned
+ * regardless of title length.
+ */
+.recipe-card--compact {
+  grid-template-columns: 4.5rem minmax(0, 1fr);
+  align-items: start;
+}
+
+.recipe-card--compact .recipe-card__media {
+  aspect-ratio: 1;
+}
+
+.recipe-card--compact .recipe-card__title {
+  font-size: 1.3125rem;
+}
+
+/* -- Variant: stacked ------------------------------------------------------ */
+.recipe-card--stacked {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.recipe-card--stacked .recipe-card__media {
+  aspect-ratio: 3 / 2;
+}
+
+/* -- Variant: list --------------------------------------------------------- */
+/*
+ * Text only, separated by a rule. Used for the journal-style rails and any
+ * listing where the images would compete with the lead story.
+ */
+.recipe-card--list {
+  grid-template-columns: minmax(0, 1fr);
+  padding-block-end: var(--fr-space-sm);
+  border-block-end: 1px solid var(--fr-rule);
 }

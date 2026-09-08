@@ -7,7 +7,10 @@
  * many contexts.
  */
 #}
-<article{{ attributes.addClass('recipe-card') }}>
+{% set variant = variant|default('compact') %}
+{% set level = heading_level %}
+
+<article{{ attributes.addClass('recipe-card', 'recipe-card--' ~ variant) }}>
 
   {#
     aria-hidden + tabindex="-1" here is deliberate: this link duplicates the
@@ -16,13 +19,42 @@
     and was silently dropped from the accessibility tree with it (WCAG 1.3.1) —
     it now renders in the body and is positioned over the media by CSS.
   #}
-  <a class="recipe-card__media" href="{{ url }}" tabindex="-1" aria-hidden="true">
-    {% block media %}{% endblock %}
-  </a>
+  {% if variant != 'list' %}
+    <a class="recipe-card__media" href="{{ url }}" tabindex="-1" aria-hidden="true">
+      {% block media %}{% endblock %}
+    </a>
+  {% endif %}
 
   <div class="recipe-card__body">
-    {% if eyebrow %}
-      <p class="recipe-card__eyebrow">{{ eyebrow }}</p>
+
+    {#
+      Eyebrow and difficulty share one row: category on the leading edge, level
+      on the trailing one. The badge used to be absolutely positioned over the
+      media, which worked on a square thumbnail but left it stranded in the
+      far corner of a wide `stacked` card, next to nothing. In the flow it is
+      correct at every card width.
+    #}
+    {% if eyebrow or difficulty %}
+      <div class="recipe-card__topline">
+        {% if eyebrow %}
+          {{ include('flavourful:micro-label', {
+            text: eyebrow,
+            tone: 'brass',
+            tag: 'p',
+          }, with_context = false) }}
+        {% endif %}
+
+        {#
+          The visually-hidden prefix gives the badge a self-sufficient name: on
+          its own, "Medium" says nothing — the meaning came from colour and
+          position.
+        #}
+        {% if difficulty %}
+          <span class="recipe-card__difficulty recipe-card__difficulty--{{ difficulty }}">
+            <span class="visually-hidden">{{ 'Difficulty'|t }}:</span>{{ difficulty|capitalize }}
+          </span>
+        {% endif %}
+      </div>
     {% endif %}
 
     {#
@@ -32,7 +64,6 @@
       it, so a second heading here both duplicates the title and breaks the
       outline (h1 -> h3 -> h2).
     #}
-    {% set level = heading_level|default(3) %}
     {% if level %}
       <h{{ level }} class="recipe-card__title">
         <a href="{{ url }}" rel="bookmark">{{ title }}</a>
@@ -43,31 +74,31 @@
       </p>
     {% endif %}
 
-    {#
-      Visually overlaid on the media, but rendered here so it is announced.
-      The visually-hidden prefix gives the badge a self-sufficient name: on its
-      own, "Medium" says nothing — the meaning came from colour and position.
-    #}
-    {% if difficulty %}
-      <span class="badge badge--difficulty badge--{{ difficulty }}">
-        <span class="visually-hidden">{{ 'Difficulty'|t }}:</span>{{ difficulty|capitalize }}
-      </span>
-    {% endif %}
-
-    {% if summary %}
+    {% if summary and variant != 'compact' %}
       <p class="recipe-card__summary">{{ summary }}</p>
     {% endif %}
 
-    {% if cooking_time %}
-      <ul class="recipe-card__meta">
-        <li class="recipe-meta">
-          <span class="recipe-meta__icon" aria-hidden="true">⏱️</span>
-          <span class="recipe-meta__value">{{ cooking_time|round }}</span>&nbsp;{{ 'min'|t }}
-        </li>
-      </ul>
+    {#
+      The byline row: chef, time, servings. `dot` separators rather than the
+      hero's brass rules — at card scale a rule between every item is noise.
+    #}
+    {% if meta is not empty %}
+      {{ include('flavourful:meta-list', {
+        items: meta,
+        separator: 'dot',
+        tone: 'muted',
+      }, with_context = false) }}
     {% endif %}
 
-    <div class="recipe-card__tags">{% block tags %}{% endblock %}</div>
+    {#
+      Captured through an inline block rather than block('tags'): block() throws
+      when a caller has not defined the slot, and a card without tags is normal.
+    #}
+    {% set tags %}{% block tags %}{% endblock %}{% endset %}
+    {% if tags|trim is not empty %}
+      <div class="recipe-card__tags">{{ tags }}</div>
+    {% endif %}
+
   </div>
 
 </article>

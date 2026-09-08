@@ -1,0 +1,45 @@
+/**
+ * Journal list molecule.
+ */
+.journal {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.journal__item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--fr-space-3xs);
+  margin: 0;
+  padding-block: var(--fr-space-sm);
+  border-block-end: 1px solid var(--fr-rule);
+}
+
+.journal__item:first-child {
+  padding-block-start: 0;
+}
+
+.journal__item:last-child {
+  padding-block-end: 0;
+  border-block-end: 0;
+}
+
+.journal__title {
+  margin: 0;
+  max-width: none;
+  font-family: var(--fr-font-display);
+  font-size: 1.375rem;
+  font-weight: 400;
+  letter-spacing: var(--fr-track-tight);
+  line-height: 1.2;
+}
+
+.journal__title a {
+  color: var(--fr-bone);
+  text-decoration: none;
+}
+
+.journal__title a:hover {
+  color: var(--fr-brass);
+}
