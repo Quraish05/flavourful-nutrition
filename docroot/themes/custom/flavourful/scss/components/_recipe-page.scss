@@ -1,0 +1,65 @@
+// =============================================================================
+// Recipe detail arrangement
+// -----------------------------------------------------------------------------
+// Layout only — the hero component owns the two-column split, so what remains
+// here is the stack of sections beneath it and the spacing between them.
+// =============================================================================
+@use '../abstracts' as *;
+
+.recipe-page {
+  display: flex;
+  flex-direction: column;
+  gap: $space-lg;
+}
+
+// The design's recipe detail runs edge to edge with the image bleeding to the
+// viewport. Inside a full-bleed main the text column still needs a gutter.
+.recipe-page--bleed {
+  .recipe-page__body {
+    padding-inline: $space-sm;
+
+    @include respond-to('md') {
+      padding-inline: $space-lg;
+    }
+  }
+}
+
+.recipe-page__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-3xs;
+  padding-block-start: $space-md;
+  @include rule('block-start');
+}
+
+// The "Submitted by … on …" line. Core renders it as prose; at this scale that
+// made it as prominent as the recipe's own intro, so it takes the tracked
+// label treatment every other piece of metadata on the page uses.
+.recipe-page__submitted {
+  margin-block: $space-md 0;
+  max-width: none;
+  @include label-type;
+  color: $color-bone-faint;
+
+  a {
+    color: $color-bone-muted;
+    text-decoration: none;
+  }
+}
+
+// Anything the node's own display adds that we have not explicitly placed —
+// extra fields, comments, contributed module output. Kept visually quiet so it
+// reads as an appendix rather than as part of the designed page.
+.recipe-page__rest {
+  padding-block-start: $space-lg;
+  @include rule('block-start');
+
+  .field__label {
+    @include label-type;
+    color: $color-brass;
+  }
+
+  .field {
+    margin-block-end: $space-sm;
+  }
+}

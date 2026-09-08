@@ -49,3 +49,51 @@
     padding-inline: $space-lg;
   }
 }
+
+/// The uppercase micro-label that carries most of Cellar's structure: nav
+/// items, eyebrows, field labels, button text. Tracking is the whole effect —
+/// at these sizes the letterforms barely register, the spacing does.
+/// @param {Length} $size - Font size; use $size-label or $size-label-lg.
+@mixin label-type($size: $size-label) {
+  font-family: $font-label;
+  font-size: $size;
+  font-weight: 500;
+  letter-spacing: $track-label;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+/// Display type for headlines and the wordmark. Large sizes set too loose by
+/// default, so tracking goes slightly negative and leading well under 1.
+/// @param {Length} $size - Font size; use one of the $size-display-* tokens.
+@mixin display-type($size: $size-display-md) {
+  font-family: $font-display;
+  font-size: $size;
+  font-weight: 400;
+  letter-spacing: $track-tight;
+  line-height: 1.08;
+}
+
+/// A single hairline rule. Used constantly — between utility bars, section
+/// headers, ingredient rows — so it is one mixin rather than 30 border decls.
+/// @param {String} $side - Which edge: 'block-end', 'block-start', 'inline-end'…
+/// @param {Color} $color - Rule colour; $color-rule-strong for real edges.
+@mixin rule($side: 'block-end', $color: $color-rule) {
+  border-#{$side}: 1px solid $color;
+}
+
+/// Focus ring. A brass outline offset clear of the element, which reads on
+/// every one of the three ground tones. Applied via :focus-visible so it never
+/// shows on mouse click, and never removed without a replacement.
+@mixin focus-ring {
+  outline: 2px solid $color-brass;
+  outline-offset: 2px;
+}
+
+/// Reset a list to no bullets and no indent, for the many places Cellar uses
+/// a list for semantics (meta rows, ingredient rows, nav) but not for looks.
+@mixin bare-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}

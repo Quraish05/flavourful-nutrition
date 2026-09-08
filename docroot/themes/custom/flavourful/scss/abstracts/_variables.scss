@@ -1,39 +1,106 @@
 // =============================================================================
-// Design tokens
+// Design tokens — "Cellar"
 // -----------------------------------------------------------------------------
 // Build-time Sass variables. These are also emitted as CSS custom properties in
 // `base/_root.scss` (prefixed `--fr-*`) so they can be consumed at runtime from
-// Twig/inline styles as well as from Sass.
+// Twig/inline styles and from SDC CSS files, which cannot @use this partial.
+//
+// The palette is dark-first: near-black ground, brass accent, warm off-white
+// text. There is no light mode — the design is a single committed look, so
+// tokens are defined once rather than swapped under a media query.
 // =============================================================================
 
-// Brand palette — warm, appetising tones.
-$color-paprika: #d94f30; // Primary accent (tomato / paprika).
-$color-paprika-dark: #b03a20;
-$color-basil: #3f7d3f; // Secondary accent (herb green).
-$color-saffron: #e8a72c; // Highlight (badges, ratings).
+// -- Ground -------------------------------------------------------------------
+// Three surfaces, not one: the page, a slightly-lifted panel (spec tables, the
+// pairing note), and the near-black used behind full-bleed media.
+$color-ink: #17140f; // Page ground.
+$color-ink-raised: #1e1a14; // Panels, cards, inset boxes.
+$color-ink-deep: #0e0c09; // Media wells, the utility bar.
 
-// Neutrals (warm grey scale).
-$color-ink: #24201c; // Body text.
-$color-slate: #5d564d; // Muted text.
-$color-line: #e7e0d6; // Borders / hairlines.
-$color-cream: #fbf7f0; // Page background.
-$color-white: #ffffff; // Surfaces / cards.
+// -- Brass --------------------------------------------------------------------
+// The single accent. `brass` is the readable text weight (7.7:1 on $color-ink,
+// 7.2:1 on the raised ground — AA at any size); `brass-bright` is the hover
+// weight at 10.0:1. `brass-dim` is 3.9:1 and therefore RULES ONLY — it is below
+// AA for text, and nothing in this theme sets type in it.
+$color-brass: #c9a24a;
+$color-brass-bright: #e0bb68;
+$color-brass-dim: #8a6f33; // Rules and ornament borders; decorative only.
 
-// Difficulty accents (map keyed by field_difficulty allowed values).
+// -- Warm neutrals ------------------------------------------------------------
+// Ratios below are against $color-ink-raised, the lightest of the three grounds
+// and therefore the worst case. Verified, not estimated.
+$color-bone: #ede7da; // Primary text — 14.1:1.
+$color-bone-muted: #a9a294; // Secondary text — 6.8:1. Meta, bylines, captions.
+// 3.2:1: BELOW AA for text. Decorative glyphs (unfilled stars, separator
+// middots) and disabled controls only, both of which WCAG 1.4.3 exempts.
+// Anything a user has to read takes $color-bone-muted instead.
+$color-bone-faint: #6f6a5f;
+$color-rule: #302a21; // Hairlines between rows and sections.
+$color-rule-strong: #453d30; // Borders that need to read as an edge.
+
+// -- Difficulty accents -------------------------------------------------------
+// Keyed by the `field_difficulty` allowed values. Rendered as the badge's text
+// and border colour, so each has to clear AA against the raised ground:
+// easy 5.7:1, medium 7.2:1, hard 4.7:1, expert 4.6:1. `expert` started as a
+// deeper #a8452c and had to be lightened — at 2.9:1 it was the one colour in
+// this palette that failed.
+//
+// `hard` and `expert` end up close in luminance and differ mainly in hue, which
+// is acceptable here because every badge carries its own text label — colour is
+// never the only carrier of meaning (WCAG 1.4.1).
 $difficulty-colors: (
-  'easy': #3f7d3f,
-  'medium': #e8a72c,
-  'hard': #d94f30,
-  'expert': #8a2b16,
+  'easy': #7f9e5c,
+  'medium': #c9a24a,
+  'hard': #c2703c,
+  'expert': #d4604a,
 );
 
-// Typography.
-$font-body: 'Georgia', 'Times New Roman', serif;
-$font-heading: 'Helvetica Neue', 'Arial', sans-serif;
-$font-size-base: 1rem;
-$line-height-base: 1.6;
+// -- Typography ---------------------------------------------------------------
+// Three roles, three families:
+// - display: the wordmark and headlines. High contrast, tight, set large.
+// - body: running prose. A lower-contrast garamond that holds up at 16px.
+// - label: uppercase micro-labels, nav and meta. Wide tracking does the work.
+$font-display: 'Cormorant Garamond', 'Iowan Old Style', 'Palatino Linotype', 'Palatino', serif;
+$font-body: 'EB Garamond', 'Iowan Old Style', 'Palatino Linotype', Georgia, serif;
+$font-label: 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 
-// Spacing scale (rem).
+// 18px, not the usual 16px. Both garamonds here have a notably small x-height:
+// EB Garamond at 16px reads about the size of a grotesque at 14px, which is what
+// made the first pass of this design feel cramped. The whole scale is set from
+// the size the *body face* actually needs, not from the browser default.
+$font-size-base: 1.125rem; // 18px
+$line-height-base: 1.7;
+
+// Tracking scale. Uppercase label text needs a lot of it; display text needs
+// slightly negative; and the body face takes a touch to open up at this size.
+$track-label: 0.18em; // Micro-labels, nav, eyebrows.
+$track-wide: 0.34em; // The wordmark and its rules.
+$track-body: 0.01em; // Running prose — barely there, but it stops the setting
+                     // looking tight against the generous line-height.
+$track-tight: -0.005em; // Large display sizes, which set too loose by default.
+
+// -- Body sizes ---------------------------------------------------------------
+// Tokens rather than literals in each component, so the scale can be retuned in
+// one place. Every component reads these through the --fr-size-* properties.
+$size-body: 1.125rem; // 18px — running prose.
+$size-body-sm: 1.0625rem; // 17px — card summaries, ingredient rows, steps.
+$size-body-lg: 1.25rem; // 20px — the hero intro paragraph.
+
+// -- Display sizes ------------------------------------------------------------
+// Fluid: each clamp is min / preferred / max so headlines scale without a
+// breakpoint per step.
+$size-display-xl: clamp(3rem, 6.5vw, 5rem); // Homepage lead.
+$size-display-lg: clamp(2.375rem, 4.5vw, 3.5rem); // Recipe detail h1.
+$size-display-md: clamp(1.75rem, 2.75vw, 2.375rem); // Section headings.
+$size-display-sm: 1.5rem; // Card titles.
+
+// -- Label sizes --------------------------------------------------------------
+// Uppercase tracked labels. Bumped a step from 11/12px: at 11px with 0.18em
+// tracking the letterforms stopped resolving at all on a dark ground.
+$size-label: 0.8125rem; // 13px — the uppercase micro-label.
+$size-label-lg: 0.875rem; // 14px — nav, buttons.
+
+// -- Spacing ------------------------------------------------------------------
 $space-3xs: 0.25rem;
 $space-2xs: 0.5rem;
 $space-xs: 0.75rem;
@@ -42,18 +109,26 @@ $space-md: 1.5rem;
 $space-lg: 2rem;
 $space-xl: 3rem;
 $space-2xl: 4rem;
+$space-3xl: 6rem;
 
-// Radii & elevation.
-$radius-sm: 4px;
-$radius-md: 10px;
-$radius-lg: 18px;
-$shadow-card: 0 2px 4px rgba(36, 32, 28, 0.06), 0 8px 24px rgba(36, 32, 28, 0.08);
-$shadow-card-hover: 0 6px 12px rgba(36, 32, 28, 0.1), 0 16px 40px rgba(36, 32, 28, 0.14);
+// -- Edges & elevation --------------------------------------------------------
+// Cellar has no rounded corners and no soft shadows: edges are hairline rules,
+// depth comes from the three ground tones. $radius-sm exists only for form
+// controls, which look broken at 0 in some browsers.
+$radius-sm: 2px;
+$shadow-lift: 0 1px 0 rgba(201, 162, 74, 0.14); // A brass hairline, not a blur.
 
-// Layout.
-$container-max: 1200px;
+// -- Layout -------------------------------------------------------------------
+$container-max: 1240px;
+$container-gutter: $space-md;
 
-// Responsive breakpoints.
+// -- Motion -------------------------------------------------------------------
+// One duration and one easing, so nothing feels out of step. Both are
+// neutralised under `prefers-reduced-motion` in base/_reset.scss.
+$duration: 0.18s;
+$ease: cubic-bezier(0.2, 0, 0.2, 1);
+
+// -- Responsive breakpoints ---------------------------------------------------
 $breakpoints: (
   'sm': 36rem, // ~576px
   'md': 48rem, // ~768px

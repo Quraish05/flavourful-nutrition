@@ -1,0 +1,80 @@
+// =============================================================================
+// Homepage arrangement
+// -----------------------------------------------------------------------------
+// Layout only. Everything visible on the homepage is a component; this file is
+// the grid they sit in — the issue ornament, the lead story, and the grid of
+// the rest.
+//
+// Rendered by:
+//   - templates/views/views-view--frontpage.html.twig              (.home)
+//   - templates/views/views-view-unformatted--frontpage.html.twig  (.home__lead)
+// =============================================================================
+@use '../abstracts' as *;
+
+.home {
+  display: flex;
+  flex-direction: column;
+  gap: $space-xl;
+}
+
+// The issue ornament sits above the lead story, hard against the content edge.
+.home__ornament {
+  display: flex;
+}
+
+// -- Lead story -------------------------------------------------------------
+// The first row, rendered by the recipe-card component's `stacked` variant —
+// which \Drupal\flavourful\Hook\ListingHooks sets on the row's render array.
+//
+// Nothing here resizes the component's structure: the card already knows how to
+// be a stacked card, and the instruction to *be* one travels through the render
+// array rather than through a CSS override. That is the point of the variant
+// prop. What this block does add is the lead's typographic step up, which is a
+// property of the position, not of the card.
+.home__lead {
+  padding-block-end: $space-xl;
+  @include rule;
+
+  .recipe-card__title {
+    max-width: 26ch;
+    font-size: $size-display-lg;
+  }
+
+  .recipe-card__summary {
+    max-width: 52ch;
+    font-size: $size-body-lg;
+    // The lead has room for more of the teaser than a grid card does.
+    -webkit-line-clamp: 4;
+    line-clamp: 4;
+  }
+}
+
+// Side by side once there is room: media left, text right, as the design's lead
+// story sits. Below this the card stays stacked — a 3:2 image beside a headline
+// is unreadable on a phone.
+@include respond-to('md') {
+  .home__lead .recipe-card--stacked {
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+    gap: $space-xl;
+    align-items: center;
+  }
+
+  // A 3:2 crop across half the container is still very tall for a lead image.
+  // 4:3 keeps it substantial without pushing the text off the first screen.
+  .home__lead .recipe-card__media {
+    aspect-ratio: 4 / 3;
+  }
+}
+
+// -- The rest ---------------------------------------------------------------
+.home__band {
+  display: flex;
+  flex-direction: column;
+  gap: $space-lg;
+}
+
+.home__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
+  gap: $space-lg $space-xl;
+}
