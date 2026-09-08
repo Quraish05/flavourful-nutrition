@@ -1,0 +1,186 @@
+/**
+ * Recipe tools organism.
+ *
+ * Only the chrome this organism adds around the composed molecules lives here:
+ * the servings stepper, the scale note and the Cook Mode overlay. The
+ * ingredient rows and method steps are styled by their own components, so
+ * nothing below reaches into .ingredients or .method internals.
+ */
+.recipe-tools {
+  display: flex;
+  flex-direction: column;
+  gap: var(--fr-space-xl);
+}
+
+.recipe-tools__section {
+  min-width: 0;
+}
+
+/* Puts the Cook Mode trigger on the same baseline as the "Method" header. */
+.recipe-tools__method-head {
+  display: flex;
+  align-items: center;
+  gap: var(--fr-space-sm);
+}
+
+.recipe-tools__method-head .section-header {
+  flex: 1 1 auto;
+  margin-block-end: 0;
+}
+
+.recipe-tools__method-head + .method {
+  margin-block-start: var(--fr-space-md);
+}
+
+/* -- Servings stepper ------------------------------------------------------ */
+.servings {
+  display: inline-flex;
+  align-items: stretch;
+  margin-block-end: var(--fr-space-md);
+  border: 1px solid var(--fr-rule-strong);
+}
+
+.servings__step {
+  width: 2rem;
+  color: var(--fr-brass);
+  font-family: var(--fr-font-label);
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.servings__step:hover:not(:disabled) {
+  background-color: var(--fr-ink-raised);
+  color: var(--fr-brass-bright);
+}
+
+.servings__step:disabled {
+  color: var(--fr-bone-faint);
+  cursor: default;
+}
+
+.servings__readout {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.35em;
+  padding: var(--fr-space-2xs) var(--fr-space-sm);
+  border-inline: 1px solid var(--fr-rule-strong);
+}
+
+.servings__value {
+  color: var(--fr-bone);
+  font-family: var(--fr-font-display);
+  font-size: 1.375rem;
+  font-variant-numeric: tabular-nums lining-nums;
+  line-height: 1;
+}
+
+.servings__unit {
+  color: var(--fr-bone-muted);
+  font-family: var(--fr-font-label);
+  font-size: var(--fr-size-label);
+  font-weight: 500;
+  letter-spacing: var(--fr-track-label);
+  text-transform: uppercase;
+}
+
+/* -- Scale note ------------------------------------------------------------ */
+.recipe-tools__note {
+  margin-block: var(--fr-space-2xs) 0;
+  max-width: none;
+  color: var(--fr-brass);
+  font-size: var(--fr-size-body-sm);
+  font-style: italic;
+}
+
+/* -- Cook Mode ------------------------------------------------------------- */
+/*
+ * A full-viewport overlay on the deepest ground. `position: fixed` with inset 0
+ * rather than a dialog element, because the panel must work in browsers without
+ * <dialog> support and the JS already manages focus, Escape and the arrow keys.
+ */
+.cook-mode {
+  position: fixed;
+  z-index: 500;
+  inset: 0;
+  overflow-y: auto;
+  background-color: var(--fr-ink-deep);
+}
+
+.cook-mode__inner {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--fr-space-lg);
+  width: 100%;
+  max-width: 44rem;
+  min-height: 100%;
+  margin-inline: auto;
+  padding: var(--fr-space-2xl) var(--fr-space-md);
+}
+
+.cook-mode__close {
+  position: absolute;
+  inset-block-start: var(--fr-space-md);
+  inset-inline-end: var(--fr-space-md);
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 1px solid var(--fr-rule-strong);
+  color: var(--fr-bone-muted);
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.cook-mode__close:hover {
+  border-color: var(--fr-brass-dim);
+  color: var(--fr-brass);
+}
+
+.cook-mode__progress {
+  margin: 0;
+  max-width: none;
+  color: var(--fr-brass);
+  font-family: var(--fr-font-label);
+  font-size: var(--fr-size-label);
+  font-weight: 500;
+  letter-spacing: var(--fr-track-label);
+  text-transform: uppercase;
+}
+
+.cook-mode__nav {
+  display: flex;
+  gap: var(--fr-space-2xs);
+  margin-block-start: auto;
+}
+
+.cook-mode__nav .btn-action:disabled {
+  border-color: var(--fr-rule);
+  color: var(--fr-bone-faint);
+  cursor: default;
+}
+
+/*
+ * One step at a time. The inactive steps are dimmed rather than hidden, so the
+ * user keeps the context of where they are in the method — and so the list
+ * still reads as a list to assistive tech.
+ */
+.cook-mode__steps .method__step {
+  border-block-end: 0;
+  color: var(--fr-bone-faint);
+  font-size: var(--fr-size-body-sm);
+  transition: color var(--fr-duration) var(--fr-ease);
+}
+
+.cook-mode__steps .method__step.is-active {
+  color: var(--fr-bone);
+  font-family: var(--fr-font-display);
+  font-size: clamp(1.5rem, 3.5vw, 2rem);
+  line-height: 1.25;
+}
+
+/*
+ * Stops the page behind the overlay scrolling. The JS adds this class to
+ * <html> when Cook Mode opens.
+ */
+.cook-mode-active {
+  overflow: hidden;
+}

@@ -1,0 +1,36 @@
+{#
+/**
+ * @file
+ * Thumb strip molecule. See thumb-strip.component.yml for the contract.
+ *
+ * Thumbnails are decorative — the title beside each one is the link text — so
+ * they carry an empty alt rather than a repeat of the title. An empty alt is
+ * the correct value here, not a missing one; a missing alt makes a screen
+ * reader read out the filename.
+ */
+#}
+{% if items is not empty %}
+  {% set label = label|default('Cook next'|t) %}
+  <nav{{ attributes.addClass('thumb-strip') }} aria-label="{{ label }}">
+    {{ include('flavourful:micro-label', {
+      text: label,
+      tone: 'muted',
+      tag: 'p',
+    }, with_context = false) }}
+
+    <ul class="thumb-strip__list">
+      {% for item in items %}
+        <li class="thumb-strip__item">
+          <a class="thumb-strip__link" href="{{ item.url }}">
+            <span class="thumb-strip__thumb">
+              {% if item.image %}
+                <img src="{{ item.image }}" alt="" width="40" height="40" loading="lazy">
+              {% endif %}
+            </span>
+            <span class="thumb-strip__title">{{ item.title }}</span>
+          </a>
+        </li>
+      {% endfor %}
+    </ul>
+  </nav>
+{% endif %}

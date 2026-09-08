@@ -1,8 +1,12 @@
 // =============================================================================
 // recipes.scss  ->  css/recipes.css
 // -----------------------------------------------------------------------------
-// Styling for the /recipes listing and recipe cards. Attached only where needed
-// via the `flavourful/recipes` library, using `{{ attach_library() }}` from the
-// recipes View templates.
+// Page-level arrangement for the recipe pages and listings: the listing grid
+// and its filters, the homepage bands, the recipe detail stack.
+//
+// Attached on demand via the `flavourful/recipes` library from the templates
+// that need it, so none of it loads on an admin page. The components those
+// layouts arrange bring their own CSS with them (SDC attaches it per render),
+// which is why this file is as small as it is.
 // =============================================================================
 @use 'components';

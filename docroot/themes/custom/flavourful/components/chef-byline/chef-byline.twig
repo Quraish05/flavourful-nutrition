@@ -1,0 +1,35 @@
+{#
+/**
+ * @file
+ * Chef byline molecule. See chef-byline.component.yml for the contract.
+ *
+ * The avatar is decorative: the chef's name sits right beside it in text, so an
+ * announced portrait would just repeat it. The slot content is therefore
+ * wrapped in an aria-hidden element — note this means the image field's own alt
+ * text is suppressed here by design.
+ */
+#}
+<div{{ attributes.addClass('chef-byline') }}>
+
+  {# Inline-block capture — see the note in hero-feature.twig. #}
+  {% set avatar %}{% block avatar %}{% endblock %}{% endset %}
+  <span class="chef-byline__avatar" aria-hidden="true">
+    {{- avatar|trim is not empty ? avatar : '' -}}
+  </span>
+
+  <span class="chef-byline__name">
+    {%- if url %}
+      <a href="{{ url }}" rel="author">{{ name }}</a>
+    {%- else %}
+      {{ name }}
+    {%- endif %}
+  </span>
+
+  {% if rating is not null %}
+    {{ include('flavourful:rating-stars', {
+      value: rating,
+      count: rating_count,
+    }, with_context = false) }}
+  {% endif %}
+
+</div>

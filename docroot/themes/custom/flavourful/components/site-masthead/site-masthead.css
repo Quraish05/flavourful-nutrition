@@ -1,0 +1,293 @@
+/**
+ * Site masthead molecule.
+ *
+ * Layout note: `centered` cannot be done with a plain 3-column grid, because
+ * the wordmark has to be centred on the *page*, not on the space left over
+ * after two nav groups of unequal width. So the two nav columns are given
+ * equal flex basis and the wordmark takes its natural width between them.
+ */
+.masthead {
+  border-block-end: 1px solid var(--fr-rule);
+  background-color: var(--fr-ink);
+}
+
+.masthead__inner {
+  display: flex;
+  align-items: center;
+  gap: var(--fr-space-md);
+  width: 100%;
+  max-width: var(--fr-container-max);
+  margin-inline: auto;
+  padding: var(--fr-space-sm);
+}
+
+@media (min-width: 48rem) {
+  .masthead__inner {
+    padding: var(--fr-space-md) var(--fr-space-lg);
+  }
+}
+
+/* -- Wordmark -------------------------------------------------------------- */
+.masthead__wordmark {
+  margin: 0;
+  max-width: none; /* Overrides the 68ch prose cap on <p>. */
+}
+
+.masthead__wordmark-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35em;
+  color: var(--fr-bone);
+  text-decoration: none;
+}
+
+.masthead__name {
+  font-family: var(--fr-font-display);
+  /*
+   * Fluid, because the site name is arbitrary-length text and 0.34em of tracking
+   * multiplies its width — an 18-character name at a fixed 1.5rem is ~390px
+   * before padding, which leaves no margin for error on a phone. The floor is
+   * the smallest size the display face still reads as a wordmark at.
+   */
+  font-size: clamp(1.0625rem, 4.5vw, 1.5rem);
+  font-weight: 400;
+  /* The wide tracking *is* the wordmark. Padding-inline-start compensates for
+     the trailing letter-space, which would otherwise push it off-centre. */
+  letter-spacing: var(--fr-track-wide);
+  line-height: 1.15;
+  padding-inline-start: var(--fr-track-wide);
+  text-transform: uppercase;
+  /* Wraps rather than overflows on a narrow screen; `balance` keeps the two
+     lines even rather than leaving one word alone on the second. */
+  text-wrap: balance;
+}
+
+@media (min-width: 48rem) {
+  .masthead--centered .masthead__name {
+    font-size: clamp(1.5rem, 3.2vw, 2.125rem);
+  }
+}
+
+/*
+ * "Est. 2019" with a rule either side. The rules are pseudo-elements on a flex
+ * row, so they always fill the leftover width whatever the caption says.
+ */
+.masthead__established {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  width: 100%;
+  color: var(--fr-brass);
+  font-family: var(--fr-font-label);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: var(--fr-track-label);
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.masthead__established::before,
+.masthead__established::after {
+  content: '';
+  flex: 1 1 auto;
+  height: 1px;
+  background-color: var(--fr-brass-dim);
+}
+
+/* -- Navigation slots ------------------------------------------------------ */
+.masthead__nav {
+  display: flex;
+  align-items: center;
+  gap: var(--fr-space-md);
+  /* See the note on .category-bar__list: a flex item needs this spelled out
+     before it will shrink below its content's intrinsic width. */
+  min-width: 0;
+}
+
+.masthead__nav:empty,
+.masthead__actions:empty {
+  display: none;
+}
+
+.masthead__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--fr-space-2xs);
+}
+
+/*
+ * Menu blocks dropped into the slots: strip the block chrome and set the items
+ * as tracked uppercase labels. Scoped under .masthead so it cannot reach the
+ * footer or a sidebar menu.
+ */
+.masthead__nav .block {
+  margin: 0;
+}
+
+.masthead__nav ul {
+  display: flex;
+  align-items: center;
+  gap: var(--fr-space-md);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.masthead__nav li {
+  margin: 0;
+}
+
+.masthead__nav a {
+  position: relative;
+  display: block;
+  padding-block: 0.25em;
+  color: var(--fr-bone-muted);
+  font-family: var(--fr-font-label);
+  font-size: var(--fr-size-label-lg);
+  font-weight: 500;
+  letter-spacing: var(--fr-track-label);
+  text-decoration: none;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.masthead__nav a:hover {
+  color: var(--fr-bone);
+}
+
+/*
+ * Active trail: a brass underline plus a colour change. Core sets
+ * .is-active / .is-active-trail on menu links. The underline is what carries
+ * the state — colour alone would leave it invisible to anyone who cannot
+ * distinguish brass from bone (WCAG 1.4.1).
+ */
+.masthead__nav a.is-active,
+.masthead__nav a.is-active-trail {
+  color: var(--fr-brass);
+}
+
+.masthead__nav a.is-active::after,
+.masthead__nav a.is-active-trail::after {
+  content: '';
+  position: absolute;
+  inset-block-end: 0;
+  inset-inline: 0;
+  height: 1px;
+  background-color: var(--fr-brass);
+}
+
+/* -- Layout: centered ------------------------------------------------------ */
+/*
+ * Equal flex basis on both nav columns is what actually centres the wordmark.
+ * `min-width: 0` lets them shrink below their content width instead of shoving
+ * the wordmark sideways.
+ */
+.masthead--centered .masthead__nav {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.masthead--centered .masthead__nav--end {
+  justify-content: flex-end;
+}
+
+.masthead--centered .masthead__wordmark {
+  flex: 0 0 auto;
+  order: 2;
+}
+
+.masthead--centered .masthead__nav--start {
+  order: 1;
+}
+
+.masthead--centered .masthead__nav--end {
+  order: 3;
+}
+
+.masthead--centered .masthead__actions {
+  order: 4;
+}
+
+/* -- Layout: inline -------------------------------------------------------- */
+/*
+ * Wordmark flush to the leading edge, navigation and actions pushed to the
+ * trailing one.
+ *
+ * The DOM order is nav-start, wordmark, nav-end, actions — which suits the
+ * centered layout — so `order` is what puts the wordmark first here. Relying
+ * on `margin-inline-start: auto` on the nav alone did not: with the wordmark
+ * still after it in source order, the auto margin shoved the whole group
+ * right and
+ * after it in source order, the auto margin shoved the whole group right and
+ * left a wide empty gap at the start of the row.
+ */
+.masthead--inline .masthead__wordmark {
+  order: 0;
+  margin-inline-end: auto;
+}
+
+.masthead--inline .masthead__nav--start {
+  order: 1;
+}
+
+.masthead--inline .masthead__nav--end {
+  order: 2;
+}
+
+.masthead--inline .masthead__actions {
+  order: 3;
+}
+
+.masthead--inline .masthead__wordmark-link {
+  flex-direction: row;
+  align-items: baseline;
+}
+
+.masthead--inline .masthead__name {
+  font-size: 1.375rem;
+}
+
+/* -- Narrow screens -------------------------------------------------------- */
+/*
+ * Under 64rem the row becomes: wordmark, then everything else wrapped beneath
+ * it and centred. Nothing is hidden — a hidden nav with no disclosure control
+ * is a dead end for keyboard and screen reader users alike.
+ */
+@media (max-width: 63.99rem) {
+  .masthead__inner {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .masthead--centered .masthead__wordmark,
+  .masthead--inline .masthead__wordmark {
+    order: 1;
+    flex: 1 0 100%;
+    text-align: center;
+  }
+
+  .masthead--centered .masthead__nav,
+  .masthead--inline .masthead__nav {
+    order: 2;
+    flex: 0 1 auto;
+    justify-content: center;
+  }
+
+  .masthead__nav ul {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--fr-space-sm) var(--fr-space-md);
+  }
+
+  .masthead__actions {
+    order: 3;
+    flex: 1 0 100%;
+    justify-content: center;
+  }
+
+  .masthead--inline .masthead__nav--start,
+  .masthead--inline .masthead__actions {
+    margin-inline-start: 0;
+  }
+}

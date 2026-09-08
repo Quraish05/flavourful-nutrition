@@ -2,6 +2,13 @@
 /**
  * @file
  * Tag pill atom. See tag-pill.component.yml for the props contract.
+ *
+ * Renders an <a> when a url is supplied and a <span> otherwise, rather than an
+ * <a href="#"> placeholder — a link that goes nowhere is announced as a link
+ * and lands in the tab order for no reason.
  */
 #}
-<span{{ attributes.addClass('pill') }}>{{ label }}</span>
+{% set tag = url ? 'a' : 'span' %}
+<{{ tag }}
+  {{ attributes.addClass('pill', 'pill--' ~ variant|default('outline')) }}
+  {%- if url %} href="{{ url }}"{% endif %}>{{ label }}</{{ tag }}>

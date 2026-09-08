@@ -1,0 +1,22 @@
+$schema: 'https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json'
+name: Pairing note
+status: stable
+description: >-
+  Molecule — the ruled aside carrying an editorial note, labelled on its
+  leading edge ("To drink — something with acid and no oak").
+
+  Rendered as an <aside> with its label as the accessible name, so it is
+  reachable as a complementary landmark rather than being read as an
+  unexplained fragment of the method.
+props:
+  type: object
+  required: [label, text]
+  properties:
+    label:
+      type: string
+      title: Label
+      description: 'The edge label, e.g. "To drink", "Make ahead".'
+    text:
+      type: string
+      title: Text
+      description: 'The note itself. May contain inline markup.'

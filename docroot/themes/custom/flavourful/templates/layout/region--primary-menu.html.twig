@@ -1,0 +1,21 @@
+{#
+/**
+ * @file
+ * The primary-menu region — content only, no wrapper.
+ *
+ * Overrides Olivero's same-named template, which this theme would otherwise
+ * inherit. Olivero's version of region--header injects a stray
+ * `<div class="header-nav-overlay">` for its mobile navigation, and its
+ * breadcrumb/content variants add `grid-full` and
+ * `layout--pass--content-medium` — classes belonging to a grid system this
+ * theme does not use.
+ *
+ * No wrapper element at all: this region's content is placed directly into a
+ * flex slot of the site-masthead or utility-bar component, and the blocks inside
+ * already bring their own semantics (a menu block renders its own labelled
+ * <nav>). An extra div here would only add a flex child to style around.
+ *
+ * @see \Drupal\Core\Theme\ThemePreprocess::preprocessRegion()
+ */
+#}
+{{ content }}

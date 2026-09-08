@@ -1,0 +1,35 @@
+$schema: 'https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json'
+name: Chef byline
+status: stable
+description: >-
+  Molecule — the attribution row under a recipe headline: an avatar, the chef's
+  name, and optionally a rating and a "cooked it" tally.
+
+  Rating and count have no fields in the content model yet; both are optional
+  props and the row simply gets shorter without them.
+props:
+  type: object
+  required: [name]
+  properties:
+    name:
+      type: string
+      title: Chef name
+    url:
+      type: string
+      title: URL
+      description: 'Link to the chef''s profile. Omitted, the name renders as text.'
+    rating:
+      type: number
+      title: Rating
+      minimum: 0
+    rating_count:
+      type: integer
+      title: Rating count
+      description: 'How many cooks rated it — the design''s "128 cooked it".'
+      minimum: 0
+slots:
+  avatar:
+    title: Avatar
+    description: >-
+      A rendered image field for the chef''s portrait. With nothing here a
+      ruled circle stands in, matching the design''s empty avatar.

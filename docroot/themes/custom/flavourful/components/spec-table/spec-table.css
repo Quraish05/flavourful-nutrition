@@ -1,0 +1,66 @@
+/**
+ * Spec table molecule.
+ * An auto-fit grid rather than fixed columns, so three items fill the width as
+ * evenly as four and nothing has to know the count.
+ */
+/*
+ * The rules between cells are drawn by a 1px grid gap letting the container's
+ * background show through, not by borders on the cells.
+ *
+ * Borders only work while the cells sit in a single row. This is an auto-fit
+ * grid, so four cells in a narrow column wrap to 2x2 — and then
+ * "border-inline-start on every cell but the first" leaves a stray vertical
+ * rule at the start of the second row and no horizontal rule between the rows
+ * at all. The gap technique is correct at any wrap, in both axes, with no
+ * nth-child arithmetic.
+ */
+.spec-table {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(7rem, 1fr));
+  gap: 1px;
+  margin: 0;
+  border-block: 1px solid var(--fr-rule-strong);
+  background-color: var(--fr-rule-strong);
+}
+
+.spec-table__cell {
+  display: flex;
+  flex-direction: column;
+  gap: var(--fr-space-3xs);
+  padding: var(--fr-space-xs) var(--fr-space-sm);
+  /* Covers the container colour, leaving only the 1px gaps showing. */
+  background-color: var(--fr-ink);
+}
+
+.spec-table__label {
+  color: var(--fr-bone-muted);
+  font-family: var(--fr-font-label);
+  font-size: var(--fr-size-label);
+  font-weight: 500;
+  letter-spacing: var(--fr-track-label);
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.spec-table__value {
+  margin: 0;
+  color: var(--fr-bone);
+  font-family: var(--fr-font-display);
+  font-size: 1.625rem;
+  line-height: 1.1;
+  /*
+   * Lining tabular figures here, against the body default of oldstyle
+   * proportional: these numbers sit in a column and must align, and oldstyle
+   * digits have descenders that make "4 hr" look misaligned with "Medium".
+   */
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+.spec-table__suffix {
+  color: var(--fr-bone-muted);
+  font-family: var(--fr-font-label);
+  font-size: var(--fr-size-label);
+  font-weight: 500;
+  letter-spacing: var(--fr-track-label);
+  text-transform: uppercase;
+}

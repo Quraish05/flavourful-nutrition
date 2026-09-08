@@ -1,37 +1,251 @@
 // =============================================================================
 // Base typography & document
+// -----------------------------------------------------------------------------
+// Element-level defaults only. Anything with a class belongs in a component or
+// in the layout layer — this file exists so unstyled content (a body field, an
+// admin form, a module's markup) already looks like it belongs to Cellar.
 // =============================================================================
 @use '../abstracts' as *;
 
 body {
   margin: 0;
-  background-color: var(--fr-color-cream);
-  color: var(--fr-color-ink);
+  background-color: var(--fr-ink);
+  color: var(--fr-bone);
   font-family: var(--fr-font-body);
   font-size: $font-size-base;
+  letter-spacing: $track-body;
   line-height: $line-height-base;
+  // Garamond's default lining figures are wide and uneven in tables; oldstyle
+  // proportional figures suit the running prose, and the spec table opts back
+  // into tabular lining locally where columns must align.
+  font-variant-numeric: oldstyle-nums proportional-nums;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
+// -- Headings -----------------------------------------------------------------
+// All display serif, all tight. Sizes step down through the display tokens;
+// h5/h6 drop to the uppercase label treatment because at that size the serif
+// stops reading as a heading at all.
 h1,
 h2,
 h3,
 h4 {
-  font-family: var(--fr-font-heading);
-  line-height: 1.2;
-  color: var(--fr-color-ink);
+  margin-block: 0 $space-md;
+  color: var(--fr-bone);
+  font-family: var(--fr-font-display);
+  font-weight: 400;
+  letter-spacing: $track-tight;
+  line-height: 1.1;
+  text-wrap: balance; // Avoids a one-word last line on wrapped headlines.
 }
 
-a {
-  color: var(--fr-color-paprika-dark);
-  text-decoration: none;
+h1 {
+  font-size: $size-display-lg;
+}
 
-  &:hover,
-  &:focus {
-    text-decoration: underline;
+h2 {
+  font-size: $size-display-md;
+}
+
+h3 {
+  font-size: 1.5rem;
+}
+
+h4 {
+  font-size: 1.25rem;
+}
+
+h5,
+h6 {
+  @include label-type($size-label-lg);
+  margin-block: 0 $space-2xs;
+  color: var(--fr-brass);
+}
+
+// -- Prose --------------------------------------------------------------------
+p {
+  margin-block: 0 $space-md;
+  // Keeps running prose readable regardless of the container it lands in.
+  // 66ch rather than 75ch because this face sets wide at 18px.
+  max-width: 66ch;
+}
+
+// A serif italic is the design's emphasis, and the real italic file is loaded
+// for it. Nothing here sets bold serif — the family has no true bold cut.
+em,
+i {
+  font-style: italic;
+}
+
+strong,
+b {
+  font-weight: 600;
+}
+
+blockquote {
+  margin-block: $space-lg;
+  margin-inline: 0;
+  padding-inline-start: $space-md;
+  @include rule('inline-start', $color-brass-dim);
+  color: var(--fr-bone-muted);
+  font-size: $size-body-lg;
+  font-style: italic;
+}
+
+hr {
+  height: 0;
+  margin-block: $space-lg;
+  border: 0;
+  @include rule('block-start');
+}
+
+// -- Links --------------------------------------------------------------------
+// Brass, underlined on hover only. Cellar underlines almost nothing by default,
+// so inside prose the underline is restored below — a link in a paragraph must
+// be distinguishable without relying on colour alone (WCAG 1.4.1).
+a {
+  color: var(--fr-brass);
+  text-decoration: none;
+  transition: color var(--fr-duration) var(--fr-ease);
+
+  &:hover {
+    color: var(--fr-brass-bright);
+  }
+
+  &:focus-visible {
+    @include focus-ring;
   }
 }
 
+// Links in running prose keep a permanent underline: colour is not enough when
+// the link sits mid-sentence with no other affordance.
+p a,
+li a,
+blockquote a {
+  text-decoration: underline;
+  text-decoration-color: var(--fr-brass-dim);
+  text-underline-offset: 0.15em;
+
+  &:hover {
+    text-decoration-color: currentColor;
+  }
+}
+
+// -- Lists --------------------------------------------------------------------
+ul,
+ol {
+  margin-block: 0 $space-sm;
+  padding-inline-start: $space-md;
+}
+
+li {
+  margin-block-end: $space-2xs;
+}
+
+// -- Tables -------------------------------------------------------------------
+table {
+  width: 100%;
+  margin-block-end: $space-md;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+th {
+  @include label-type;
+  padding: $space-2xs $space-xs;
+  @include rule('block-end', $color-rule-strong);
+  color: var(--fr-bone-muted);
+  text-align: start;
+}
+
+td {
+  padding: $space-2xs $space-xs;
+  @include rule;
+}
+
+// -- Forms --------------------------------------------------------------------
+// Enough to stop core's form markup looking foreign on a dark ground. Views
+// exposed filters get their own treatment in the listing layout.
+label {
+  @include label-type;
+  display: inline-block;
+  margin-block-end: $space-3xs;
+  color: var(--fr-bone-muted);
+}
+
+input,
+select,
+textarea {
+  padding: $space-xs $space-sm;
+  border: 1px solid var(--fr-rule-strong);
+  border-radius: var(--fr-radius-sm);
+  background-color: var(--fr-ink-deep);
+  color: var(--fr-bone);
+  font-family: var(--fr-font-label);
+  font-size: $size-label-lg;
+  letter-spacing: 0.02em;
+
+  &:focus-visible {
+    @include focus-ring;
+    border-color: var(--fr-brass-dim);
+  }
+}
+
+// The native select keeps its own light dropdown button on macOS whatever the
+// background is set to, so the control is reset and the chevron redrawn as an
+// inline SVG in brass. `appearance: none` needs the extra inline-end padding to
+// keep the value clear of that arrow.
+select {
+  appearance: none;
+  padding-inline-end: $space-xl;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath fill='none' stroke='%23c9a24a' stroke-width='1.4' d='M1 1l4 4 4-4'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right $space-sm center;
+
+  // The dropdown list itself is drawn by the OS, not by CSS. Setting an explicit
+  // colour pair is what stops it rendering white-on-white in the browsers that
+  // do honour it.
+  option {
+    background-color: $color-ink-deep;
+    color: $color-bone;
+  }
+}
+
+// A right-hand background-position is wrong under RTL.
+[dir='rtl'] select {
+  background-position: left $space-sm center;
+}
+
+::placeholder {
+  color: var(--fr-bone-faint);
+}
+
+// -- Utilities ----------------------------------------------------------------
 .visually-hidden {
   @include visually-hidden;
+}
+
+// Core adds `.focusable` to the skip link so it reveals itself on focus.
+.visually-hidden.focusable:focus,
+.visually-hidden.focusable:focus-within {
+  position: static !important;
+  overflow: visible;
+  clip: auto;
+  width: auto;
+  height: auto;
+  margin: 0;
+  white-space: inherit;
+}
+
+.skip-link {
+  @include label-type;
+  position: absolute;
+  z-index: 100;
+  inset-block-start: 0;
+  inset-inline-start: 0;
+  padding: $space-2xs $space-sm;
+  background-color: var(--fr-brass);
+  color: var(--fr-ink);
+  text-decoration: none;
 }

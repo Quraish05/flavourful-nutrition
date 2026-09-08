@@ -1,29 +1,57 @@
 // =============================================================================
 // Page layout
+// -----------------------------------------------------------------------------
+// The page shell only: full-bleed header/footer bands, the content container,
+// and the sidebar columns. Everything with an editorial look is a component in
+// components/ — nothing in this file should know what a recipe is.
 // =============================================================================
+@use 'sass:map';
 @use '../abstracts' as *;
 
-.page-wrapper {
-  display: block;
+.layout-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
 
-// `main` becomes the three-column shell: left sidebar · content · right
-// sidebar. The regions are declared in flavourful.info.yml and rendered by
+// The header band runs edge to edge; its children (utility bar, masthead,
+// category bar) each hold their own centred inner container, which is what
+// lets the band's rules reach the viewport edge as they do in the design.
+.page-header {
+  position: relative;
+  z-index: 10;
+}
+
+// -- Main -------------------------------------------------------------------
+// `main` is the three-column shell: left sidebar · content · right sidebar.
+// The regions are declared in flavourful.info.yml and rendered by
 // templates/layout/page.html.twig in the DOM order content → sidebar_first →
 // sidebar_second; flex `order` puts them back in visual left-to-right order.
 // Absent sidebars collapse gracefully — content simply takes the freed space.
-main {
+.page-main {
   @include container;
-  padding-block: $space-lg;
+  flex: 1 0 auto;
   display: flex;
   flex-direction: column;
-  gap: $space-md;
+  gap: $space-lg;
+  padding-block: $space-lg;
 
   @include respond-to('lg') {
     flex-direction: row;
     align-items: flex-start;
-    gap: $space-xl;
+    gap: $space-2xl;
     padding-block: $space-xl;
+  }
+}
+
+// A full-bleed page opts out of the container so a hero can reach the viewport
+// edge. Added by page.html.twig on the node types that want it.
+.page-main--bleed {
+  max-width: none;
+  padding-inline: 0;
+
+  @include respond-to('md') {
+    padding-inline: 0;
   }
 }
 
@@ -37,7 +65,7 @@ main {
   order: 1;
 
   @include respond-to('lg') {
-    flex: 0 0 15rem;
+    flex: 0 0 14rem;
   }
 }
 
@@ -45,42 +73,266 @@ main {
   order: 3;
 
   @include respond-to('lg') {
-    flex: 0 0 18rem;
+    flex: 0 0 17rem;
   }
 }
 
-// Sidebar surfacing: each block reads as a distinct card so the sidebars feel
-// intentional rather than a loose stack of links.
+// -- Sidebars ---------------------------------------------------------------
+// Cellar has no card surfaces: a sidebar block is separated by a hairline rule
+// and a tracked uppercase title, nothing more. This is the deliberate opposite
+// of the previous theme, which boxed each block — don't reintroduce the box.
 .layout-sidebar-first,
 .layout-sidebar-second {
   display: flex;
   flex-direction: column;
-  gap: $space-md;
+  gap: $space-lg;
 
-  .block {
-    padding: $space-md;
-    background: $color-white;
-    border: 1px solid $color-line;
-    border-radius: $radius-md;
-    box-shadow: $shadow-card;
+  .block + .block {
+    padding-block-start: $space-lg;
+    @include rule('block-start');
   }
 
   .block__title,
-  h2 {
+  h2,
+  h3 {
+    @include label-type;
     margin-block: 0 $space-sm;
-    font-family: $font-heading;
-    font-size: 1.1rem;
-    color: $color-ink;
+    color: $color-brass;
   }
 
   // Sidebar link/item lists: airy, no default bullets.
   ul {
-    margin: 0;
-    padding: 0;
-    list-style: none;
+    @include bare-list;
   }
 
   li + li {
-    margin-top: $space-2xs;
+    margin-block-start: $space-2xs;
+    padding-block-start: $space-2xs;
+    @include rule('block-start');
+  }
+
+  a {
+    color: $color-bone;
+    text-decoration: none;
+    font-size: 0.9375rem;
+
+    &:hover {
+      color: $color-brass;
+    }
+  }
+}
+
+// -- Regions ----------------------------------------------------------------
+// The highlighted and help regions sit between the header and main, so they
+// need the same gutters main has.
+.region-highlighted,
+.region-help {
+  @include container;
+  padding-block: $space-sm;
+}
+
+// -- Breadcrumb -------------------------------------------------------------
+// Sits in its own row under the category bar. The region template emits no
+// wrapper, so the gutter and the band have to come from here — without them the
+// trail ran hard against the viewport edge.
+.breadcrumb {
+  @include container;
+  padding-block: $space-sm;
+
+  // No rule here on purpose. Every bar above the breadcrumb is full-bleed, and
+  // a rule inside a max-width container stops short of the viewport edge — it
+  // read as a line that had failed to reach the end rather than as a band.
+  ol {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: $space-2xs;
+    @include bare-list;
+  }
+
+  li {
+    display: flex;
+    align-items: center;
+    gap: $space-2xs;
+    margin: 0;
+  }
+
+  // A middot before every item but the first. A pseudo-element rather than a
+  // literal character, so it is never announced between crumbs.
+  li + li::before {
+    content: '·';
+    color: $color-bone-faint;
+  }
+
+  a,
+  li {
+    color: $color-bone-muted;
+    font-family: $font-label;
+    font-size: $size-label;
+    font-weight: 500;
+    letter-spacing: $track-label;
+    text-decoration: none;
+    text-transform: uppercase;
+  }
+
+  a:hover {
+    color: $color-brass;
+  }
+}
+
+// -- Page title -------------------------------------------------------------
+// The page-title block on listing and admin pages. Node pages render their own
+// heading inside the hero component and hide this via the block's visibility
+// settings, so this only ever styles the generic case.
+.page-title {
+  @include display-type($size-display-lg);
+  margin-block: 0 $space-md;
+  color: $color-bone;
+}
+
+// -- Local tasks (admin tabs) -----------------------------------------------
+// Not part of the design, but they appear over content for any editor. Given
+// just enough treatment that they read as chrome rather than as page content.
+.tabs {
+  margin-block-end: $space-lg;
+
+  ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $space-2xs;
+    @include bare-list;
+    @include rule;
+  }
+
+  li {
+    margin: 0;
+  }
+
+  a {
+    @include label-type;
+    display: block;
+    padding: $space-2xs $space-sm;
+    color: $color-bone-muted;
+    text-decoration: none;
+
+    &:hover {
+      color: $color-bone;
+    }
+
+    &.is-active {
+      @include rule('block-end', $color-brass);
+      color: $color-brass;
+    }
+  }
+}
+
+// -- Node links -------------------------------------------------------------
+// The "Read more" list under a teaser. Previously came from the starterkit's
+// links.css, which set `color: #000` on the active link — black on a near-black
+// ground. Styled here instead, as a tracked label rather than a bullet list.
+.links.inline {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-2xs $space-sm;
+  @include bare-list;
+
+  li {
+    margin: 0;
+  }
+
+  a {
+    @include label-type;
+    color: $color-brass;
+    text-decoration: none;
+
+    &:hover {
+      color: $color-brass-bright;
+    }
+  }
+}
+
+// -- Pager ------------------------------------------------------------------
+.pager {
+  margin-block-start: $space-xl;
+  padding-block-start: $space-md;
+  @include rule('block-start');
+
+  &__items {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: $space-2xs;
+    @include bare-list;
+  }
+
+  &__item {
+    margin: 0;
+  }
+
+  a,
+  .pager__item--current {
+    @include label-type;
+    display: block;
+    min-width: 2.25rem;
+    padding: $space-2xs;
+    border: 1px solid $color-rule;
+    color: $color-bone-muted;
+    text-align: center;
+    text-decoration: none;
+    font-variant-numeric: lining-nums;
+  }
+
+  a:hover {
+    border-color: $color-brass-dim;
+    color: $color-brass;
+  }
+
+  // The current page. Brass border *and* brass text, plus aria-current in the
+  // markup — core's pager template already sets it.
+  &__item--current {
+    border-color: $color-brass;
+    color: $color-brass;
+  }
+}
+
+// -- Powered by Drupal ------------------------------------------------------
+// The credit block, if an editor leaves it placed. Set as a tracked label so it
+// reads as a footer credit rather than as a line of the site's prose.
+.powered-by {
+  @include label-type;
+  color: $color-bone-faint;
+
+  a {
+    color: $color-bone-muted;
+    text-decoration: none;
+
+    &:hover {
+      color: $color-brass;
+    }
+  }
+}
+
+// -- Status messages --------------------------------------------------------
+// Left-edge accent rules instead of coloured fills, which would be the only
+// large blocks of saturated colour on the site.
+.messages {
+  margin-block-end: $space-md;
+  padding: $space-sm $space-md;
+  background-color: $color-ink-raised;
+  @include rule('inline-start', $color-brass);
+
+  // The difficulty map holds the only red in the palette; an error message
+  // wants that same red rather than a second one defined here.
+  &--error {
+    border-inline-start-color: map.get($difficulty-colors, 'expert');
+  }
+
+  &--warning {
+    border-inline-start-color: map.get($difficulty-colors, 'medium');
+  }
+
+  &--status {
+    border-inline-start-color: map.get($difficulty-colors, 'easy');
   }
 }

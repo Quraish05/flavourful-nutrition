@@ -1,46 +1,81 @@
 // =============================================================================
 // Root custom properties
 // -----------------------------------------------------------------------------
-// Expose the Sass design tokens as CSS custom properties so they can be reused
-// at runtime (e.g. from Twig inline styles or other libraries) and overridden
-// per-section without a recompile.
+// The bridge between the Sass token layer and everything that cannot @use it:
+// SDC CSS files (which live outside scss/ and compile on their own), Twig inline
+// styles, and other libraries. Every SDC in components/ reads --fr-* only —
+// none of them hardcode a colour.
+//
+// Adding a token means adding it here as well as in abstracts/_variables.scss.
 // =============================================================================
 @use 'sass:map';
 @use '../abstracts' as *;
 
 :root {
-  // Colour.
-  --fr-color-paprika: #{$color-paprika};
-  --fr-color-paprika-dark: #{$color-paprika-dark};
-  --fr-color-basil: #{$color-basil};
-  --fr-color-saffron: #{$color-saffron};
-  --fr-color-ink: #{$color-ink};
-  --fr-color-slate: #{$color-slate};
-  --fr-color-line: #{$color-line};
-  --fr-color-cream: #{$color-cream};
-  --fr-color-white: #{$color-white};
+  // Tell the browser this is a dark page, so form controls, scrollbars and
+  // the canvas behind the body all render dark without further styling.
+  color-scheme: dark;
 
-  // Difficulty accents.
+  // -- Ground -----------------------------------------------------------------
+  --fr-ink: #{$color-ink};
+  --fr-ink-raised: #{$color-ink-raised};
+  --fr-ink-deep: #{$color-ink-deep};
+
+  // -- Brass ------------------------------------------------------------------
+  --fr-brass: #{$color-brass};
+  --fr-brass-bright: #{$color-brass-bright};
+  --fr-brass-dim: #{$color-brass-dim};
+
+  // -- Warm neutrals ----------------------------------------------------------
+  --fr-bone: #{$color-bone};
+  --fr-bone-muted: #{$color-bone-muted};
+  --fr-bone-faint: #{$color-bone-faint};
+  --fr-rule: #{$color-rule};
+  --fr-rule-strong: #{$color-rule-strong};
+
+  // -- Difficulty accents -----------------------------------------------------
   @each $level, $value in $difficulty-colors {
     --fr-difficulty-#{$level}: #{$value};
   }
 
-  // Typography.
+  // -- Typography -------------------------------------------------------------
+  --fr-font-display: #{$font-display};
   --fr-font-body: #{$font-body};
-  --fr-font-heading: #{$font-heading};
+  --fr-font-label: #{$font-label};
 
-  // Spacing.
+  --fr-track-label: #{$track-label};
+  --fr-track-wide: #{$track-wide};
+  --fr-track-body: #{$track-body};
+  --fr-track-tight: #{$track-tight};
+
+  --fr-size-body: #{$size-body};
+  --fr-size-body-sm: #{$size-body-sm};
+  --fr-size-body-lg: #{$size-body-lg};
+
+  --fr-size-display-xl: #{$size-display-xl};
+  --fr-size-display-lg: #{$size-display-lg};
+  --fr-size-display-md: #{$size-display-md};
+  --fr-size-display-sm: #{$size-display-sm};
+  --fr-size-label: #{$size-label};
+  --fr-size-label-lg: #{$size-label-lg};
+
+  // -- Spacing ----------------------------------------------------------------
+  --fr-space-3xs: #{$space-3xs};
   --fr-space-2xs: #{$space-2xs};
   --fr-space-xs: #{$space-xs};
   --fr-space-sm: #{$space-sm};
   --fr-space-md: #{$space-md};
   --fr-space-lg: #{$space-lg};
   --fr-space-xl: #{$space-xl};
+  --fr-space-2xl: #{$space-2xl};
+  --fr-space-3xl: #{$space-3xl};
 
-  // Radii & elevation.
+  // -- Edges & motion ---------------------------------------------------------
   --fr-radius-sm: #{$radius-sm};
-  --fr-radius-md: #{$radius-md};
-  --fr-radius-lg: #{$radius-lg};
-  --fr-shadow-card: #{$shadow-card};
-  --fr-shadow-card-hover: #{$shadow-card-hover};
+  --fr-shadow-lift: #{$shadow-lift};
+  --fr-duration: #{$duration};
+  --fr-ease: #{$ease};
+
+  // -- Layout -----------------------------------------------------------------
+  --fr-container-max: #{$container-max};
 }

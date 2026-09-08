@@ -4,14 +4,35 @@
  */
 .pill {
   display: inline-block;
-  padding: 0.25rem var(--fr-space-xs);
-  border-radius: 999px;
-  background-color: var(--fr-color-cream);
-  border: 1px solid var(--fr-color-line);
-  color: var(--fr-color-slate);
-  font-family: var(--fr-font-heading);
-  font-size: 0.8rem;
-  font-weight: 700;
-  letter-spacing: 0.03em;
-  line-height: 1.4;
+  padding: 0.4em 0.7em;
+  border: 1px solid var(--fr-rule-strong);
+  color: var(--fr-bone-muted);
+  font-family: var(--fr-font-label);
+  font-size: var(--fr-size-label);
+  font-weight: 500;
+  letter-spacing: var(--fr-track-label);
+  line-height: 1;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: border-color var(--fr-duration) var(--fr-ease),
+    color var(--fr-duration) var(--fr-ease);
+}
+
+a.pill:hover {
+  border-color: var(--fr-brass-dim);
+  color: var(--fr-brass);
+}
+
+.pill--brass {
+  border-color: var(--fr-brass);
+  background-color: var(--fr-brass);
+  /* Near-black on brass, not white: 8.9:1, and white would blow out. */
+  color: var(--fr-ink);
+  font-weight: 600;
+}
+
+a.pill--brass:hover {
+  border-color: var(--fr-brass-bright);
+  background-color: var(--fr-brass-bright);
+  color: var(--fr-ink);
 }

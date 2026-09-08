@@ -1,0 +1,62 @@
+/**
+ * Thumb strip molecule.
+ */
+.thumb-strip {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--fr-space-2xs) var(--fr-space-lg);
+  padding-block: var(--fr-space-md);
+  border-block-start: 1px solid var(--fr-rule);
+}
+
+.thumb-strip .micro-label {
+  flex: 0 0 auto;
+}
+
+.thumb-strip__list {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--fr-space-sm) var(--fr-space-lg);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.thumb-strip__item {
+  margin: 0;
+}
+
+.thumb-strip__link {
+  display: flex;
+  align-items: center;
+  gap: var(--fr-space-2xs);
+  color: var(--fr-bone);
+  text-decoration: none;
+}
+
+.thumb-strip__link:hover {
+  color: var(--fr-brass);
+}
+
+.thumb-strip__thumb {
+  display: block;
+  flex: 0 0 auto;
+  overflow: hidden;
+  width: 2rem;
+  height: 2rem;
+  background-color: var(--fr-ink-raised);
+}
+
+.thumb-strip__thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.thumb-strip__title {
+  font-family: var(--fr-font-display);
+  font-size: 1.1875rem;
+  line-height: 1.2;
+}

@@ -1,0 +1,30 @@
+{#
+/**
+ * @file
+ * Section header molecule. See section-header.component.yml for the contract.
+ *
+ * The rule between the title and the link is a pseudo-element on the wrapper,
+ * so it fills whatever width is left over without a JS measurement and without
+ * appearing in the accessibility tree.
+ */
+#}
+<div{{ attributes.addClass('section-header', 'section-header--' ~ tone|default('brass')) }}>
+  {% if heading_level %}
+    <h{{ heading_level }} class="section-header__title">{{ title }}</h{{ heading_level }}>
+  {% else %}
+    {# heading_level 0: a strip label, not a section. No heading, no outline entry. #}
+    <p class="section-header__title">{{ title }}</p>
+  {% endif %}
+
+  <span class="section-header__rule" aria-hidden="true"></span>
+
+  {% if url and link_label %}
+    {{ include('flavourful:button', {
+      label: link_label,
+      url: url,
+      variant: 'quiet',
+      size: 'sm',
+      icon_after: '→',
+    }, with_context = false) }}
+  {% endif %}
+</div>

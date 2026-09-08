@@ -4,6 +4,7 @@
 // Core already ships `core/normalize`; this only adds the few opinionated
 // box-model and media defaults we rely on.
 // =============================================================================
+@use '../abstracts' as *;
 
 *,
 *::before,
@@ -20,7 +21,27 @@ video {
   height: auto;
 }
 
-// Respect users who prefer reduced motion.
+// Cellar's media sits in near-black wells, so an image's own white background
+// or a slow-loading gap would flash bright. The well colour covers both.
+img {
+  background-color: var(--fr-ink-deep);
+}
+
+// The design's fixed-ratio thumbnails crop rather than letterbox. Set here so
+// every component that declares an `aspect-ratio` gets the crop for free.
+img[width][height] {
+  object-fit: cover;
+}
+
+// Buttons inherit type by default so components only need to set what differs.
+button {
+  font: inherit;
+  color: inherit;
+}
+
+// Respect users who prefer reduced motion. This neutralises the single
+// $duration/$ease pair the whole theme animates with, so there is nowhere else
+// motion can leak in from.
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

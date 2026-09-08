@@ -1,0 +1,54 @@
+$schema: 'https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json'
+name: Ingredient list
+status: stable
+description: >-
+  Molecule — the ingredient rows, each a name on the left and its amount on the
+  right, separated by a hairline. Two columns on wide screens, one on narrow.
+
+  A <ul> of rows rather than a <table>: there is no header row and no
+  cross-referencing between rows, so a list is the honest structure and reads
+  far better ("Duck legs, 4 cloves" instead of "row 1 column 2").
+
+  A row's amount is given either as `qty` + `unit` (a scalable measurement) or
+  as free-text `amount` ("to taste"), never both. Only the first form carries
+  the data-* hooks the servings scaler in flavourful/recipe-tools rewrites, so
+  "salt, to taste" can never be multiplied by 1.5.
+props:
+  type: object
+  required: [items]
+  properties:
+    items:
+      type: array
+      title: Items
+      description: 'Ingredient rows in recipe order.'
+      items:
+        type: object
+        required: [name]
+        properties:
+          name:
+            type: string
+            title: Name
+          qty:
+            type: number
+            title: Quantity
+            description: >-
+              The numeric amount. Supply this (with `unit`) for anything the
+              servings scaler should recompute.
+          unit:
+            type: string
+            title: Unit
+            description: 'Unit for `qty`, e.g. "cloves", "ml", "sprigs".'
+          amount:
+            type: string
+            title: Free-text amount
+            description: >-
+              A non-numeric amount, e.g. "to taste". Used only when `qty` is
+              absent, and never scaled.
+    columns:
+      type: integer
+      title: Columns
+      description: >-
+        Maximum columns on a wide screen. 2 matches the design; 1 for a narrow
+        sidebar.
+      enum: [1, 2]
+      default: 2

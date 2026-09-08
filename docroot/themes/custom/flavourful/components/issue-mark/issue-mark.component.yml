@@ -1,0 +1,28 @@
+$schema: 'https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json'
+name: Issue mark
+status: stable
+description: >-
+  Atom — the brass-ruled ornament box carrying an issue number, as seen above
+  the homepage hero. Editorial furniture: it says the site has a publishing
+  rhythm.
+
+  There is no issue field in the content model. Whatever places this must pass
+  the number in; nothing here invents one.
+props:
+  type: object
+  required:
+    - number
+  properties:
+    number:
+      type: string
+      title: Number
+      description: 'Rendered large in display type — e.g. "41".'
+    label:
+      type: string
+      title: Label
+      description: 'Small caption under the number.'
+      default: Issue
+    url:
+      type: string
+      title: URL
+      description: 'Optional — links the whole mark to the issue archive.'

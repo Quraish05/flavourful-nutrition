@@ -1,0 +1,36 @@
+$schema: 'https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json'
+name: Rating stars
+status: stable
+description: >-
+  Atom — a star rating. The stars are decorative (aria-hidden) and the real
+  value is announced from a single visually-hidden sentence, because five
+  separate star glyphs read as noise on a screen reader.
+
+  The content model has no rating field yet. Callers pass `value` only when
+  they have one; with no value the component renders nothing at all, so a page
+  never shows an empty or zeroed rating.
+props:
+  type: object
+  properties:
+    value:
+      type: number
+      title: Value
+      description: 'Rating out of `max`. Omit entirely when unrated.'
+      minimum: 0
+    max:
+      type: integer
+      title: Maximum
+      default: 5
+      minimum: 1
+    show_value:
+      type: boolean
+      title: Show the numeric value
+      description: 'Prints the number beside the stars, as the homepage hero does.'
+      default: false
+    count:
+      type: integer
+      title: Rating count
+      description: >-
+        How many people rated it — the design''s "128 cooked it". Rendered
+        after the stars when supplied.
+      minimum: 0

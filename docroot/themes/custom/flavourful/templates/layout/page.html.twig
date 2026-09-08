@@ -38,26 +38,124 @@
  * - page.footer: Items for the footer region.
  * - page.breadcrumb: Items for the breadcrumb region.
  *
+ * Added by src/Hook/PageHooks.php — see that class for the cacheability of each:
+ * - site_name, site_established, home_url: the masthead wordmark.
+ * - utility_date, utility_date_iso: the date at the head of the utility bar.
+ * - category_items, recipe_count: the cuisine strip and its tally.
+ * - footer_links: the flattened footer menu.
+ * - is_bleed: whether main should run edge to edge.
+ *
+ * Note on `{% embed ... with {...} only %}` throughout this file: `only` stops
+ * this template's own context reaching the component, which matters because a
+ * page-level variable sharing a name with a component prop (`attributes`,
+ * `label`, `title`) would otherwise silently become that prop. The cost is that
+ * the blocks below see only what the `with` map passes, so anything a block
+ * needs is listed there explicitly.
+ *
  * @see \Drupal\Core\Theme\ThemePreprocess::preprocessPage()
  * @see html.html.twig
  */
 #}
 <div class="layout-container">
 
-  <header>
-    {{ page.header }}
+  {#
+    One <header> for the whole banner: the utility bar, the masthead and the
+    category strip are three rows of a single site header, not three separate
+    ones. Nesting them under one banner landmark is what keeps the landmark
+    list short enough to be useful.
+  #}
+  <header class="page-header">
+
+    {#
+      The utility bar carries the date on the left and the secondary/account
+      menu on the right. No `label` is passed, so it stays a plain <div> — the
+      menu block inside it renders its own labelled <nav>, and wrapping that in
+      a second one would nest navigation landmarks.
+    #}
+    {% embed 'flavourful:utility-bar' with {
+      tone: 'deep',
+      utility_date: utility_date,
+      utility_date_iso: utility_date_iso,
+      issue_line: site_established,
+      secondary_menu: page.secondary_menu,
+    } only %}
+      {% block start %}
+        {% if utility_date %}
+          <time datetime="{{ utility_date_iso }}">{{ utility_date }}</time>
+        {% endif %}
+      {% endblock %}
+
+      {% block center %}
+        {#
+          The design's issue line ("Issue forty-one · The long cook"). There is
+          no issue field in this content model, so the site's own tagline stands
+          in rather than a fabricated issue number.
+        #}
+        {{ issue_line }}
+      {% endblock %}
+
+      {% block end %}
+        {{ secondary_menu }}
+      {% endblock %}
+    {% endembed %}
+
+    {#
+      The masthead. Layout is `inline` on a node page, where the hero needs the
+      vertical space, and `centered` everywhere else.
+
+      The primary menu fills the leading slot and whatever else is in the
+      header region (a search block, say) the trailing one. The site-branding
+      block is not among them: PageHooks::dropBrandingBlock() removes it,
+      because the wordmark below already renders the site name.
+    #}
+    {% embed 'flavourful:site-masthead' with {
+      site_name: site_name,
+      home_url: home_url,
+      established: site_established,
+      layout: node ? 'inline' : 'centered',
+      primary_menu: page.primary_menu,
+      header_region: page.header,
+    } only %}
+      {% block nav_start %}
+        {{ primary_menu }}
+      {% endblock %}
+
+      {% block nav_end %}
+        {{ header_region }}
+      {% endblock %}
+    {% endembed %}
+
+    {#
+      The cuisine strip. Rendered only when PageHooks found the /recipes route
+      and at least one term — an empty strip would leave a ruled band with
+      nothing in it.
+    #}
+    {% if category_items is not empty %}
+      {{ include('flavourful:category-bar', {
+        items: category_items,
+        count: recipe_count,
+        label: 'Recipe categories'|t,
+      }, with_context = false) }}
+    {% endif %}
+
+    {#
+      The breadcrumb, below the strip — where the design puts the trail. The
+      breadcrumb block renders its own <nav aria-label="Breadcrumb">, so
+      nothing is added around it here.
+    #}
+    {{ page.breadcrumb }}
+
   </header>
-
-  {{ page.primary_menu }}
-  {{ page.secondary_menu }}
-
-  {{ page.breadcrumb }}
 
   {{ page.highlighted }}
 
   {{ page.help }}
 
-  <main aria-label="{{ 'Main content'|t }}">
+  {#
+    No aria-label on <main>: there is only ever one main landmark on a page, so
+    a label tells a screen reader nothing it does not already announce.
+  #}
+  <main class="page-main{{ is_bleed ? ' page-main--bleed' }}">
     <a id="main-content" tabindex="-1"></a>{# link is in html.html.twig #}
 
     <div class="layout-content">
@@ -88,9 +186,48 @@
 
   </main>
 
-  {% if page.footer %}
+  {#
+    The footer band. Rendered whenever there is either a placed block or a
+    footer menu link — the two are independent, and testing only `page.footer`
+    would drop the whole designed strip on a site with no footer blocks.
+
+    <footer> lives here rather than inside the component so there is exactly one
+    contentinfo landmark.
+  #}
+  {% set footer_content = page.footer|render %}
+  {% if footer_content|trim is not empty or footer_links is not empty %}
     <footer>
-      {{ page.footer }}
+      {% embed 'flavourful:site-footer' with {
+        links: footer_links,
+        tagline: site_established,
+        links_label: 'Footer'|t,
+        footer_content: footer_content,
+        recipes_url: recipes_url,
+      } only %}
+        {% block content %}
+          {{ footer_content }}
+        {% endblock %}
+
+        {% block action %}
+          {#
+            The design's trailing "Subscribe" action. This site has no
+            newsletter or contact form, so the slot carries the real onward
+            action it does have instead of a button that goes nowhere.
+
+            `recipes_url` is resolved in PageHooks behind an access check and is
+            null when the recipes view is disabled, which is why it is tested
+            rather than passed to url() here — url() throws on a missing route.
+          #}
+          {% if recipes_url %}
+            {{ include('flavourful:button', {
+              label: 'Browse all recipes'|t,
+              url: recipes_url,
+              variant: 'brass',
+              size: 'sm',
+            }, with_context = false) }}
+          {% endif %}
+        {% endblock %}
+      {% endembed %}
     </footer>
   {% endif %}
 

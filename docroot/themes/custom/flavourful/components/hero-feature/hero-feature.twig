@@ -1,0 +1,106 @@
+{#
+/**
+ * @file
+ * Hero feature molecule. See hero-feature.component.yml for the contract.
+ *
+ * One component covers both heroes in the design because they differ only in
+ * axis: the homepage stacks media over text, the recipe detail sets them side
+ * by side. Keeping them together means the eyebrow/headline/meta rhythm can
+ * only be changed in one place.
+ */
+#}
+{% set level = heading_level %}
+
+<div{{ attributes.addClass('hero', 'hero--' ~ layout|default('stacked')) }}>
+
+  {#
+    Slots are captured with `{% set %}` wrapped around an inline `{% block %}`
+    rather than read with `block('media')`. Twig's block() throws when the block
+    was never defined, and a caller that fills only some slots is the normal
+    case for a component like this — so the block is declared here (making it
+    always exist, with empty default content) and its output captured so it can
+    be tested before a wrapper is emitted for it.
+  #}
+  {% set media %}{% block media %}{% endblock %}{% endset %}
+  {% if media|trim is not empty %}
+    <div class="hero__media-col">
+      {% set caption %}{% block caption %}{% endblock %}{% endset %}
+      {% if caption|trim is not empty %}
+        <p class="hero__caption">{{ caption }}</p>
+      {% endif %}
+
+      <div class="hero__media">
+        {{ media }}
+        {#
+          The overlay is a sibling of the media, not a child of a link, so
+          anything content-bearing inside it (the "Editor's pick" chip) stays in
+          the accessibility tree.
+        #}
+        {% set overlay %}{% block media_overlay %}{% endblock %}{% endset %}
+        {% if overlay|trim is not empty %}
+          <div class="hero__media-overlay">{{ overlay }}</div>
+        {% endif %}
+      </div>
+    </div>
+  {% endif %}
+
+  <div class="hero__text-col">
+
+    {% if eyebrow %}
+      {{ include('flavourful:micro-label', {
+        text: eyebrow,
+        tone: 'brass',
+        tag: 'p',
+      }, with_context = false) }}
+    {% endif %}
+
+    {#
+      The level is caller-supplied because the same hero is an h1 on a recipe
+      page and an h2 in a homepage section. Level 0 emits a <p> — for a hero
+      whose title is already the page h1 somewhere else, where a second heading
+      would duplicate the text and add a phantom outline entry.
+    #}
+    {% if level %}
+      <h{{ level }} class="hero__title">
+        {%- if url %}<a href="{{ url }}" rel="bookmark">{{ title }}</a>{% else %}{{ title }}{% endif -%}
+      </h{{ level }}>
+    {% else %}
+      <p class="hero__title">
+        {%- if url %}<a href="{{ url }}" rel="bookmark">{{ title }}</a>{% else %}{{ title }}{% endif -%}
+      </p>
+    {% endif %}
+
+    {% if meta is not empty or rating is not null %}
+      <div class="hero__meta">
+        {% if meta is not empty %}
+          {{ include('flavourful:meta-list', {
+            items: meta,
+            separator: 'rule',
+            tone: 'muted',
+          }, with_context = false) }}
+        {% endif %}
+        {% if rating is not null %}
+          {{ include('flavourful:rating-stars', {
+            value: rating,
+            show_value: true,
+          }, with_context = false) }}
+        {% endif %}
+      </div>
+    {% endif %}
+
+    {% if summary %}
+      <p class="hero__summary">{{ summary }}</p>
+    {% endif %}
+
+    {% set actions %}{% block actions %}{% endblock %}{% endset %}
+    {% if actions|trim is not empty %}
+      <div class="hero__actions">{{ actions }}</div>
+    {% endif %}
+
+    {% set aside %}{% block aside %}{% endblock %}{% endset %}
+    {% if aside|trim is not empty %}
+      <div class="hero__aside">{{ aside }}</div>
+    {% endif %}
+
+  </div>
+</div>

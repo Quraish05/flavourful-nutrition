@@ -1,0 +1,33 @@
+{#
+/**
+ * @file
+ * Meta list atom. See meta-list.component.yml for the props contract.
+ *
+ * The separators are ::before pseudo-elements on the CSS side, not characters
+ * in the markup. A literal "—" between items is read aloud by some screen
+ * readers as "em dash" and by others as nothing at all; a pseudo-element is
+ * reliably silent and reliably visible.
+ */
+#}
+{% set items = items|filter(item => item.value is not empty) %}
+
+{% if items is not empty %}
+  <ul{{ attributes.addClass(
+    'meta-list',
+    'meta-list--sep-' ~ separator|default('rule'),
+    'meta-list--' ~ tone|default('muted')
+  ) }}>
+    {% for item in items %}
+      <li class="meta-list__item">
+        {% if item.label %}
+          <span class="visually-hidden">{{ item.label }}:</span>
+        {% endif %}
+        {% if item.url %}
+          <a class="meta-list__link" href="{{ item.url }}">{{ item.value }}</a>
+        {% else %}
+          {{ item.value }}
+        {% endif %}
+      </li>
+    {% endfor %}
+  </ul>
+{% endif %}

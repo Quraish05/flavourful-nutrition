@@ -1,0 +1,51 @@
+{#
+/**
+ * @file
+ * Homepage rows — lead story, then a section header, then a grid of the rest.
+ *
+ * The section header sits *here*, between the two groups, rather than in
+ * views-view--frontpage.html.twig above them. That is what puts the lead card's
+ * h2 directly under the page h1 instead of inside the "Recently added" section
+ * as a sibling of its own heading — and it matches the design, where the lead
+ * story runs above the "Recently added" rule, not under it.
+ *
+ * The first row carries the `home__lead-row` class and renders its card in the
+ * `stacked` variant; both are set on the row's render array by
+ * \Drupal\flavourful\Hook\ListingHooks, so this template only has to put it in
+ * a different container. Which row leads is a question about the View, and it
+ * is answered there rather than by an `{% if loop.first %}` here — which would
+ * also fire on page two of the pager.
+ *
+ * @see template_preprocess_views_view_unformatted()
+ */
+#}
+{% set lead = rows|slice(0, 1) %}
+{% set rest = rows|slice(1) %}
+
+{% for row in lead %}
+  <div class="home__lead">
+    <div{{ row.attributes }}>
+      {{- row.content -}}
+    </div>
+  </div>
+{% endfor %}
+
+{% if rest is not empty %}
+  <div class="home__band">
+    {{ include('flavourful:section-header', {
+      title: 'Recently added'|t,
+      heading_level: 2,
+      url: recipes_url,
+      link_label: 'View all recipes'|t,
+      tone: 'brass',
+    }, with_context = false) }}
+
+    <div class="home__grid">
+      {% for row in rest %}
+        <div{{ row.attributes }}>
+          {{- row.content -}}
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+{% endif %}

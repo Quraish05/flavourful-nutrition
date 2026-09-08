@@ -1,0 +1,75 @@
+/**
+ * Meta list atom.
+ * Separators are pseudo-elements so they are decorative by construction —
+ * never in the accessibility tree, never selected when copying the text.
+ */
+.meta-list {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--fr-space-2xs) var(--fr-space-sm);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-family: var(--fr-font-label);
+  font-size: var(--fr-size-label);
+  font-weight: 500;
+  letter-spacing: var(--fr-track-label);
+  text-transform: uppercase;
+}
+
+.meta-list--muted {
+  color: var(--fr-bone-muted);
+}
+
+.meta-list--bone {
+  color: var(--fr-bone);
+}
+
+/*
+ * `nowrap` keeps an item and its own separator on one line together — see the
+ * separator note below for why that matters.
+ */
+.meta-list__item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--fr-space-sm);
+  margin: 0;
+  white-space: nowrap;
+}
+
+.meta-list__link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.meta-list__link:hover {
+  color: var(--fr-brass);
+}
+
+/*
+ * Separator sits *after* every item except the last, not before every item
+ * except the first.
+ *
+ * The `::before` version read correctly on one line but broke as soon as the
+ * row wrapped: the separator belonged to the item after it, so it wrapped with
+ * it and the second line opened with an orphaned "· 15 min". With `::after` the
+ * separator stays with the item it follows, so a wrap can only ever leave one
+ * trailing — which reads as continuation rather than as a typo.
+ */
+.meta-list--sep-rule .meta-list__item:not(:last-child)::after,
+.meta-list--sep-dot .meta-list__item:not(:last-child)::after {
+  flex: 0 0 auto;
+}
+
+.meta-list--sep-rule .meta-list__item:not(:last-child)::after {
+  content: '';
+  width: 1.5rem;
+  height: 1px;
+  background-color: var(--fr-rule-strong);
+}
+
+.meta-list--sep-dot .meta-list__item:not(:last-child)::after {
+  content: '·';
+  color: var(--fr-bone-faint);
+}

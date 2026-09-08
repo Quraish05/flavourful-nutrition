@@ -1,117 +1,185 @@
 // =============================================================================
 // Recipes listing (the /recipes View)
 // -----------------------------------------------------------------------------
+// The *arrangement* of cards, not the cards. The card, its badge and its meta
+// row are a Single Directory Component (components/recipe-card/) so their
+// styles travel with the markup wherever it renders; only the grid, the exposed
+// filters and the listing's own furniture live here.
+//
 // Rendered by:
-//   - templates/views/views-view--recipes.html.twig       (.recipes-view + header)
-//   - templates/views/views-view-grid--recipes.html.twig  (.recipes-grid)
+//   - templates/views/views-view--recipes--page-1.html.twig  (.recipes-view)
+//   - templates/views/views-view-grid--recipes.html.twig     (.recipes-grid)
 // =============================================================================
 @use '../abstracts' as *;
 
-// Intro header at the top of the listing.
+// -- Intro ------------------------------------------------------------------
 .recipes-header {
-  margin-bottom: $space-xl;
-  text-align: center;
-
-  &__title {
-    margin: 0 0 $space-2xs;
-    font-size: clamp(2rem, 5vw, 3rem);
-  }
+  margin-block-end: $space-lg;
+  padding-block-end: $space-md;
+  @include rule;
 
   &__lead {
-    max-width: 60ch;
-    margin-inline: auto;
-    color: var(--fr-color-slate);
-    font-size: 1.1rem;
+    max-width: 56ch;
+    margin: 0;
+    color: $color-bone-muted;
+    font-size: $size-body-lg;
   }
 }
 
-// Responsive card grid.
+// -- Grid -------------------------------------------------------------------
+// `auto-fill` with a min track rather than a breakpoint per column count: the
+// listing then fills whatever width it is given, including inside a narrower
+// content column when a sidebar is present.
 .recipes-grid {
   display: grid;
-  gap: $space-lg;
-  grid-template-columns: 1fr;
-
-  @include respond-to('sm') {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  @include respond-to('lg') {
-    grid-template-columns: repeat(3, 1fr);
-  }
-
-  @include respond-to('xl') {
-    grid-template-columns: repeat(4, 1fr);
-  }
+  grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+  gap: $space-xl $space-lg;
 }
 
-// Exposed filters (Diet / Cuisine + Apply).
-.recipes-view .view-filters {
-  margin-bottom: $space-xl;
+// A grid of `compact` cards (thumbnail beside the text) needs wider tracks than
+// one of `stacked` cards, or the 4.5rem thumbnail leaves too little for the
+// title. Set by the row template via a modifier on the grid.
+.recipes-grid--compact {
+  grid-template-columns: repeat(auto-fill, minmax(22rem, 1fr));
+  gap: $space-xl $space-lg;
+}
 
-  form {
+// -- Exposed filters --------------------------------------------------------
+// Laid out as a single tracked row under the intro, matching the category bar
+// above it rather than looking like an admin form dropped onto the page.
+.recipes-view .view-filters {
+  margin-block-end: $space-xl;
+  padding-block-end: $space-md;
+  @include rule;
+
+  // Views wraps exposed filters in a <fieldset><legend>. The legend is a real
+  // group label, so it is styled rather than hidden — but the fieldset's own
+  // border is dropped, because the rule under the whole block already bounds it
+  // and a second box inside a box is exactly what this design avoids.
+  fieldset {
+    min-width: 0; // Fieldsets do not shrink below their content without this.
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  legend {
+    @include label-type;
+    float: left; // Takes the legend out of flow so the flex row starts clean.
+    width: 100%;
+    margin-block-end: $space-sm;
+    padding: 0;
+    color: $color-brass;
+  }
+
+  form,
+  .form--inline {
     display: flex;
     flex-wrap: wrap;
     align-items: flex-end;
-    justify-content: center;
-    gap: $space-sm $space-md;
+    gap: $space-md $space-lg;
   }
 
+  // Each label/control pair is its own column. `flex-direction: column` is what
+  // stops the labels running together horizontally, which is how they rendered
+  // while Olivero's form CSS was still overriding this block.
   .form-item {
     display: flex;
+    flex: 0 1 auto;
     flex-direction: column;
-    gap: $space-3xs;
+    gap: $space-2xs;
     margin: 0;
+    min-width: 0;
   }
 
+  // These labels are allowed to wrap. They carry the field machine name from
+  // the view's own configuration — "Recipe cuisine type
+  // (field_recipe_cuisine_type)" is 45 characters, wider than a phone viewport
+  // on its own — so pinning them to one line would be asking for an overflow.
+  // See "Known blemish" in the theme README about the labels themselves.
   label {
-    font-family: var(--fr-font-heading);
-    font-size: 0.8rem;
-    font-weight: 700;
-    letter-spacing: 0.03em;
-    text-transform: uppercase;
-    color: var(--fr-color-slate);
+    @include label-type;
+    display: block;
+    margin: 0;
+    color: $color-bone-muted;
   }
 
   select {
-    padding: $space-2xs $space-sm;
-    border: 1px solid var(--fr-color-line);
-    border-radius: var(--fr-radius-sm);
-    background-color: var(--fr-color-white);
-    font: inherit;
-    color: var(--fr-color-ink);
+    // Wide enough for the longest cuisine name without the row reflowing.
+    min-width: 11rem;
   }
 
   .form-actions {
     margin: 0;
   }
 
+  // Views renders the submit as <input type="submit">, which cannot hold the
+  // button atom's inner span — so the atom's look is restated for it here.
+  // This is the one place in the theme that duplicates .btn, and it is because
+  // the markup is core's, not ours.
   .button,
   input[type='submit'] {
-    padding: $space-2xs $space-md;
-    border: 0;
-    border-radius: var(--fr-radius-sm);
-    background-color: var(--fr-color-paprika);
-    color: var(--fr-color-white);
-    font-family: var(--fr-font-heading);
-    font-weight: 700;
+    @include label-type($size-label-lg);
+    padding: 0.7em 1.15em;
+    border: 1px solid $color-brass;
+    border-radius: 0;
+    background-color: transparent;
+    color: $color-brass;
     cursor: pointer;
-    transition: background-color 0.15s ease;
+    transition: background-color $duration $ease, color $duration $ease;
 
-    &:hover,
-    &:focus {
-      background-color: var(--fr-color-paprika-dark);
+    &:hover {
+      background-color: rgba(201, 162, 74, 0.1);
+      color: $color-brass-bright;
+    }
+
+    &:focus-visible {
+      @include focus-ring;
     }
   }
 }
 
-// Empty state.
+// -- Empty state ------------------------------------------------------------
 .recipes-view .view-empty {
-  padding: $space-xl;
+  padding-block: $space-2xl;
+  color: $color-bone-muted;
+  font-style: italic;
   text-align: center;
-  color: var(--fr-color-slate);
 }
 
-// Pager spacing.
-.recipes-view .pager {
-  margin-top: $space-xl;
+// -- Views A–Z summary ------------------------------------------------------
+// The glossary attachment renders bare <span>s with a literal " | " separator
+// and no list semantics. The template override supplies the list; this styles
+// it as the design's category bar so the two strips match.
+.views-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-2xs $space-sm;
+  margin-block-end: $space-lg;
+  padding-block-end: $space-sm;
+  @include bare-list;
+  @include rule;
+
+  li {
+    margin: 0;
+  }
+
+  a {
+    @include label-type($size-label-lg);
+    color: $color-bone-muted;
+    text-decoration: none;
+    font-variant-numeric: lining-nums;
+
+    &:hover {
+      color: $color-bone;
+    }
+  }
+
+  // The current letter. aria-current in the markup carries this for assistive
+  // tech; the brass underline is what carries it visually — colour alone would
+  // not (WCAG 1.4.1).
+  a[aria-current] {
+    color: $color-brass;
+    @include rule('block-end', $color-brass);
+  }
 }

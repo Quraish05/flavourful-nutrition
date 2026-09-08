@@ -8,6 +8,63 @@ libraries:
   - core/normalize
   - flavourful/global-styling
   - flavourful/recipe-interactions
+# Olivero is the base theme for its *templates*, not its looks, and none of its
+# CSS belongs on this design. Inheriting it brought ~55 stylesheets that fought
+# the palette at every turn: the tiled droplet SVG on `body`, white form
+# controls, blue link underlines, a white page background, and Olivero's own
+# font-size/line-height at high specificity — which is what made the first pass
+# of this redesign read as cramped.
+#
+# Every Olivero library is therefore switched off. They are split into two
+# groups because they cannot be disabled the same way.
+#
+# 1. Libraries nothing else references — simply `false`.
+libraries-override:
+  olivero/cke-dialog: false
+  olivero/color-picker: false
+  olivero/comments: false
+  olivero/content-below: false
+  olivero/dropbutton: false
+  olivero/feed: false
+  olivero/filter.theme: false
+  olivero/global-styling: false
+  olivero/layout-views-grid: false
+  olivero/layout_builder_fourcol_section: false
+  olivero/layout_builder_threecol_section: false
+  olivero/layout_builder_twocol_section: false
+  olivero/local-actions: false
+  olivero/maintenance-page: false
+  olivero/menu-sidebar: false
+  olivero/messages: false
+  olivero/navigation-base: false
+  olivero/navigation-primary: false
+  olivero/navigation-secondary: false
+  olivero/olivero.table: false
+  olivero/powered-by-block: false
+  olivero/search-narrow: false
+  olivero/search-results: false
+  olivero/search-wide: false
+  olivero/sidebar: false
+  olivero/tabs: false
+  olivero/tags: false
+  # 2. Libraries named by Olivero's own `libraries-extend`, which this theme
+  #    inherits and cannot un-declare. Setting these to `false` makes Drupal
+  #    throw InvalidLibrariesExtendSpecificationException on every page — the
+  #    extend still points at them, so they have to keep existing. Redirected
+  #    to flavourful/noop instead: resolvable, and carrying nothing.
+  #
+  #    This theme has its own treatment for each: flavourful/messages,
+  #    flavourful/progress, flavourful/details, flavourful/dialog,
+  #    flavourful/tabledrag and css/components/tablesort.css.
+  olivero/content_moderation: flavourful/noop
+  olivero/details: flavourful/noop
+  olivero/drupal.dialog: flavourful/noop
+  olivero/drupal.message: flavourful/noop
+  olivero/drupal.node.preview: flavourful/noop
+  olivero/layout_discovery_section: flavourful/noop
+  olivero/progress: flavourful/noop
+  olivero/tabledrag: flavourful/noop
+
 libraries-extend:
   user/drupal.user:
     - flavourful/user
@@ -25,6 +82,12 @@ libraries-extend:
     - flavourful/drupal.tablesort
 description: ""
 core_version_requirement: ^11
+# Makes prop schemas mandatory for this theme's components rather than optional.
+# All 22 already ship one, and the schemas are load-bearing — they are what
+# turns a typo in a `variant` or a missing `heading_level` into a loud failure
+# at render instead of silently unstyled markup. Without this key a component
+# added later could quietly opt out of that.
+enforce_prop_schemas: true
 generator: "starterkit_theme:11.4.0"
 # Regions are declared explicitly (rather than inherited from Olivero) so the
 # left/right sidebars used by page.html.twig and the block layout actually

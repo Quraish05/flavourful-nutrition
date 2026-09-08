@@ -1,0 +1,45 @@
+$schema: 'https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json'
+name: Site masthead
+status: stable
+description: >-
+  Molecule — the site wordmark plus its flanking navigation. Two layouts from
+  the same component: `centered` puts the wordmark in the middle with rules
+  either side (the homepage), `inline` sets it flush left with the nav beside
+  it (the recipe detail page, where vertical space is scarcer).
+
+  Navigation markup arrives through slots because on a Drupal site it comes
+  from menu blocks, already rendered and already cached.
+props:
+  type: object
+  required:
+    - site_name
+  properties:
+    site_name:
+      type: string
+      title: Site name
+      description: 'The wordmark text.'
+    home_url:
+      type: string
+      title: Home URL
+      default: /
+    established:
+      type: string
+      title: Established line
+      description: >-
+        The small caption under the wordmark, e.g. "Est. 2019". Rendered only
+        in the centered layout, where there is room for it.
+    layout:
+      type: string
+      title: Layout
+      enum: [centered, inline]
+      default: centered
+slots:
+  nav_start:
+    title: Navigation (start)
+    description: 'Primary menu — sits left of the wordmark.'
+  nav_end:
+    title: Navigation (end)
+    description: 'Secondary menu — sits right of the wordmark.'
+  actions:
+    title: Actions
+    description: 'Trailing buttons: Save list, Cook mode, Print.'

@@ -1,0 +1,38 @@
+$schema: 'https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json'
+name: Thumb strip
+status: stable
+description: >-
+  Molecule — the horizontal "Cook next" strip at the foot of a recipe: a label
+  on the leading edge, then small thumbnail-plus-title links.
+
+  A labelled <nav>, because it is a set of onward links to other pages. Feed it
+  from the related_recipes view.
+props:
+  type: object
+  required: [items]
+  properties:
+    items:
+      type: array
+      title: Items
+      items:
+        type: object
+        required: [title, url]
+        properties:
+          title:
+            type: string
+            title: Title
+          url:
+            type: string
+            title: URL
+          image:
+            type: string
+            title: Image URL
+            description: >-
+              Src for the thumbnail. A plain URL rather than a render array
+              because these are decorative crops; where an image style and its
+              cache metadata matter, use recipe-card instead.
+    label:
+      type: string
+      title: Label
+      description: 'The edge label, and the nav''s accessible name.'
+      default: Cook next

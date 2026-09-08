@@ -1,0 +1,23 @@
+{#
+/**
+ * @file
+ * The "Powered by Drupal" block.
+ *
+ * Overrides Olivero's template, which this theme would otherwise inherit.
+ * Olivero's version embeds the Drupal logo SVG and attaches
+ * `olivero/powered-by-block` to style it — a piece of Drupal branding, and the
+ * only logo on the page, sitting in a footer the design gives no logo at all.
+ *
+ * The credit itself is kept: it is a placed block, and whether to credit Drupal
+ * is the site owner's call, not the theme's. It is rendered as plain text so it
+ * inherits the footer's own type. Unplace the block at
+ * /admin/structure/block if you would rather it were not there.
+ */
+#}
+{% extends "block.html.twig" %}
+
+{% block content %}
+  <span class="powered-by">
+    {% trans %}Powered by <a href="https://www.drupal.org">Drupal</a>{% endtrans %}
+  </span>
+{% endblock %}

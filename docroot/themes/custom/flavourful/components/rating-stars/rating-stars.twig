@@ -1,0 +1,55 @@
+{#
+/**
+ * @file
+ * Rating stars atom. See rating-stars.component.yml for the props contract.
+ *
+ * No rating, no markup: an absent `value` is a real state in this content model
+ * (there is no rating field yet), not a zero. Rendering "☆☆☆☆☆" for it would be
+ * a lie, and rendering an empty wrapper would leave a gap in the meta row.
+ */
+#}
+{% if value is not null and value > 0 %}
+  {% set max = max|default(5) %}
+  {# Round to the nearest half so a 4.6 shows four filled and one half star. #}
+  {% set halves = (value * 2)|round %}
+
+  <span{{ attributes.addClass('rating') }}>
+    {#
+      The glyph row is decorative. Everything it conveys is in the sentence
+      below it, so it is removed from the accessibility tree rather than read
+      out star by star.
+    #}
+    <span class="rating__stars" aria-hidden="true">
+      {% for i in 1..max %}
+        {% set filled = halves >= i * 2 %}
+        {% set half = not filled and halves == (i * 2 - 1) %}
+        <span class="rating__star{{ filled ? ' is-full' : (half ? ' is-half') }}">★</span>
+      {% endfor %}
+    </span>
+
+    {% if show_value %}
+      <span class="rating__value" aria-hidden="true">{{ value|number_format(1) }}</span>
+    {% endif %}
+
+    {#
+      One sentence, one announcement. `count` folds into the same string so a
+      screen reader does not hear the rating and the tally as two disconnected
+      fragments.
+    #}
+    <span class="visually-hidden">
+      {% if count %}
+        {{ 'Rated @value out of @max by @count cooks'|t({
+          '@value': value|number_format(1),
+          '@max': max,
+          '@count': count,
+        }) }}
+      {% else %}
+        {{ 'Rated @value out of @max'|t({ '@value': value|number_format(1), '@max': max }) }}
+      {% endif %}
+    </span>
+  </span>
+
+  {% if count %}
+    <span class="rating__count" aria-hidden="true">{{ '@count cooked it'|t({ '@count': count }) }}</span>
+  {% endif %}
+{% endif %}
