@@ -1,0 +1,112 @@
+/**
+ * Category bar molecule.
+ * Scrolls horizontally rather than wrapping: the design's single-line strip is
+ * part of its editorial look, and a wrapped two-line version of it reads as a
+ * mistake. The scroll container is the <ul>, so the count stays pinned.
+ */
+.category-bar {
+  border-block-end: 1px solid var(--fr-rule);
+  background-color: var(--fr-ink);
+}
+
+.category-bar__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--fr-space-md);
+  width: 100%;
+  max-width: var(--fr-container-max);
+  min-height: 2.5rem;
+  margin-inline: auto;
+  padding-inline: var(--fr-space-sm);
+}
+
+@media (min-width: 48rem) {
+  .category-bar__inner {
+    padding-inline: var(--fr-space-lg);
+  }
+}
+
+.category-bar__list {
+  display: flex;
+  align-items: center;
+  gap: var(--fr-space-md);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  /* Horizontal overflow scrolls inside the bar; the page never scrolls sideways. */
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  /*
+   * `min-width: 0` is what makes the line above dependable. A flex item's
+   * default `min-width: auto` refuses to shrink below its content's intrinsic
+   * width, so without this an `overflow-x: auto` flex item can widen its parent
+   * instead of scrolling inside it. `flex: 1 1 auto` then lets the list take
+   * the space actually available rather than the space it wants.
+   */
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.category-bar__list::-webkit-scrollbar {
+  display: none;
+}
+
+.category-bar__item {
+  margin: 0;
+  flex: 0 0 auto;
+}
+
+.category-bar__link {
+  position: relative;
+  display: block;
+  padding-block: var(--fr-space-2xs);
+  color: var(--fr-bone-muted);
+  font-family: var(--fr-font-label);
+  font-size: var(--fr-size-label);
+  font-weight: 500;
+  letter-spacing: var(--fr-track-label);
+  text-decoration: none;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.category-bar__link:hover {
+  color: var(--fr-bone);
+}
+
+/* Current category: brass text *and* a brass underline, so the state survives
+   for anyone who cannot tell the two colours apart. */
+.category-bar__link.is-active {
+  color: var(--fr-brass);
+}
+
+.category-bar__link.is-active::after {
+  content: '';
+  position: absolute;
+  inset-block-end: 0;
+  inset-inline: 0;
+  height: 1px;
+  background-color: var(--fr-brass);
+}
+
+.category-bar__count {
+  flex: 0 0 auto;
+  margin: 0;
+  max-width: none;
+  color: var(--fr-brass);
+  font-family: var(--fr-font-label);
+  font-size: var(--fr-size-label);
+  font-weight: 500;
+  letter-spacing: var(--fr-track-label);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* The count is a nice-to-have; below 36rem the categories need the whole row. */
+@media (max-width: 35.99rem) {
+  .category-bar__count {
+    display: none;
+  }
+}

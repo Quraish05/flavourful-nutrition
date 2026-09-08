@@ -1,0 +1,43 @@
+$schema: 'https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json'
+name: Site footer
+status: stable
+description: >-
+  Molecule — the footer strip: a row of links on the leading edge, the tagline
+  in the middle, and a subscribe action trailing.
+
+  Emits the inner row only, not a <footer> element — page.html.twig owns the
+  contentinfo landmark, and nesting a second <footer> inside it would create a
+  duplicate landmark for screen reader users to step past.
+props:
+  type: object
+  properties:
+    tagline:
+      type: string
+      title: Tagline
+      description: 'The centre line, e.g. "Six chefs, one dish each, every Friday".'
+    links:
+      type: array
+      title: Links
+      description: 'Footer links in display order.'
+      items:
+        type: object
+        required: [label, url]
+        properties:
+          label:
+            type: string
+          url:
+            type: string
+    links_label:
+      type: string
+      title: Links accessible label
+      description: >-
+        Names the footer link group, so it is not announced as just another
+        unnamed "navigation".
+      default: Footer
+slots:
+  content:
+    title: Content
+    description: 'Blocks placed in the footer region — rendered above the strip.'
+  action:
+    title: Action
+    description: 'The trailing action, e.g. a Subscribe button.'

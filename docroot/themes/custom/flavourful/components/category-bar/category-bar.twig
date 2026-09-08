@@ -1,0 +1,30 @@
+{#
+/**
+ * @file
+ * Category bar molecule. See category-bar.component.yml for the props contract.
+ *
+ * aria-current="page" — not a class — is what tells a screen reader which
+ * category is open. The brass underline in the CSS is the visual half of the
+ * same fact; neither is sufficient alone.
+ */
+#}
+{% if items is not empty %}
+  <nav{{ attributes.addClass('category-bar') }} aria-label="{{ label|default('Categories'|t) }}">
+    <div class="category-bar__inner">
+      <ul class="category-bar__list">
+        {% for item in items %}
+          <li class="category-bar__item">
+            <a
+              class="category-bar__link{{ item.is_active ? ' is-active' }}"
+              href="{{ item.url }}"
+              {%- if item.is_active %} aria-current="page"{% endif %}>{{ item.label }}</a>
+          </li>
+        {% endfor %}
+      </ul>
+
+      {% if count %}
+        <p class="category-bar__count">{{ count }}</p>
+      {% endif %}
+    </div>
+  </nav>
+{% endif %}
