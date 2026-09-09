@@ -24,8 +24,6 @@
         "drupal/core-recommended": "^11.4",
         "drupal/eva": "^3.1",
         "drupal/facets": "^3.0",
-        "drupal/jquery_ui_slider": "^2.1",
-        "drupal/jquery_ui_touch_punch": "^1.1",
         "drupal/pathauto": "^1.15",
         "drupal/search_api": "^1.41",
         "drupal/search_api_searchstax": "^1.0",
