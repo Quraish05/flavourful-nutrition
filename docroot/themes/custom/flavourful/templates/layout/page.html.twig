@@ -172,14 +172,14 @@
     #}
     {% set sidebar_first = page.sidebar_first|render %}
     {% if sidebar_first|trim is not empty %}
-      <aside class="layout-sidebar-first" aria-label="{{ 'Recipe details'|t }}">
+      <aside class="layout-sidebar-first" aria-label="{{ sidebar_first_label }}">
         {{ sidebar_first }}
       </aside>
     {% endif %}
 
     {% set sidebar_second = page.sidebar_second|render %}
     {% if sidebar_second|trim is not empty %}
-      <aside class="layout-sidebar-second" aria-label="{{ 'Related content'|t }}">
+      <aside class="layout-sidebar-second" aria-label="{{ sidebar_second_label }}">
         {{ sidebar_second }}
       </aside>
     {% endif %}
