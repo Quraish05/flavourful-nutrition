@@ -113,9 +113,13 @@ class PageHooks {
     // Decided here so the list of bleeding routes lives in one place;
     // page.html.twig only reads the flag.
     $node = $this->routeMatch->getParameter('node');
-    $variables['is_bleed'] = $this->routeMatch->getRouteName() === 'entity.node.canonical'
+    $is_recipe_page = $this->routeMatch->getRouteName() === 'entity.node.canonical'
       && $node instanceof NodeInterface
       && $node->bundle() === 'recipe';
+
+    $variables['is_bleed'] = $is_recipe_page;
+
+    $this->addSidebarLabels($variables, $is_recipe_page, $cache);
 
     $this->dropDuplicatePageTitle($variables);
 
@@ -297,6 +301,39 @@ class PageHooks {
     }
 
     $variables['footer_links'] = $links;
+  }
+
+  /**
+   * Names the sidebar landmarks after what this route puts in them.
+   *
+   * There is no honest static name. The same region holds the facet filters
+   * on /recipe-search and this recipe's nutrition panel on a recipe page, and
+   * a landmark whose name is false is worse than one with no name at all — a
+   * screen-reader user who skips "Related content" has skipped the filters.
+   *
+   * Both regions get a name, and the two are always different. Naming only
+   * the region that happens to be filled today is how this returns the next
+   * time somebody drags a block from one sidebar to the other.
+   */
+  private function addSidebarLabels(
+    array &$variables,
+    bool $is_recipe_page,
+    CacheableMetadata $cache,
+  ): void {
+    // The names are derived from the route, so they must vary by it.
+    $cache->addCacheContexts(['route.name']);
+
+    $route = $this->routeMatch->getRouteName();
+
+    $variables['sidebar_second_label'] = match (TRUE) {
+      $route === 'view.recipe_search.page_1' => $this->t('Search filters'),
+      $is_recipe_page => $this->t('More about this recipe'),
+      default => $this->t('Secondary information'),
+    };
+
+    // Nothing is placed here today. Named generically rather than left blank
+    // so that a builder who fills it gets two distinct landmark names.
+    $variables['sidebar_first_label'] = $this->t('Supporting information');
   }
 
 }

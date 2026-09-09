@@ -7,6 +7,6 @@
 #}
 {% block content %}
   {% if content %}
-    <nav class="action-links">{{ content }}</nav>
+    <nav class="action-links" aria-label="{{ 'Actions'|t }}">{{ content }}</nav>
   {% endif %}
 {% endblock %}

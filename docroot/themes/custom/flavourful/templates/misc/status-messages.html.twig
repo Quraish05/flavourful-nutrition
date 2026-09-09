@@ -9,8 +9,14 @@
  * Sighted users see a colored box. See https://www.w3.org/TR/WCAG-TECHS/H69.html
  * for info.
  *
- * Add an ARIA label to the contentinfo area so that assistive technology
- * user agents will better describe this landmark.
+ * Add an ARIA label to the region so that assistive technology user agents
+ * will better describe this landmark.
+ *
+ * `role="region"` rather than core's `role="contentinfo"`: the page already
+ * has one contentinfo (the site footer, in page.html.twig), and that role is
+ * meant to be singular. A named region keeps the message in the landmark
+ * rotor without claiming to be the page's footer. The inner `role="alert"`
+ * below is what announces the text; this wrapper only makes it navigable.
  *
  * Available variables:
  * - message_list: List of messages to be displayed, grouped by type.
@@ -28,7 +34,7 @@
       'messages--' ~ type,
     ]
   %}
-  <div role="contentinfo" aria-label="{{ status_headings[type] }}"{{ attributes.addClass(classes)|without('role', 'aria-label') }}>
+  <div role="region" aria-label="{{ status_headings[type] }}"{{ attributes.addClass(classes)|without('role', 'aria-label') }}>
     {% if type == 'error' %}
       <div role="alert">
     {% endif %}
