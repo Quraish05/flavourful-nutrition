@@ -80,6 +80,9 @@ libraries-extend:
     - flavourful/progress
   core/drupal.tablesort:
     - flavourful/drupal.tablesort
+  facets/soft-limit:
+    - flavourful/facet-soft-limit
+
 description: ""
 core_version_requirement: ^11
 # Makes prop schemas mandatory for this theme's components rather than optional.
