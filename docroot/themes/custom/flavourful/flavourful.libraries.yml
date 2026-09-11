@@ -173,3 +173,17 @@ user:
     component:
       css/components/user.css:
         weight: -10
+
+# Adds the disclosure state to the facet soft-limit toggle, which
+# facets/soft-limit builds in JS without one. Never attached by hand — it is
+# bolted onto facets/soft-limit via libraries-extend in flavourful.info.yml,
+# so it loads only on pages that actually render a soft-limited facet, and
+# always after the script whose markup it is fixing.
+facet-soft-limit:
+  version: 1.x
+  js:
+    js/facet-soft-limit.js: {}
+  dependencies:
+    - core/drupal
+    - core/once
+

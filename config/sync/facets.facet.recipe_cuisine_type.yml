@@ -30,10 +30,10 @@ widget:
   type: checkbox
   config:
     show_numbers: true
-    soft_limit: 0
+    soft_limit: 5
     show_reset_link: true
     reset_text: 'Clear all filters'
-    hide_reset_when_no_selection: false
+    hide_reset_when_no_selection: true
     soft_limit_settings:
       show_less_label: 'Show less'
       show_more_label: 'Show more'
