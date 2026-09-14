@@ -6,6 +6,7 @@ use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\flavourful\RecipeStats;
+use Drupal\Core\Pager\PagerManagerInterface;
 
 /**
  * Shapes the recipe listings — which row leads, and at what size.
@@ -35,8 +36,29 @@ class ListingHooks {
    */
   private RecipeStats $stats;
 
-  public function __construct(EntityTypeManagerInterface $entityTypeManager) {
+  public function __construct(
+    EntityTypeManagerInterface $entityTypeManager,
+    protected PagerManagerInterface $pagerManager,
+  ) {
     $this->stats = new RecipeStats($entityTypeManager);
+  }
+
+  /**
+   * Implements hook_preprocess_views_mini_pager() via the #[Hook] attribute.
+   *
+   * Adds the total page count, which core computes and then throws away:
+   * ViewsThemeHooks::preprocessViewsMiniPager() calls getTotalPages() to decide
+   * whether to render the previous and next links, but only ever exposes
+   * `items.current` to the template. "Page 2" tells a screen-reader user
+   * nothing about how far through the set they are; "Page 2 of 7" does.
+   *
+   * Left NULL rather than guessed when the pager cannot be resolved — the
+   * template falls back to the bare number.
+   */
+  #[Hook('preprocess_views_mini_pager')]
+  public function preprocessViewsMiniPager(array &$variables): void {
+    $pager = $this->pagerManager->getPager($variables['element'] ?? 0);
+    $variables['total_pages'] = $pager?->getTotalPages();
   }
 
   /**

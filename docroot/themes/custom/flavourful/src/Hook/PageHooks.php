@@ -228,12 +228,20 @@ class PageHooks {
     // variant's active state.
     $cache->addCacheContexts(['url.query_args:' . $filter]);
 
+    // The strip renders in the header of every page, but it can only describe
+    // where you are on the listing it links into. Off that route nothing in it
+    // is current — a link marked aria-current="page" from a recipe node or the
+    // glossary tells a screen reader it has arrived somewhere it has not.
+    $on_listing = $this->routeMatch->getRouteName() === 'view.recipes.page_1';
+    $cache->addCacheContexts(['route.name']);
+
     $items = [[
       'label' => $this->t('All'),
       'url' => $listing_url,
       // Views' "All" option submits the literal string "All" for an unset
       // select, so both that and an absent parameter mean unfiltered.
-      'is_active' => $active === NULL || $active === '' || $active === 'All',
+      'is_active' => $on_listing
+        && ($active === NULL || $active === '' || $active === 'All'),
     ]];
 
     foreach ($terms as $term) {
@@ -243,7 +251,7 @@ class PageHooks {
         'url' => Url::fromRoute('view.recipes.page_1', [], [
           'query' => [$filter => $term->id()],
         ])->toString(),
-        'is_active' => (string) $active === (string) $term->id(),
+        'is_active' => $on_listing && (string) $active === (string) $term->id(),
       ];
     }
 
