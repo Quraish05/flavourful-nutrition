@@ -22,8 +22,8 @@
   announced as a heading with no name, and every heading-navigation shortcut
   lands on it (WCAG 1.3.1).
 #}
-{% set title_markup = title|render|trim %}
-{% if title_markup is not empty %}
+{% set title_markup = title|render %}
+{% if title_markup|trim is not empty %}
   <h1{{ title_attributes.addClass('page-title') }}>{{ title_markup }}</h1>
 {% endif %}
 {{ title_suffix }}
