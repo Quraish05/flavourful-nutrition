@@ -23,13 +23,32 @@
           </a>
         </li>
       {% endif %}
+      {#
+        The current page is text rather than a link, which is correct — there
+        is nowhere to navigate to — but it left the mini pager with no
+        programmatic current-page marker at all. aria-current="page" is valid
+        on any element, not only on links, and this is the element that means
+        "you are here".
+
+        `total_pages` comes from \Drupal\flavourful\Hook\ListingHooks. Core's
+        mini pager knows only the current number, so "Page 2" alone gives no
+        sense of how far through the set you are; "Page 2 of 7" does. It falls
+        back to the bare number when the total is unavailable.
+      #}
       {% if items.current %}
-        <li class="pager__item is-active">
-          {% trans %}
-            Page {{ items.current }}
-          {% endtrans %}
+        <li class="pager__item is-active" aria-current="page">
+          {% if total_pages %}
+            {% trans %}
+              Page {{ items.current }} of {{ total_pages }}
+            {% endtrans %}
+          {% else %}
+            {% trans %}
+              Page {{ items.current }}
+            {% endtrans %}
+          {% endif %}
         </li>
       {% endif %}
+
       {% if items.next %}
         <li class="pager__item pager__item--next">
           <a href="{{ items.next.href }}" title="{{ 'Go to next page'|t }}" rel="next"{{ items.next.attributes|without('href', 'title', 'rel') }}>
