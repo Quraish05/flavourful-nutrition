@@ -41,6 +41,7 @@ PALETTE = {
     "bone-faint": "#6f6a5f",
     "rule": "#302a21",
     "rule-strong": "#453d30",
+    "rule-control": "#7a7263",
     "difficulty-easy": "#7f9e5c",
     "difficulty-medium": "#c9a24a",
     "difficulty-hard": "#c2703c",
@@ -52,26 +53,44 @@ PAIRS = [
     ("body text", "bone", "ink", 4.5, "1.4.3"),
     ("muted text", "bone-muted", "ink", 4.5, "1.4.3"),
     ("muted text on card", "bone-muted", "ink-raised", 4.5, "1.4.3"),
-    ("faint text", "bone-faint", "ink", 4.5, "1.4.3"),
-    ("faint text on card", "bone-faint", "ink-raised", 4.5, "1.4.3"),
-    ("input placeholder", "bone-faint", "ink-deep", 4.5, "1.4.3"),
+    # The four call sites raised out of bone-faint. Kept as named rows rather
+    # than folded into "muted text" so a regression names itself.
+    ("powered-by credit", "bone-muted", "ink", 4.5, "1.4.3"),
+    ("submitted-by line", "bone-muted", "ink", 4.5, "1.4.3"),
+    ("cook-mode inactive step", "bone-muted", "ink", 4.5, "1.4.3"),
+    ("input placeholder", "bone-muted", "ink-deep", 4.5, "1.4.3"),
     ("input text", "bone", "ink-deep", 4.5, "1.4.3"),
     ("link", "brass", "ink", 4.5, "1.4.3"),
     ("link hover", "brass-bright", "ink", 4.5, "1.4.3"),
     ("link underline", "brass-dim", "ink", 3.0, "1.4.11"),
     ("focus outline", "brass", "ink", 3.0, "1.4.11"),
-    ("control border vs field", "rule-strong", "ink-deep", 3.0, "1.4.11"),
-    ("control border vs page", "rule-strong", "ink", 3.0, "1.4.11"),
+    # A border must clear 3:1 against every ground it is drawn on, not just the
+    # common one. An earlier candidate (#736b5c) passed on page and field and
+    # reached only 3.29 on the card -- a margin that is not a margin.
+    ("control border vs field", "rule-control", "ink-deep", 3.0, "1.4.11"),
+    ("control border vs page", "rule-control", "ink", 3.0, "1.4.11"),
+    ("control border vs card", "rule-control", "ink-raised", 3.0, "1.4.11"),
     ("difficulty easy", "difficulty-easy", "ink", 4.5, "1.4.3"),
     ("difficulty medium", "difficulty-medium", "ink", 4.5, "1.4.3"),
     ("difficulty hard", "difficulty-hard", "ink", 4.5, "1.4.3"),
     ("difficulty expert", "difficulty-expert", "ink", 4.5, "1.4.3"),
 ]
 
-# Decorative, so 1.4.11 does not apply. Reported only under --all, to keep the
-# default output to things that are actually owed.
+# Exempt from a threshold, so reported only under --all. These are not passes;
+# they are uses the criteria do not reach, and the distinction matters.
+#
+# bone-faint measures ~3.2-3.6:1 and would fail 1.4.3 as text. It is not used
+# as text: after the audit's O-3 fix its only remaining call sites are two
+# middot separators (decorative pseudo-elements, never announced), two
+# :disabled controls (1.4.3 exempts inactive components) and the unfilled
+# rating star (a decorative glyph). If bone-faint ever appears on readable
+# copy again, move that use up into PAIRS rather than widening this list.
 DECORATIVE = [
-    ("section rule (decorative)", "rule", "ink", 3.0, "n/a"),
+    ("section rule", "rule", "ink", 3.0, "n/a"),
+    ("table header rule", "rule-strong", "ink", 3.0, "n/a"),
+    ("bone-faint: separators", "bone-faint", "ink", 4.5, "n/a"),
+    ("bone-faint: disabled control", "bone-faint", "ink-raised", 4.5, "n/a"),
+    ("bone-faint: unfilled star", "bone-faint", "ink", 4.5, "n/a"),
 ]
 
 

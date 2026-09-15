@@ -2,7 +2,7 @@
 
 > Site: Flavourful Nutrition (Drupal 11.4, custom `flavourful` theme, Site Studio 8.2) · Audited: 8–15 September 2026 · Last updated: 2026-09-15
 >
-> **Status: remediation substantially complete.** 20 defects found and fixed across six pull requests; 5 remain open, all scoped and estimated below. Conformance target is **WCAG 2.2 Level AA**.
+> **Status: remediation complete except one component API change.** 24 defects found and fixed across eight pull requests; **1 remains open** (O-4, the `button` atom), scoped below. Conformance target is **WCAG 2.2 Level AA**.
 >
 > This is the outcome document for [Phase 1 of the study plan](../objectives/). It is written in the shape a client procurement team expects — finding, criterion, severity, location, remediation, retest — so it works as a work sample as well as a record. Working notes for each slice live in [`docs/plans/`](../plans/); they are the transient middle state and are not summarised here.
 
@@ -13,16 +13,16 @@
 | | Count |
 |---|---|
 | Defects found | **25** |
-| **Fixed and retested** | **20** |
-| Open, scoped | 5 |
+| **Fixed and retested** | **24** |
+| Open, scoped | 1 |
 | Criteria assessed and found **not** to apply | 5 |
 | Existing behaviour verified correct (no work needed) | 12 |
-| Pull requests merged | 6 |
-| Net change across the six remediation PRs | **+1,125 / −197 lines** (includes working notes) |
+| Pull requests merged | 8 |
+| Net change across the eight remediation PRs | **+1,173 / −207 lines** (includes working notes) |
 
-**Severity of what was fixed:** **19 Level A, 1 Level AA** by primary criterion; findings 3 and 16 also implicate 2.4.6 (AA). Level A is the most severe tier — a Level A failure is generally understood as content being unusable for the affected user rather than merely inconvenient. That almost everything here is Level A is the headline: these were not polish items.
+**Severity of what was fixed:** **20 Level A, 3 Level AA**, and one (O-5) that maps to no criterion at all but was worth fixing anyway — see the note under *Open*. Findings 3 and 16 also implicate 2.4.6 (AA). Level A is the most severe tier — a Level A failure is generally understood as content being unusable for the affected user rather than merely inconvenient. That almost everything here is Level A is the headline: these were not polish items.
 
-**Where the defects lived:** **8 in configuration, 12 in theme code.** That split matters: 40% of this site's accessibility defects were fixed without writing a line of code, by changing settings an administrator can reach. That is a very different conversation with a client than "the markup is wrong" — and it means a share of the risk is reintroducible by anyone with an admin login, which is a governance problem rather than an engineering one.
+**Where the defects lived:** **9 in configuration, 15 in theme code.** That split matters: more than a third of this site's accessibility defects were fixed without writing a line of code, by changing settings an administrator can reach. That is a very different conversation with a client than "the markup is wrong" — and it means a share of the risk is reintroducible by anyone with an admin login, which is a governance problem rather than an engineering one.
 
 ---
 
@@ -43,7 +43,9 @@
 
 ---
 
-## Fixed — the twenty
+## Fixed — the original twenty
+
+The twenty found in the first pass. Four more were found and fixed afterwards and are listed under *Closed since the first draft* below, which is where the running total of 24 comes from.
 
 Severity uses WCAG level. "Impact" is our judgement of user consequence, which is what a client actually acts on.
 
@@ -91,19 +93,32 @@ Severity uses WCAG level. "Impact" is our judgement of user consequence, which i
 
 ---
 
-## Open — the five
-
-Each is scoped; none is blocked.
+## Open — the one
 
 | # | Finding | Criterion | Impact | Location | Proposed fix | Effort |
 |---|---|---|---|---|---|---|
-| O-1 | The mini pager's heading is **still `h4`** on `views.view.recipes` and `views.view.recipe_search`, so `/recipes` reads h2 → h4 and `/recipe-search` reads **h1 → h4** | 1.3.1 (A) | Medium | two views | *Pagination heading level* → `h2`. Identical to fixed finding 17; these two views were simply not in that PR's scope | 2 config clicks |
-| O-2 | Form control borders measure **1.72:1** against the page and **1.83:1** against the field — below the 3:1 that non-text contrast requires for UI component boundaries | 1.4.11 (AA) | Medium | `--fr-rule-strong` `#453d30` | Lighten the token used for control borders only; leave decorative rules alone | 1 token, needs a design decision |
-| O-3 | `--fr-bone-faint` `#6f6a5f` measures **3.41:1** on the page ground and **3.63:1** as input placeholder text — below 4.5:1 | 1.4.3 (AA) | Medium | 7 usages | Per-use triage: some are decorative separators (fine), some are real text (not fine). The theme's own comments already call this token "below AA and reserved for" non-text use — the rule exists and is being broken in places | 1 token + 7 call sites |
-| O-4 | The `button` atom is unconditionally an `<a href>`, so anything using it for an **action** exposes the wrong role; with no `url` it renders `href="#"`, a link to the current page | 4.1.2 (A) | Medium — only where used as an action; today's usages are navigational | `components/button/button.twig` | An `as`/`element` prop switching `<a>`/`<button>`, `url` required only for the link variant | Small, but it is an API change |
-| O-5 | The A–Z row's stylesheet **never loads on the only page that has an A–Z row.** `.views-summary a[aria-current]` lives in `recipes.css`, attached from the recipes listing, front page and recipe nodes — not from `/glossary` | — (see note) | Low | `_recipes-listing.scss` | One `attach_library`, or move the block to global CSS | Trivial |
+| O-4 | The `button` atom is unconditionally an `<a href>`, so anything using it for an **action** exposes the wrong role; with no `url` it renders `href="#"`, a link to the current page | 4.1.2 (A) | Medium — only where used as an action; today's usages are all navigational, so nothing currently announces the wrong role | `components/button/button.twig` | An `as`/`element` prop switching `<a>`/`<button>`, `url` required only for the link variant | Small, but it is a component API change |
 
-**O-5 does not map to a WCAG failure, and the reason is worth stating.** 1.4.1 Use of Color requires that colour not be the *sole* means of conveying information. Here there is **no** visual means at all — so 1.4.1 is not triggered. What it is instead is a parity inversion: after this remediation, screen-reader users can tell which letter is current and **sighted users cannot.** That is the reverse of the usual defect, and it is the kind of thing only a human review surfaces.
+Left last deliberately: it is the only item here that changes a contract other code depends on, and it prevents a future defect rather than fixing a present one. Its real value is in the Articles build, where actions are likely.
+
+### Closed since the first draft
+
+| # | Finding | Criterion | Fixed in | Retest |
+|---|---|---|---|---|
+| O-1 | The mini pager was still `h4` on `views.view.recipes` and `views.view.recipe_search`, so `/recipes` read h2 → h4 and **`/recipe-search` read h1 → h4** — the worst outline on the site | 1.3.1 (A) | [#30](https://github.com/Quraish05/flavourful-nutrition/pull/30) | Sweep: **9 routes, 0 flagged** |
+| O-2 | Form control borders measured **1.72:1** against the page, below 1.4.11's 3:1 for a UI component boundary | 1.4.11 (AA) | [#31](https://github.com/Quraish05/flavourful-nutrition/pull/31) | New `$color-rule-control` at **3.86 / 4.11 / 3.64** |
+| O-3 | `--fr-bone-faint` used as readable text in four places at **3.41–3.63:1**, below 4.5:1 | 1.4.3 (AA) | [#31](https://github.com/Quraish05/flavourful-nutrition/pull/31) | All four now **7.24:1** or better |
+| O-5 | The A–Z row's stylesheet never loaded on the only page with an A–Z row | — (see note) | [#31](https://github.com/Quraish05/flavourful-nutrition/pull/31) | `recipes.css` now served on `/glossary` |
+
+Contrast across the whole palette is now **19 pairs, 0 failing** (was 5 failing of 17), each measured against the ground it is actually painted on.
+
+**O-3's shape is worth keeping.** The theme's own token file already carried the rule — *"BELOW AA for text. Decorative glyphs … and disabled controls only … anything a user has to read takes `$color-bone-muted`"* — and four call sites ignored it. The standard was not missing; it was written down and not followed. The best example was `.cook-mode__steps .method__step`, whose comment says the inactive steps are *"dimmed rather than hidden, so the user keeps the context of where they are in the method"* — an intent that requires them to stay readable.
+
+**O-2 turned on scoping rather than on the number.** `$color-rule-strong` also draws table header rules and section hairlines, which are decorative and outside 1.4.11. A new token was added rather than lightening that one, which would have restyled every table on the site for no accessibility gain.
+
+**O-5 never mapped to a WCAG failure, and the reason is worth keeping.** 1.4.1 Use of Color requires that colour not be the *sole* means of conveying information. There was **no** visual means at all, so 1.4.1 was not triggered. What it was instead is a **parity inversion**: after `aria-current` was added, screen-reader users could tell which letter was current and **sighted users could not.** Remediation had improved the page in one direction and left it worse in the other. That is the reverse of the usual defect and the kind of thing only a human review surfaces — no scanner has an opinion about it.
+
+**Also fixed, though never a WCAG failure:** every page title ended `| Drush Site-Install`, the installer default, and the header rendered it too. The drift ran the *other* way — `config/sync/system.site.yml` already held `The Cookbook` and the database had never caught up — so `drush config:set` fixed the header, all nine titles and a config drift item without touching git. Titles were always unique and descriptive, so **2.4.2 passed either way**; it simply read as unfinished.
 
 **Assessed and deliberately kept:** the glossary's Author column renders "Anonymous (not verified)" on every row, because all 32 nodes are authored by uid 0 or 1. Raised as a content-quality observation, **not** an accessibility finding — no criterion applies — and the site owner has chosen to keep the column, since it will carry real information once the content has real authors. And the site name is still the installer default, `Drush Site-Install`, which appears in every `<title>`; titles are unique and descriptive, so 2.4.2 passes, but it reads as unfinished.
 
@@ -187,8 +202,10 @@ Two of the twenty fixed defects were **regressions introduced during this projec
 | [#26](https://github.com/Quraish05/flavourful-nutrition/pull/26) | 15 Sep | `aria-current` in three places, page-title escaping | +59 / −10 |
 | [#27](https://github.com/Quraish05/flavourful-nutrition/pull/27) | 15 Sep | Chef listing links and headings, cuisine caption, pager levels | +252 / −4 |
 | [#28](https://github.com/Quraish05/flavourful-nutrition/pull/28) | 15 Sep | Glossary A–Z names and landmark | +249 / −0 |
+| [#30](https://github.com/Quraish05/flavourful-nutrition/pull/30) | 15 Sep | Pager heading levels on the recipes and search views (O-1) | +2 / −2 |
+| [#31](https://github.com/Quraish05/flavourful-nutrition/pull/31) | 15 Sep | A–Z stylesheet delivery (O-5); four sub-AA colours and a control-border token (O-2, O-3) | +46 / −8 |
 
-**Deployment note for whoever ships this:** PRs #23, #25 and #27 are **configuration**, and `acli push:artifact` does not import configuration. They require a config import on deploy. #24, #26 and #28 are theme code and do not.
+**Deployment note for whoever ships this:** PRs #23, #25, #27 and #30 are **configuration**, and `acli push:artifact` does not import configuration. They require a config import on deploy. #24, #26, #28 and #31 are theme code and do not.
 
 ---
 
@@ -220,7 +237,7 @@ Stated plainly, because a conformance claim is only as good as its scope stateme
 - **The Site Studio component library is untested**, and it owns the full recipe display. Any finding there is likely to be *authorable* — reintroducible by an editor — which makes it a governance problem rather than a code one.
 - **No user testing.** Everything here is expert evaluation. Conformance is not the same as usability, and no amount of desk work substitutes for a disabled user's judgement.
 - **The accessible-name computations for the newest fix (finding 15) are verified from source, not from the browser's computed name.** The distinction is recorded in the plan file rather than papered over.
-- **Automated scanning is not yet in CI**, so nothing prevents regression today. Two of the defects above were our own regressions, which is the measure of that risk.
+- **Automated scanning is not yet in CI**, so nothing prevents regression today. `scripts/a11y-sweep.py` and `scripts/contrast.py` both exit non-zero on failure and are ready to drop into the Week 5–6 gate. Two of the defects above were our own regressions, which is the measure of that risk.
 - **The sweep checks structure, not meaning.** It can tell you a landmark has a name; it cannot tell you the name is *true*. Finding 4 — `aria-current="page"` asserting the wrong location site-wide — is valid, well-formed ARIA that no structural check would question. That gap is permanent and is the reason this document exists alongside the scripts.
 
 ---

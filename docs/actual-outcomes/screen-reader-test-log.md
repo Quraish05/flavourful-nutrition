@@ -4,7 +4,7 @@
 >
 > Companion to [`accessibility-audit.md`](accessibility-audit.md). The audit says **what was wrong and what was fixed**; this log says **what a screen reader actually did** on each task, before and after. Task scripts come from the Notion study doc *"Screen Reader Task Scripts — Six Runs on Flavourful"*.
 >
-> **Status: six of six tasks run and passing.** Evidence provenance is recorded per row — see *How to read the evidence column*, which is the part of this document that makes it trustworthy.
+> **Status: six of six tasks run, and every defect they surfaced is now fixed.** Evidence provenance is recorded per row — see *How to read the evidence column*, which is the part of this document that makes it trustworthy.
 
 ---
 
@@ -67,7 +67,7 @@ Not every row is backed by the same kind of proof, and pretending otherwise woul
 | Pager link names | Already correct — "Page 3", and the pagination nav has a name | unchanged | 2.4.4 (A) | A11y tree | **Pass** |
 | Current page state | Marked by a CSS class only; the current item is plain text, not a link | `aria-current="page"`, and it reads **"Page 2 of 3"** — core computes the total to decide whether to draw prev/next, then discards it, so a preprocess hook re-exposes it | 4.1.2 (A) | A11y tree, VO | **Fail → Pass** ([#26](https://github.com/Quraish05/flavourful-nutrition/pull/26)) |
 | Card heading level | `<h3>` hardcoded, giving h1 → h3 on every listing page | `heading_level` is a required prop; `/recipes` cards are `<h2>` | 1.3.1 (A) | DOM | **Fail → Pass** |
-| Pager heading level | `h4`, so the page reads h2 → h4 | **Still `h4`** on this view | 1.3.1 (A) | DOM | **Open** — see audit O-1 |
+| Pager heading level | `h4`, so the page reads h2 → h4 | `h2` | 1.3.1 (A) | DOM | **Fail → Pass** ([#30](https://github.com/Quraish05/flavourful-nutrition/pull/30)) |
 
 **Correction recorded.** The first remediation attempt edited `templates/navigation/pager.html.twig` and changed nothing, because **every view on this site uses the mini pager**. `views-mini-pager.html.twig` is the file that renders. Editing a template that never executes produces a convincing diff and no behaviour change — the same trap as auditing a disabled view.
 
@@ -111,7 +111,7 @@ The rotor view of this is also the clearest client-facing clip available from th
 | Header cells | Predicted fine | `scope="col"` on all three — set unconditionally by the theme | 1.3.1 (A) | DOM | **Pass** |
 | Sort state | Predicted absent | **Core sets `aria-sort`** on the sorted column. The original check looked in `views.theme.inc`; the hooks had moved to `src/Hook/ViewsThemeHooks.php` | 4.1.2 (A) | DOM | **Pass** — prediction was wrong |
 | Table replaced on sort without announcement | `use_ajax: true` — sorting and paging silently replaced the table | AJAX off | 4.1.3 (AA) | DOM | **Fail → Not applicable** |
-| Visual current-letter indicator | None | **Still none** — the stylesheet that would provide it never loads on this route | — | DOM | **Open** — see audit O-5 |
+| Visual current-letter indicator | None — the stylesheet that would provide it never loaded on this route | `recipes.css` now attached; the letters sit on one row and the current one is brass with a rule under it | — | DOM | **Fail → Pass** ([#31](https://github.com/Quraish05/flavourful-nutrition/pull/31)) |
 
 **Two lessons, and the second is uncomfortable.** First: *load the page before writing the finding* — a task written against a 404 produces confident prose about markup that never rendered. Second: **searching the wrong file reads exactly like absence.** `aria-sort` was reported missing twice on that basis.
 
@@ -159,11 +159,11 @@ Run by the developer alongside the six tasks.
 |---|---|---|---|---|
 | 1 — Facet filtering | 2 | 2 | 0 | 2 |
 | 2 — Difficulty by ear | 1 | 1 | 0 | 0 |
-| 3 — Pagination | 2 | 2 | 1 | 0 |
+| 3 — Pagination | 3 | 3 | 0 | 0 |
 | 4 — Chef navigation | 3 | 3 | 0 | 0 |
-| 5 — Glossary A–Z | 9 | 9 | 1 | 2 |
+| 5 — Glossary A–Z | 10 | 10 | 0 | 2 |
 | 6 — Landmarks | 3 | 3 | 0 | 1 |
-| **Total** | **20** | **20** | **2** | **5** |
+| **Total** | **22** | **22** | **0** | **5** |
 
 Five predictions written into the task scripts **inverted under testing** — the exposed form's legend, the embedded heading levels, `aria-sort`, the sort indicator, and the skip link were all reported as defects and all turned out to be correct. Each is recorded as a pass above rather than quietly deleted, because a checklist that only ever confirms its own suspicions is not a test.
 
