@@ -105,7 +105,7 @@ Each is scoped; none is blocked.
 
 **O-5 does not map to a WCAG failure, and the reason is worth stating.** 1.4.1 Use of Color requires that colour not be the *sole* means of conveying information. Here there is **no** visual means at all — so 1.4.1 is not triggered. What it is instead is a parity inversion: after this remediation, screen-reader users can tell which letter is current and **sighted users cannot.** That is the reverse of the usual defect, and it is the kind of thing only a human review surfaces.
 
-**Also open but out of accessibility scope:** the glossary's Author column renders "Anonymous (not verified)" on every row (all content is uid 0 or 1) — a content-quality issue, deferred deliberately. And the site name is still the installer default, `Drush Site-Install`, which appears in every `<title>`; titles are unique and descriptive, so 2.4.2 passes, but it reads as unfinished.
+**Assessed and deliberately kept:** the glossary's Author column renders "Anonymous (not verified)" on every row, because all 32 nodes are authored by uid 0 or 1. Raised as a content-quality observation, **not** an accessibility finding — no criterion applies — and the site owner has chosen to keep the column, since it will carry real information once the content has real authors. And the site name is still the installer default, `Drush Site-Install`, which appears in every `<title>`; titles are unique and descriptive, so 2.4.2 passes, but it reads as unfinished.
 
 ---
 
