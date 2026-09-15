@@ -32,6 +32,7 @@
   --fr-bone-faint: #{$color-bone-faint};
   --fr-rule: #{$color-rule};
   --fr-rule-strong: #{$color-rule-strong};
+  --fr-rule-control: #{$color-rule-control};
 
   // -- Difficulty accents -----------------------------------------------------
   @each $level, $value in $difficulty-colors {

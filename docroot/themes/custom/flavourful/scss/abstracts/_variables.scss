@@ -37,6 +37,13 @@ $color-bone-muted: #a9a294; // Secondary text — 6.8:1. Meta, bylines, captions
 $color-bone-faint: #6f6a5f;
 $color-rule: #302a21; // Hairlines between rows and sections.
 $color-rule-strong: #453d30; // Borders that need to read as an edge.
+// 3.3:1 against the lightest ground. Form control borders only — WCAG 1.4.11
+// wants 3:1 for the boundary of a user interface component, and
+// $color-rule-strong reaches 1.6:1. Kept as a separate token rather than
+// lightening $color-rule-strong, because that one also draws table header
+// rules and section hairlines, which are decorative and which 1.4.11 does
+// not reach.
+$color-rule-control: #7a7263;
 
 // -- Difficulty accents -------------------------------------------------------
 // Keyed by the `field_difficulty` allowed values. Rendered as the badge's text

@@ -301,7 +301,10 @@
 // reads as a footer credit rather than as a line of the site's prose.
 .powered-by {
   @include label-type;
-  color: $color-bone-faint;
+  // A line of text a reader can choose to read, so it takes the muted token
+  // rather than the faint one, which is reserved for decoration and disabled
+  // controls.
+  color: $color-bone-muted;
 
   a {
     color: $color-bone-muted;
