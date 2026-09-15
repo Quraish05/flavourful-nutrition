@@ -72,7 +72,21 @@ class ListingHooks {
   #[Hook('preprocess_views_view')]
   public function preprocessViewsView(array &$variables): void {
     $view = $variables['view'] ?? NULL;
-    if (!$view || $view->id() !== 'frontpage') {
+    if (!$view) {
+      return;
+    }
+
+    // The A–Z letter row is the only .views-summary on the site, and its
+    // styling lives in the recipes listing stylesheet — a library /glossary
+    // never attaches. Without this the row renders unstyled and the active
+    // letter has no visual indicator at all, while screen readers do get
+    // aria-current. The CSS is arguably in the wrong file; moving it out of
+    // _recipes-listing.scss is the tidier fix and a bigger change.
+    if ($view->id() === 'glossary') {
+      $variables['#attached']['library'][] = 'flavourful/recipes';
+    }
+
+    if ($view->id() !== 'frontpage') {
       return;
     }
 
