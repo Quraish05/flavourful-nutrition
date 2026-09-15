@@ -212,7 +212,7 @@ display:
         type: mini
         options:
           offset: 0
-          pagination_heading_level: h4
+          pagination_heading_level: h2
           items_per_page: 10
           total_pages: null
           id: 0
@@ -286,6 +286,44 @@ display:
             recipe: recipe
       style:
         type: table
+        options:
+          grouping: {  }
+          row_class: ''
+          default_row_class: true
+          columns:
+            title: title
+            field_recipe_cuisine_type: field_recipe_cuisine_type
+            nid: nid
+          default: '-1'
+          info:
+            title:
+              sortable: false
+              default_sort_order: asc
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+            field_recipe_cuisine_type:
+              sortable: false
+              default_sort_order: asc
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+            nid:
+              sortable: false
+              default_sort_order: asc
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+          override: true
+          sticky: false
+          summary: ''
+          empty_table: false
+          caption: 'Recipes grouped by cuisine'
+          description: ''
+          class: ''
       row:
         type: 'entity:node'
         options:
