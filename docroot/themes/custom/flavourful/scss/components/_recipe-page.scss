@@ -39,7 +39,8 @@
   margin-block: $space-md 0;
   max-width: none;
   @include label-type;
-  color: $color-bone-faint;
+  // Authorship and date are information, not decoration — muted, not faint.
+  color: $color-bone-muted;
 
   a {
     color: $color-bone-muted;

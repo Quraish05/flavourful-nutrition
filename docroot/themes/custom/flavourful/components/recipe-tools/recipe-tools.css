@@ -162,10 +162,17 @@
  * One step at a time. The inactive steps are dimmed rather than hidden, so the
  * user keeps the context of where they are in the method — and so the list
  * still reads as a list to assistive tech.
+ *
+ * --fr-bone-muted, not --fr-bone-faint. These are recipe steps, not a disabled
+ * control, so 1.4.3's exemption does not apply and 4.5:1 is owed. Dimming them
+ * below that defeated the reason for dimming rather than hiding them: a reader
+ * who cannot make out the surrounding steps has lost the context this was
+ * supposed to preserve. The active step still separates itself, by weight and
+ * by typeface as well as by colour.
  */
 .cook-mode__steps .method__step {
   border-block-end: 0;
-  color: var(--fr-bone-faint);
+  color: var(--fr-bone-muted);
   font-size: var(--fr-size-body-sm);
   transition: color var(--fr-duration) var(--fr-ease);
 }

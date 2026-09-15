@@ -178,7 +178,10 @@ input,
 select,
 textarea {
   padding: $space-xs $space-sm;
-  border: 1px solid var(--fr-rule-strong);
+  // --fr-rule-control, not --fr-rule-strong: a field's border is the boundary
+  // of a UI component, so WCAG 1.4.11 asks 3:1 against both the field and the
+  // page behind it. The decorative tokens do not reach that.
+  border: 1px solid var(--fr-rule-control);
   border-radius: var(--fr-radius-sm);
   background-color: var(--fr-ink-deep);
   color: var(--fr-bone);
@@ -217,8 +220,10 @@ select {
   background-position: left $space-sm center;
 }
 
+// Placeholder text sits in an *enabled* field, so 1.4.3's exemption for
+// inactive components does not cover it. --fr-bone-faint measured 3.6:1 here.
 ::placeholder {
-  color: var(--fr-bone-faint);
+  color: var(--fr-bone-muted);
 }
 
 // -- Utilities ----------------------------------------------------------------
