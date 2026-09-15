@@ -1,0 +1,53 @@
+{#
+/**
+ * @file
+ * Theme override for the glossary A–Z letter summary.
+ *
+ * Scoped to the glossary view's attachment display, because the label text is
+ * specific to this view. The generic views-view-summary.html.twig stays
+ * unlabelled so any other summary this site grows is not mislabelled.
+ *
+ * What this adds over the generic template:
+ * - A named <nav> landmark, so the A–Z row can be reached by landmark and told
+ *   apart from the site's other navigation (WCAG 1.3.1, 2.4.1).
+ * - A visually-hidden prefix inside each link, so it announces as "Recipes
+ *   beginning with S" instead of a bare "S" (WCAG 2.4.4). The space before
+ *   row.link is load-bearing: without it the name reads "…beginning withS".
+ * - aria-current="page" on the active letter, carried over from the generic
+ *   template. Do not drop it.
+ *
+ * The count stays outside the link deliberately: it is context, not part of
+ * the link's purpose.
+ *
+ * The 'item-list' class moves onto the <nav> so css/components/item-list.css,
+ * which selects on descendants, keeps applying and nothing shifts visually.
+ *
+ * Available variables:
+ * - rows: The rows contained in this view.
+ *   Each row contains:
+ *   - url: The summary link URL.
+ *   - link: The summary link text.
+ *   - count: The number of items under this grouping.
+ *   - attributes: HTML attributes to apply to each row.
+ *   - active: A flag indicating whether the row is active.
+ * - options: Flags indicating how the summary should be displayed.
+ *   This contains:
+ *   - count: A flag indicating whether the count should be displayed.
+ *
+ * @see template_preprocess_views_view_summary()
+ */
+#}
+<nav class="item-list" aria-label="{{ 'Browse recipes by first letter'|t }}">
+	<ul class="views-summary">
+		{% for row in rows %}
+			<li>
+				<a href="{{ row.url }}" {{ row.attributes.addClass(row.active ? 'is-active')|without('href') }} {% if row.active %} aria-current="page" {% endif %}>
+					<span class="visually-hidden">{{ 'Recipes beginning with'|t }}</span>
+					{{ row.link }}</a>
+				{% if options.count %}
+					({{ row.count }})
+				{% endif %}
+			</li>
+		{% endfor %}
+	</ul>
+</nav>
