@@ -1,0 +1,25 @@
+# Pre-existing phpstan findings, frozen so that anything NEW fails the build.
+#
+# All three are the same Drupal pattern and all three are false positives:
+# FieldItemBase::__get() serves $item->entity and $item->value at runtime, but
+# phpstan sees only the FieldItemInterface type hint and cannot resolve the
+# concrete item class. The code is correct.
+#
+# Do not add to this file to make a new error go away. Regenerate it only when
+# a listed finding is genuinely fixed:
+#
+#   ddev exec "vendor/bin/phpstan analyse --generate-baseline phpstan-baseline.neon"
+
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Access to an undefined property Drupal\\Core\\Field\\FieldItemInterface\:\:\$entity\.$#'
+			identifier: property.notFound
+			count: 2
+			path: docroot/themes/custom/flavourful/src/Hook/RecipeHooks.php
+
+		-
+			message: '#^Access to an undefined property Drupal\\Core\\Field\\FieldItemInterface\:\:\$value\.$#'
+			identifier: property.notFound
+			count: 1
+			path: docroot/themes/custom/flavourful/src/Hook/RecipeHooks.php

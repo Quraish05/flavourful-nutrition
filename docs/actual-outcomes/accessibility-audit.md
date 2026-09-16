@@ -192,6 +192,37 @@ Two of the twenty fixed defects were **regressions introduced during this projec
 
 ---
 
+## What the CI gate does and does not cover
+
+Added 16 September. Stated in this much detail because the point of a conformance document is that a reader can tell what was *checked* from what was *assumed*.
+
+**Running on every pull request and every push to `master`:**
+
+| Gate | Catches | Needs a site? |
+|---|---|---|
+| `scripts/contrast.py` | any design token falling below 1.4.3 or 1.4.11 | no — pure arithmetic over the tokens |
+| CSS artefact freshness | an SCSS edit that was never compiled, so the page never changed | no |
+| `phpcs` (Drupal, DrupalPractice) | coding standards across the custom module and theme | no |
+| `phpstan` level 2 + baseline | new static-analysis errors; the three pre-existing ones are frozen | no |
+
+**Not running, and this is the honest part:**
+
+- **`scripts/a11y-sweep.py`** — heading outlines, landmark names, unnamed links, nested anchors, table captions. It needs the site up. Bringing one up in CI means `drush site-install --existing-config`, and this site's configuration declares **eleven Cohesion (Site Studio) modules**, which require Acquia API credentials, plus `search_api_solr`, which requires a Solr service.
+- **axe-core / pa11y-ci** — the same running site, and then **content**. Against an empty install `/chefs` has no rows and `/glossary` no letters, so a scan would pass trivially and prove nothing. Content fixtures are the real cost here, not the scanner.
+
+So the sweep is run by hand against DDEV and its result recorded in this document. **That is a weaker guarantee than a gate and is recorded as such.**
+
+**And the permanent gap, which no amount of CI closes.** These gates check structure; they cannot check *truth*. Finding 4 — `aria-current="page"` asserting the wrong location on every page of the site — is valid, well-formed ARIA that every scanner would accept. So is a landmark named "Search filters" on a page with no filters. Roughly **six of the twenty-five** defects in this document were machine-detectable; the rest needed configuration read, post-JavaScript DOM read, or a judgement about whether a name was true.
+
+### Two things the gate fixed on the way in
+
+Worth recording because they are the reason to distrust a green build:
+
+- **The test step could not fail.** It ran `vendor/bin/phpunit … || true`, `phpunit` was never installed, and every run logged *"No such file or directory"* and reported green. There are no tests in this project; the step has been removed rather than faked, and the workflow says why. A step that cannot fail is worse than no step, because it reads as coverage.
+- **Nothing had ever run on push.** The trigger was `branches: [main]` and the default branch is `master`.
+
+---
+
 ## Remediation record
 
 | PR | Date | Scope | Change |
@@ -237,7 +268,7 @@ Stated plainly, because a conformance claim is only as good as its scope stateme
 - **The Site Studio component library is untested**, and it owns the full recipe display. Any finding there is likely to be *authorable* — reintroducible by an editor — which makes it a governance problem rather than a code one.
 - **No user testing.** Everything here is expert evaluation. Conformance is not the same as usability, and no amount of desk work substitutes for a disabled user's judgement.
 - **The accessible-name computations for the newest fix (finding 15) are verified from source, not from the browser's computed name.** The distinction is recorded in the plan file rather than papered over.
-- **Automated scanning is not yet in CI**, so nothing prevents regression today. `scripts/a11y-sweep.py` and `scripts/contrast.py` both exit non-zero on failure and are ready to drop into the Week 5–6 gate. Two of the defects above were our own regressions, which is the measure of that risk.
+- **Only part of this audit can be automated, and the reason is the stack.** See *What the CI gate does and does not cover* below. Two of the defects above were our own regressions, which is the measure of that risk.
 - **The sweep checks structure, not meaning.** It can tell you a landmark has a name; it cannot tell you the name is *true*. Finding 4 — `aria-current="page"` asserting the wrong location site-wide — is valid, well-formed ARIA that no structural check would question. That gap is permanent and is the reason this document exists alongside the scripts.
 
 ---
