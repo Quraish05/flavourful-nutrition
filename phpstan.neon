@@ -1,0 +1,23 @@
+# Static analysis for the custom module and theme code.
+#
+# Level 2, not the implicit 0 this project ran at before. Level 0 checks little
+# more than that the code parses, which is why CI reported it green throughout
+# an audit that found two dozen defects.
+#
+# The baseline holds three pre-existing hits and nothing else, so anything new
+# fails the build. Regenerate it deliberately, never to silence a fresh error:
+#
+#   ddev exec "vendor/bin/phpstan analyse --generate-baseline"
+includes:
+  - phpstan-baseline.neon
+
+parameters:
+  level: 2
+  paths:
+    - docroot/modules/custom
+    - docroot/themes/custom
+  # Compiled CSS, fixtures and vendor code inside the theme are not ours.
+  excludePaths:
+    analyseAndScan:
+      - docroot/themes/custom/*/node_modules
+

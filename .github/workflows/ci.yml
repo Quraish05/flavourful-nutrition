@@ -1,23 +1,92 @@
 name: CI
+
+# `master` is this repository's default branch. This said `main` until
+# 2026-09-16, so no push to the default branch had ever triggered a run —
+# only pull requests did.
 on:
   pull_request:
   push:
-    branches: [ main ]
+    branches: [ master ]
+
+
 jobs:
   build-test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.3'
           tools: composer
+
       - name: Install dependencies
         run: composer install --no-interaction --no-progress
+
       - name: Coding standards (Drupal)
         run: vendor/bin/phpcs --standard=Drupal,DrupalPractice docroot/modules/custom docroot/themes/custom
+
+      # Configured by phpstan.neon at level 2. This ran at the implicit level 0
+      # until 2026-09-16, which checks little beyond "does it parse".
       - name: Static analysis
-        run: vendor/bin/phpstan analyse docroot/modules/custom
-      - name: Tests
-        run: vendor/bin/phpunit docroot/modules/custom || true
+        run: vendor/bin/phpstan analyse --no-progress
+
+      # There is deliberately no test step. There were no tests, phpunit was
+      # not installed, and the step read:
+      #
+      #   vendor/bin/phpunit docroot/modules/custom || true
+      #
+      # so every run logged "vendor/bin/phpunit: No such file or directory" and
+      # reported green. A step that cannot fail is worse than no step: it reads
+      # as coverage. Restore it — without `|| true`, and with drupal/core-dev
+      # in require-dev — on the day a test exists.
+
+  accessibility:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Pure arithmetic over the design tokens: no site, no browser, no
+      # dependencies. Exits non-zero on any pair below its threshold.
+      #
+      # There is no baseline file because there is no backlog — the palette was
+      # brought to 19 pairs, 0 failing before this gate was added. Fixing first
+      # and gating second is what lets the gate be zero-tolerance.
+      - name: Colour contrast (WCAG 1.4.3, 1.4.11)
+        run: python3 scripts/contrast.py
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      # The theme ships compiled CSS. An SCSS edit that is never built produces
+      # a convincing diff and no change on the page — which happened during the
+      # contrast work. Rebuilding and diffing is the only way to know the
+      # artefact matches its source.
+      - name: CSS artefacts are in sync with their source
+        working-directory: docroot/themes/custom/flavourful
+        run: |
+          npm ci
+          npm run build
+          if ! git diff --quiet -- css/; then
+            echo "::error::css/ is stale — run 'npm run build' in the theme and commit the result."
+            git diff --stat -- css/
+            exit 1
+          fi
+# Not here, and the reason is the stack rather than the effort:
+#
+#   * scripts/a11y-sweep.py needs the site running. Bringing one up means
+#     `drush site-install --existing-config`, and this site's config declares
+#     eleven Cohesion (Site Studio) modules, which need Acquia API credentials,
+#     plus search_api_solr, which needs a Solr service.
+#   * axe-core and pa11y-ci need the same running site, and then need content:
+#     against an empty install /chefs has no rows and /glossary no letters, so
+#     they would pass trivially and prove nothing.
+#
+# Until that is worth building, a11y-sweep.py is run by hand against DDEV and
+# its result recorded in docs/actual-outcomes/accessibility-audit.md. The limit
+# is written down there too, so the audit is not mistaken for a scan.
+
+
