@@ -1,0 +1,21 @@
+uuid: 59513a3d-da76-4b37-9188-b86a4f66593f
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_story_type
+    - node.type.article
+  module:
+    - options
+id: node.article.field_story_type
+field_name: field_story_type
+entity_type: node
+bundle: article
+label: 'Story type'
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: list_string

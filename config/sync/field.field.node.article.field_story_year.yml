@@ -1,0 +1,23 @@
+uuid: 56e933c0-1bbe-494e-81fc-2ebefac629bd
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_story_year
+    - node.type.article
+id: node.article.field_story_year
+field_name: field_story_year
+entity_type: node
+bundle: article
+label: 'Year this happened'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: 1900
+  max: 2026
+  prefix: ''
+  suffix: ''
+field_type: integer

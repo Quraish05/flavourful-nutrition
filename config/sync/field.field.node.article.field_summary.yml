@@ -1,0 +1,19 @@
+uuid: d867023f-702d-4228-b5d4-18324cadb8b9
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_summary
+    - node.type.article
+id: node.article.field_summary
+field_name: field_summary
+entity_type: node
+bundle: article
+label: Standfirst
+description: 'One or two sentences under the headline. Appears on cards and in the feed.'
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string_long
