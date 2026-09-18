@@ -1,0 +1,9 @@
+uuid: 6d25d9bf-d2ef-47ff-bdda-0382bbd5c1d4
+langcode: en
+status: true
+dependencies: {  }
+name: Topic
+vid: topic
+description: null
+weight: 0
+new_revision: false

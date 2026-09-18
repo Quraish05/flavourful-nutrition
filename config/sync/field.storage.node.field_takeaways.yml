@@ -1,0 +1,19 @@
+uuid: 07f4b653-c8a6-4c89-a05b-838347c255fc
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+    - text
+id: node.field_takeaways
+field_name: field_takeaways
+entity_type: node
+type: text_long
+settings: {  }
+module: text
+locked: false
+cardinality: -1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false
