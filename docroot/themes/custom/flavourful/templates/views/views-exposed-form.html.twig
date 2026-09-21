@@ -3,8 +3,21 @@
  * @file
  * Theme override for a views exposed form.
  *
+ * The fieldset/legend grouping is a WCAG 1.3.1 fix: a bare row of filter
+ * controls has no programmatic association with each other.
+ *
+ * The legend names the view it filters, taken from `filter_label` — set in
+ * flavourful_preprocess_views_exposed_form() from the value that
+ * flavourful_form_views_exposed_form_alter() stashes on the form. It is done
+ * that way round because the exposed form's render array carries `#theme` but
+ * not the view, so the view is only reachable from form state.
+ *
+ * Hardcoding a legend here is a trap: this template is the site-wide fallback,
+ * so any view without its own override inherits whatever it says.
+ *
  * Available variables:
  * - form: A render element representing the form.
+ * - filter_label: The title of the view this form filters, or NULL.
  *
  * @see template_preprocess_views_exposed_form()
  */
@@ -18,7 +31,13 @@
 {% endif %}
 <div class="form--inline clearfix">
   <fieldset class="form--inline clearfix">
-    <legend>{{ 'Filter recipes'|t }}</legend>
+    <legend>
+      {%- if filter_label -%}
+        {{ 'Filter @label'|t({'@label': filter_label|lower}) }}
+      {%- else -%}
+        {{ 'Filter results'|t }}
+      {%- endif -%}
+    </legend>
       {{ form }}
   </fieldset>
 </div>
