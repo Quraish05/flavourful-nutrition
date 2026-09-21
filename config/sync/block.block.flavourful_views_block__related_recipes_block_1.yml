@@ -11,8 +11,8 @@ dependencies:
     - flavourful
 id: flavourful_views_block__related_recipes_block_1
 theme: flavourful
-region: sidebar_first
-weight: 0
+region: sidebar_second
+weight: -8
 provider: null
 plugin: 'views_block:related_recipes-block_1'
 settings:
