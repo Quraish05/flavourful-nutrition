@@ -12,6 +12,16 @@ targetEntityType: node
 bundle: chef
 mode: default
 content:
+  articles_by_author_entity_view_1:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 10
+    region: content
+  chef_recipes_eva_entity_view_1:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 10
+    region: content
   field_chef_name:
     type: string
     label: above
