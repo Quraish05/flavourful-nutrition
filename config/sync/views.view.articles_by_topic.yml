@@ -137,8 +137,8 @@ display:
           plugin_id: taxonomy_index_tid
           default_action: 'not found'
           exception:
-            value: all
-            title_enable: false
+            value: ''
+            title_enable: true
             title: All
           title_enable: true
           title: 'Articles on {{ arguments.tid }}'
