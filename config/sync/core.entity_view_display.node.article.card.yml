@@ -1,0 +1,83 @@
+uuid: 3114773d-8ce7-4c5f-8453-f8f3287d2adc
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.card
+    - field.field.node.article.body
+    - field.field.node.article.field_chef
+    - field.field.node.article.field_hero
+    - field.field.node.article.field_reading_time
+    - field.field.node.article.field_recipes
+    - field.field.node.article.field_story_type
+    - field.field.node.article.field_story_year
+    - field.field.node.article.field_summary
+    - field.field.node.article.field_takeaways
+    - field.field.node.article.field_topics
+    - image.style.medium
+    - node.type.article
+  module:
+    - image
+    - layout_builder
+    - user
+third_party_settings:
+  layout_builder:
+    enabled: false
+    allow_custom: false
+id: node.article.card
+targetEntityType: node
+bundle: article
+mode: card
+content:
+  field_chef:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 3
+    region: content
+  field_hero:
+    type: image
+    label: above
+    settings:
+      image_link: ''
+      image_style: medium
+      image_loading:
+        attribute: lazy
+    third_party_settings: {  }
+    weight: 0
+    region: content
+  field_reading_time:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 2
+    region: content
+  field_topics:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 1
+    region: content
+  field_summary:
+    type: basic_string
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 4
+    region: content
+hidden:
+  body: true
+  field_recipes: true
+  field_story_type: true
+  field_story_year: true
+  field_takeaways: true
+  langcode: true
+  links: true
+  search_api_excerpt: true
