@@ -1,0 +1,92 @@
+{#
+/**
+ * @file
+ * Theme override for the "Articles" view (all displays).
+ *
+ * Adds an intro header, an `.articles-view` wrapper class and attaches the
+ * `flavourful/articles` library so the listing CSS only loads here. Row markup
+ * is not this template's business: the view uses the `entity:node` row plugin,
+ * so each row is a node rendered through the `card` view mode.
+ *
+ * Applies to page_2 (`/articles/fields-test`) too, deliberately — the wrapper
+ * is the same whichever row plugin a display uses.
+ *
+ * @see template_preprocess_views_view()
+ * @see the base template in core: views-view.html.twig
+ */
+#}
+
+{{ attach_library('flavourful/articles') }}
+{%
+  set classes = [
+    'view',
+    'articles-view',
+    'view-' ~ id|clean_class,
+    'view-display-id-' ~ display_id,
+    dom_id ? 'js-view-dom-id-' ~ dom_id,
+  ]
+%}
+<div{{ attributes.addClass(classes) }}>
+  {{ title_prefix }}
+  {{ title_suffix }}
+
+  {#
+    No <h1> here. The page-title block already renders the only h1 on this page,
+    which is the convention every other listing follows (/chefs, /recipe-search).
+    A second one duplicated both the visible text and the document outline.
+  #}
+  <header class="articles-header">
+    <p class="articles-header__lead">
+      {{ 'Chefs on the dishes that shaped them — how they learned them, where they went wrong, and who taught them.'|t }}
+    </p>
+  </header>
+
+
+  {% if exposed %}
+    <div class="view-filters">
+      {{ exposed }}
+    </div>
+  {% endif %}
+
+  {% if attachment_before %}
+    <div class="attachment attachment-before">
+      {{ attachment_before }}
+    </div>
+  {% endif %}
+
+  {% if rows %}
+    <div class="view-content">
+      {{ rows }}
+    </div>
+  {% elseif empty %}
+    <div class="view-empty">
+      {{ empty }}
+    </div>
+  {% endif %}
+
+  {% if pager %}
+    {{ pager }}
+  {% endif %}
+
+  {% if attachment_after %}
+    <div class="attachment attachment-after">
+      {{ attachment_after }}
+    </div>
+  {% endif %}
+
+  {% if more %}
+    {{ more }}
+  {% endif %}
+
+  {% if footer %}
+    <div class="view-footer">
+      {{ footer }}
+    </div>
+  {% endif %}
+
+  {% if feed_icons %}
+    <div class="feed-icons">
+      {{ feed_icons }}
+    </div>
+  {% endif %}
+</div>

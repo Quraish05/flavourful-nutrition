@@ -1,0 +1,9 @@
+// =============================================================================
+// articles.scss  ->  css/articles.css
+// -----------------------------------------------------------------------------
+// Page-level arrangement for the articles listing. The card itself brings its
+// own CSS: SDC attaches components/article-card/article-card.css per render,
+// which is why nothing about a card belongs in this file.
+// =============================================================================
+
+@use 'components/articles-listing';

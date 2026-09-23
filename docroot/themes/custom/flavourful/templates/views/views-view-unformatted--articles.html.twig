@@ -1,0 +1,6 @@
+{% if title %}<h3>{{ title }}</h3>{% endif %}
+<div class="articles-list">
+  {% for row in rows %}
+    <div{{ row.attributes.addClass('articles-list__item') }}>{{- row.content -}}</div>
+{% endfor %}
+</div>

@@ -15,7 +15,8 @@
 | 1 — Contextual filters and the validation decision | `articles_by_topic` at `articles/topic/%`, argument `taxonomy_index.tid`, validator `entity:taxonomy_term` scoped to the `topic` bundle. PR #34 | Done |
 | 2 — Relationships, and the same relationship backwards | `articles_by_author` and `recipe_articles` (EVA displays, `entity_view_1`); `recipes_without_articles` at `reports/recipes-without-articles` using `reverse__node__field_recipes`. PR #35 | Done |
 | 3 — Exposed filters as shareable state | `articles` view, `page_1` at `/articles`, two exposed filters (`field_story_type_value`, `field_topics_target_id`) with GET identifiers; exposed-form legend now names its own view. PR #36 | Done |
-| 4 — Fields versus view modes | `card` view mode plus a configured `article.card` display; both row plugins built and compared; the five comparison questions answered and recorded below | Partial — the rule is written; `/articles` still serves the Fields row plugin |
+| 4 — Fields versus view modes | `card` view mode plus a configured `article.card` display; both row plugins built and compared; the five comparison questions answered and recorded below | Done — PR #37. `page_2` was inverted to Fields at `articles/fields-test` rather than deleted, so both row plugins stay observable |
+| 5 — Views templates, and knowing when to stop writing them | `views-view--articles.html.twig` and `views-view-unformatted--articles.html.twig`; a `flavourful/articles` library compiled from its own partial; three docblock-only overrides deleted; the dead recipes row template disarmed | Partial — the `node--article--card.html.twig` component call waits on `article-card` |
 | Content to exercise all of the above | [`scripts/seed-articles.php`](../../scripts/seed-articles.php) — five articles shaped so each exercise has a verifiable result set. PR #35 | Done |
 
 ---
@@ -83,11 +84,74 @@ One listing obeyed the display config and the other did not. The defences are re
 
 ---
 
+## Views templates, and the stopping rule
+
+Item 5 asks which markup a Views template suggestion should own. The rule:
+
+> **Template suggestions own wrapper markup — the container, the header, the
+> empty region, anything Views itself structures. SDC owns anything with a
+> props contract.**
+
+Under an `entity:node` row plugin there is no row template to write at all.
+Views hands the rendered node to the list template and themes nothing per row,
+so the component call belongs in `node--article--card.html.twig`, following
+[`node--recipe--teaser.html.twig`](../../docroot/themes/custom/flavourful/templates/content/node--recipe--teaser.html.twig).
+The Views side owns exactly two files: the view wrapper and the list wrapper.
+
+**A template override that changes no markup is a liability, not a neutral.**
+Three of this theme's seventeen views templates differed from their core
+originals only in the `@file` docblock — `views-view-unformatted`,
+`views-view-list` and `views-view-grid`. An override like that freezes core's
+markup at the version it was copied from, so accessibility and markup fixes
+shipped in later core releases silently never arrive. The audit is a `diff`
+against the core original, not a judgement call, and the proof is that
+deleting all three changed nothing on `/recipes`, `/chefs`, `/articles`,
+`/articles/fields-test` or a chef node page.
+
+All three were reachable, which is what made the check worth running:
+`views-view-grid` renders `/recipes`, `views-view-unformatted` renders every
+`default`-style listing, and `views-view-list` renders the `html_list` style —
+which has no path of its own and reaches the site only through the
+`chef_recipes_eva` display embedded in a chef node.
+
+**A suggestion-named file is armed even when nothing reaches it.**
+`views-view-unformatted--recipes.html.twig` had carried a `DEAD TEMPLATE`
+docblock for two builds, and it was registered in the theme registry the whole
+time:
+
+    views_view_unformatted__recipes => themes/custom/flavourful/templates/views/…
+
+"Unreachable" described the view's current style setting, not the template.
+Changing `views.view.recipes` from grid to unformatted would have rendered it —
+silently and emptily, because it loops `recipes` where the template is handed
+`rows`. It now lives at `templates/partials/legacy-recipes-row.html.twig`,
+which preserves the Day 8 baseline the [Day 9 §7 comparison](day9-sdc.md)
+contrasts against while matching no theme hook. The registry scans `templates/`
+by filename across every subdirectory, so the rename is what deregisters it;
+moving it without renaming would not have.
+
+That is the general rule worth keeping: `partials/` and `macros/` are safe
+places for a superseded artifact **because nothing can auto-select them**. A
+template-suggestion filename is not.
+
+**Listing CSS and component CSS are different things.** The listing library is
+attached by hand from the view template — `attach_library('flavourful/articles')`
+— while the component's CSS travels with the component and is declared nowhere.
+The trap is the SCSS barrel: `scss/components/_index.scss` forwards every
+page-level partial, so an entry point that does `@use 'components'` compiles
+all of them. Pointing `articles.scss` at the barrel produced a `css/articles.css`
+byte-identical to `css/recipes.css` — 4478 bytes of recipe grid, homepage bands
+and recipe detail on the articles page, and nothing matching `.articles-list`.
+Two libraries with identical bytes look scoped and are not. Each page-level
+entry point should `@use` its own partial directly; `articles.css` is 252 bytes
+and four rules once it does.
+
+---
+
 ## Open items
 
-- `/articles` still uses the Fields row plugin. Adopting Card means changing the row plugin **on `page_1`**, not deleting it — the exposed-form block is `views_exposed_filter_block:articles-page_1` and is bound to the display ID, as are the AJAX setting, pager, path and no-results text.
-- `articles/card-test` and the `page_2` display are scaffolding, to be deleted once the row plugin swap lands.
-- `core.entity_view_mode.node.card` and `core.entity_view_display.node.article.card` exist in the database only; not yet exported.
+- `node--article--card.html.twig` is not written. Until `article-card` exists, `/articles` rows render as default node markup inside the new list wrapper.
+- `scss/components/_index.scss` is still a barrel that `recipes.scss` pulls wholesale, so `css/recipes.css` carries the homepage bands and the recipe detail stack as well as the listing. The same fix applied to `articles.scss` would apply here; not done, because it changes what loads on `/recipes`.
 - `field_reading_time` has no presave hook, so it is empty on every article and renders nothing. Seeding a value by hand would hide that.
 - `recipe.teaser` has no display config anywhere in this repo, so the teaser view mode falls back to the default display and the template overrides the markup wholesale. Real, and separate.
 - `block.block.flavourful_recipe_tools.yml` is still held back; its plugin class exists only in `stash@{1}`.
