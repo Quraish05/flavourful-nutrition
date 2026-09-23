@@ -1,0 +1,39 @@
+// =============================================================================
+// Articles listing (the /articles View)
+// -----------------------------------------------------------------------------
+// The *arrangement* of rows, not the row. Each row is a node rendered through
+// the `card` view mode, so once components/article-card/ exists its styles
+// travel with it; only the listing's own furniture lives here.
+//
+// Rendered by:
+//   - templates/views/views-view--articles.html.twig              (.articles-view)
+//   - templates/views/views-view-unformatted--articles.html.twig  (.articles-list)
+// =============================================================================
+@use '../abstracts' as *;
+
+// -- Intro ------------------------------------------------------------------
+.articles-header {
+  margin-block-end: $space-lg;
+  padding-block-end: $space-md;
+  @include rule;
+
+  &__lead {
+    max-width: 56ch;
+    margin: 0;
+    color: $color-bone-muted;
+    font-size: $size-body-lg;
+  }
+}
+
+// -- List -------------------------------------------------------------------
+// One column, not a grid: a row leads with a standfirst that needs a
+// comfortable measure, and prose in narrow tracks reads badly. The grid
+// arrives with article-card in Week 5–7.
+.articles-list {
+  display: grid;
+  gap: $space-xl;
+
+  &__item {
+    max-width: 68ch;
+  }
+}

@@ -20,6 +20,16 @@ recipes:
     component:
       css/recipes.css: {}
 
+# Articles listing styling. Attached on demand from the articles View template
+# so its CSS only loads on pages that render the listing. The article-card
+# component's own CSS travels with the component, not here.
+articles:
+  version: VERSION
+  css:
+    component:
+      css/articles.css: {}
+
+
 recipe-interactions:
   version: 1.x
   js:
