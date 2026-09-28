@@ -16,7 +16,6 @@
 <div{{ attributes.addClass('masthead', 'masthead--' ~ layout|default('centered')) }}>
   <div class="masthead__inner">
 
-    <div class="masthead__nav masthead__nav--start">{% block nav_start %}{% endblock %}</div>
 
     {#
       A <p>, not a heading. The site name is not the heading of the page — the
@@ -31,6 +30,13 @@
       </a>
     </p>
 
+    <div class="masthead__nav masthead__nav--start">{% block nav_start %}{% endblock %}</div>
+
+    {#
+      Declared in the component's slots and previously never rendered, so
+      anything passed to it was silently discarded — a Twig embed drops blocks
+      the embedded template does not declare, without an error.
+    #}
     <div class="masthead__nav masthead__nav--end">{% block nav_end %}{% endblock %}</div>
 
     <div class="masthead__actions">{% block actions %}{% endblock %}</div>

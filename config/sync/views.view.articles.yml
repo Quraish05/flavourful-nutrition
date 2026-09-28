@@ -433,6 +433,10 @@ display:
     display_plugin: page
     position: 2
     display_options:
+      access:
+        type: perm
+        options:
+          perm: 'administer views'
       style:
         type: default
         options: {  }
@@ -444,6 +448,7 @@ display:
           separator: ''
           hide_empty: false
       defaults:
+        access: false
         style: false
         row: false
       display_extenders: {  }
