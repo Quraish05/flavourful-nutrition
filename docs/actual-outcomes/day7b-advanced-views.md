@@ -17,6 +17,8 @@
 | 3 — Exposed filters as shareable state | `articles` view, `page_1` at `/articles`, two exposed filters (`field_story_type_value`, `field_topics_target_id`) with GET identifiers; exposed-form legend now names its own view. PR #36 | Done |
 | 4 — Fields versus view modes | `card` view mode plus a configured `article.card` display; both row plugins built and compared; the five comparison questions answered and recorded below | Done — PR #37. `page_2` was inverted to Fields at `articles/fields-test` rather than deleted, so both row plugins stay observable |
 | 5 — Views templates, and knowing when to stop writing them | `views-view--articles.html.twig` and `views-view-unformatted--articles.html.twig`; a `flavourful/articles` library compiled from its own partial; three docblock-only overrides deleted; the dead recipes row template disarmed | Partial — the `node--article--card.html.twig` component call waits on `article-card` |
+| 6 — Rewrite and output handling | The three mechanisms exercised on `page_2` and written up below: the rewrite box proven to be a Twig template, `Xss::filter` shown to unwrap rather than delete, token values shown to be escaped a layer earlier by the formatter | Partial — only `basic_html` was observed on the text area |
+| 7 — Aggregation, upgraded rather than cut | `articles_per_chef` at `reports/articles-per-chef` — Count plus Minimum/Maximum of `field_story_year`, grouped on the chef, with a row-multiplying relationship used to break the count on purpose | Done |
 | Content to exercise all of the above | [`scripts/seed-articles.php`](../../scripts/seed-articles.php) — five articles shaped so each exercise has a verifiable result set. PR #35 | Done |
 
 ---
@@ -148,9 +150,172 @@ and four rules once it does.
 
 ---
 
+## Rewrite, text areas, and who each one trusts
+
+Three unrelated pieces of machinery decide what markup leaves a view, and the
+useful question about each is not *"does it escape?"* but *"whose judgement is
+it relying on?"*
+
+| Mechanism | What it does to markup | Whose judgement it trusts |
+|---|---|---|
+| A field's **Rewrite results** box | executes it as Twig, then `Xss::filterAdmin()` — a flat allow-list of **78 tags** | whoever holds *administer views* |
+| A **Global: Text area** | runs the chosen text format; `basic_html` allows **~24 tags, each with its own attribute list** (`<h2 id>`, `<a hreflang href>`) | whoever can use that format |
+| A field **formatter** | escapes its own input | nobody |
+
+The ordering is the surprise. The developer-facing box permits three times as
+many tags as the editorial format does, and applies no per-tag attribute
+filtering at all.
+
+**The rewrite box is a template, not a string.** `viewsTokenReplace()` builds a
+`#type: inline_template` whose `#template` is the text you typed and whose
+`#context` is the tokens, then applies `Xss::filterAdmin()` as a `#post_render`.
+Typing `{{ 7 * 6 }}` into a field labelled *"custom text"* renders **42**. Core
+says so on the form itself — the Text field's description reads *"You may
+include Twig or the following allowed HTML tags"* and prints the list from
+`Xss::getAdminTagList()`. The security boundary is therefore the person editing
+the view, which is why *administer views* is a trusted permission rather than an
+editorial one. No role in this repo grants it.
+
+Twig's sandbox limits methods, not Twig. `TwigSandboxPolicy` allows `id`,
+`label`, `bundle`, `get`, `__toString` and `toString`, plus anything prefixed
+`get`, `has` or `is`. Filters, functions and loops all run.
+
+**Filtering unwraps; escaping replaces.** Both are called "sanitising" and they
+fail differently. Put `<script>alert(1)</script>` through the rewrite box, or
+`<script>alert(3)</script>` through a `basic_html` text area, and the element is
+removed while its text content is promoted to a bare text node in the parent:
+
+```html
+<div class="view-empty">
+  " No articles match. "
+  <em>italic</em>
+  <h2>heading</h2>
+  " alert(3) "          <!-- the script element's text, unwrapped -->
+</div>
+```
+
+Nothing executes, and the payload is still on the page as visible content.
+Escaping behaves differently: it leaves the tag in place as characters.
+
+**A token's value is data; the text around it is not.** One rewrite carrying both
+halves settles it:
+
+    literal <em>italic</em> — token Probe: &lt;em&gt;italic&lt;/em&gt; and &lt;script&gt;alert(2)&lt;/script&gt;
+
+The literal `<em>` became an element; the same markup arriving through
+`{{ field_summary }}` came back escaped. It is escaped a layer earlier than
+Views: `BasicStringFormatter` renders the field as `'#template' => '{{ value|nl2br }}'`
+with the raw value as **context**, so Twig escapes it before a token exists at
+all. Same mechanism as the rewrite box, one layer up.
+
+**This is the same question `day7-rest-export.md` answers from the other end.**
+There, recipe titles arrived in the REST payload as hex-escaped HTML anchors,
+because the `default` display's *link to content* formatter was inherited by
+`rest_export_1` and Drupal's JSON encoder then escaped the markup it produced.
+A display that renders no HTML at all, hitting the same boundary: something
+upstream decided the value was markup, and every consumer downstream had to
+live with that decision. Fixing it meant overriding the formatter per display,
+not touching the escaping.
+
+**The `<h2>` is a real accessibility defect, not a curiosity.** `basic_html`
+permits `<h2 id>`, so an editor can put a heading into a no-results message from
+a Views settings form. On `/articles` it lands below the page `h1` and the
+outline survives. The same text area renders in *every* display of the view,
+including an EVA embedded inside a node, where that `h2` would sit beneath the
+node's own heading and break the document outline — the class of defect Phase 1
+spent real effort removing.
+
+**Not observed:** only `basic_html` was exercised. `full_html` runs no
+`filter_html` filter at all, and `plain_text` runs `filter_html_escape` at
+weight `-10` so it escapes before any other filter can interpret. Both are read
+from `config/sync/filter.format.*.yml` rather than watched, and this item is a
+long argument for not confusing the two.
+
+---
+
+## Aggregation, and which aggregates survive a join
+
+`recipes_per_cuisine` already counts things with `group_by: true` and a table
+style, so counting articles per topic would have added nothing. The version
+worth building puts a **Count** and a **Minimum/Maximum** in one view and then
+introduces a relationship that multiplies rows, because the two behave
+differently and the difference is the lesson.
+
+`articles_per_chef` at `reports/articles-per-chef` groups on the chef and
+reports three figures: how many articles, and the earliest and latest
+`field_story_year`.
+
+**The rule: Count and Sum are join-sensitive; Minimum and Maximum are not.**
+Duplicating a row does not change its smallest or largest value, but it does
+change how many rows there are and what they add up to.
+
+The seeded data makes this observable because `field_recipes` is multi-valued
+and unevenly filled, so joining through it multiplies each chef's rows by a
+different factor. Expected figures were written down before the view was built:
+
+| Chef | Articles | Count with the recipes relationship | Count DISTINCT | Earliest / latest |
+|---|---|---|---|---|
+| Camille Dubois | 1 | 1 | 1 | 2005 / 2005 |
+| Kenji Tanaka | 1 | **2** | 1 | 2016 / 2016 |
+| Marco Rossi | 2 | **3** | 2 | 1998 / 2011 |
+| Priya Sharma | 1 | 1 | 1 | 2023 / 2023 |
+
+Every cell matched. Two of four counts were wrong the moment the relationship
+was added, and the earliest/latest columns stayed correct throughout — through
+the same broken join.
+
+**Nothing looked broken.** Three articles for Marco and two for Kenji are
+entirely believable numbers on a report nobody cross-checks. There was no error,
+no warning and no visual clue; the only way to catch it was having written the
+expected figures down first.
+
+**The fix is Count DISTINCT, not removing the relationship.** Real reports need
+joins for filtering that they do not want counted. `field_recipes` is left in
+place here deliberately, so the view keeps demonstrating the failure it was
+built to show.
+
+A relationship no field displays is the same smell as the unused `field_chef`
+relationship still sitting on `views.view.recipes` — with one difference. That
+one is inert; this one silently changed the numbers while displaying nothing.
+
+**Aggregating a field costs you its config dependency.** Every function in
+`Sql::getAggregationInfo()` except *Group results together* declares
+`'handler' => ['field' => 'numeric', …]`, so Views swaps `EntityField` for
+`NumericField` on any aggregated field. `EntityField::calculateDependencies()`
+is what adds `field.storage.*`; `NumericField` has no such method. The view
+therefore calculated a dependency on `field_chef` — grouped, so not swapped —
+and none on `field_story_year`, used twice, or on `field_recipes`, which the
+`Standard` relationship handler does not declare either.
+
+Editing the exported YAML does not fix this. `calculateDependencies()` runs on
+every save, including the ones `drush cim` performs during import, and
+[`ConfigEntityBase::calculateDependencies()`](../../docroot/core/lib/Drupal/Core/Config/Entity/ConfigEntityBase.php)
+keeps only one key across that reset:
+
+```php
+// All dependencies should be recalculated on every save apart from enforced
+// dependencies.
+$this->dependencies = array_intersect_key($this->dependencies ?? [], ['enforced' => '']);
+```
+
+So the two missing dependencies are declared under `dependencies.enforced.config`,
+which is merged back into the effective list on read. Confirmed by saving the
+view again afterwards and finding all four still present.
+
+Two notes for anyone re-running this. The aggregation type on `nid` was set in
+config rather than through the Views UI, whose aggregation dialog returns a 500
+on an entity field in this version. And two field handlers went into **Filter
+criteria** rather than **Fields** on the first attempt, which produced numeric
+filters set to *is equal to* with an empty value: the view returned zero rows,
+rendered nothing at all, and still answered 200. The same silent shape as the
+`nid IS NULL` filter left on `relationship: none` in item 2.
+
+---
+
 ## Open items
 
 - `node--article--card.html.twig` is not written. Until `article-card` exists, `/articles` rows render as default node markup inside the new list wrapper.
+- The no-results text area was only observed at `basic_html`. `full_html` and `plain_text` are described from their config and not watched.
 - `scss/components/_index.scss` is still a barrel that `recipes.scss` pulls wholesale, so `css/recipes.css` carries the homepage bands and the recipe detail stack as well as the listing. The same fix applied to `articles.scss` would apply here; not done, because it changes what loads on `/recipes`.
 - `field_reading_time` has no presave hook, so it is empty on every article and renders nothing. Seeding a value by hand would hide that.
 - `recipe.teaser` has no display config anywhere in this repo, so the teaser view mode falls back to the default display and the template overrides the markup wholesale. Real, and separate.

@@ -7,6 +7,7 @@ dependencies:
     - search_api.index.recipes
   module:
     - search_api
+    - user
 id: recipe_search
 label: 'Recipe search'
 module: views
@@ -371,8 +372,9 @@ display:
           sort_asc_label: Asc
           sort_desc_label: Desc
       access:
-        type: none
-        options: {  }
+        type: perm
+        options:
+          perm: 'access content'
       cache:
         type: search_api_none
         options: {  }
@@ -477,6 +479,7 @@ display:
         - 'url.query_args:sort_by'
         - 'url.query_args:sort_order'
         - 'user.node_grants:view'
+        - user.permissions
       tags:
         - 'config:field.storage.node.field_recipe_ingredients'
         - 'config:search_api.index.recipes'
@@ -499,7 +502,9 @@ display:
         - 'url.query_args:sort_by'
         - 'url.query_args:sort_order'
         - 'user.node_grants:view'
+        - user.permissions
       tags:
         - 'config:field.storage.node.field_recipe_ingredients'
         - 'config:search_api.index.recipes'
         - 'search_api_list:recipes'
+

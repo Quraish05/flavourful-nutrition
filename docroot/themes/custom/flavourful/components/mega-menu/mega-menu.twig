@@ -1,0 +1,37 @@
+{#
+/**
+ * @file
+ * Mega menu organism. See mega-menu.component.yml for the props contract.
+ *
+ * The disclosure contract, which the CSS and JS both depend on:
+ * - the trigger is a <button>, carrying aria-expanded and aria-controls
+ * - aria-expanded lives on the trigger, never on the panel
+ * - the panel's closed state is the `hidden` attribute, so it is hidden from
+ *   assistive technology too, not merely off-screen
+ *
+ * js/mega-menu.js finds these by their data- attributes rather than by class,
+ * so restyling cannot silently break the behaviour.
+ */
+#}
+<button type="button"
+  class="mega-menu__trigger"
+  aria-expanded="false"
+  aria-controls="{{ panel_id }}"
+  data-mega-menu-trigger>
+  <span class="mega-menu__trigger-label">{{ label }}</span>
+</button>
+
+<div class="mega-menu__panel" id="{{ panel_id }}" data-mega-menu-panel hidden>
+  {% for group_label, links in groups %}
+    <div class="mega-menu__group">
+      <h{{ heading_level }} class="mega-menu__group-title">{{ group_label }}</h{{ heading_level }}>
+      <ul class="mega-menu__links">
+        {% for item in links %}
+          <li class="mega-menu__link">
+            {% include 'flavourful:tag-pill' with { label: item.label, url: item.url } only %}
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% endfor %}
+</div>

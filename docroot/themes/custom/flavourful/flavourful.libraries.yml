@@ -53,6 +53,19 @@ recipe-tools:
     - core/drupal # Drupal.behaviors + Drupal.t
     - core/once
 
+# Disclosure behaviour for the mega-menu component: click to toggle, Escape to
+# close and return focus, click-outside and tab-out to close. JS only — the
+# component's CSS lives beside its Twig and SDC attaches it on render. Nothing
+# attaches this by hand either: mega-menu.component.yml names it as a
+# dependency, so placing the component brings the behaviour with it.
+mega-menu:
+  version: 1.x
+  js:
+    js/mega-menu.js: {}
+  dependencies:
+    - core/drupal
+    - core/once
+
 # An intentionally empty library.
 #
 # Olivero's own `libraries-extend` is inherited by this theme, and it bolts

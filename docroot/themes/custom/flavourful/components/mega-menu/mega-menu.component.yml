@@ -1,0 +1,53 @@
+$schema: 'https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json'
+name: Mega menu
+status: stable
+description: >-
+  Organism — one top-level navigation item rendered as a disclosure: a button
+  that opens a panel of grouped links. Used once per top-level main-menu item
+  that has panel content, from templates/navigation/menu--main.html.twig.
+
+  The trigger is a button rather than a link that also toggles. An element that
+  is both a destination and a control is the classic mega-menu failure: one
+  target, two behaviours, and a keyboard user gets whichever was bound. The
+  destination appears instead as the first link inside the panel.
+props:
+  type: object
+  required: [label, panel_id, heading_level, groups]
+  properties:
+    label:
+      type: string
+      title: Label
+      description: 'Text on the trigger button — the top-level menu link title.'
+    panel_id:
+      type: string
+      title: Panel ID
+      description: >-
+        Unique DOM id for the panel. The trigger points at it with
+        aria-controls, so it must be unique within the page.
+    heading_level:
+      type: integer
+      title: Heading level
+      description: >-
+        Level for each group title. Required with no default on purpose: the
+        correct level depends on what surrounds the menu, and a default is how
+        a component ends up structurally wrong in the second place it is used.
+      enum: [2, 3, 4, 5, 6]
+    groups:
+      type: object
+      title: Link groups
+      description: >-
+        Panel contents, keyed by group title. Each value is a list of links,
+        each with a label and a url. Built by NavigationHooks::preprocessMenu().
+      additionalProperties:
+        type: array
+        items:
+          type: object
+          required: [label, url]
+          properties:
+            label:
+              type: string
+            url:
+              type: string
+libraryOverrides:
+  dependencies:
+    - flavourful/mega-menu

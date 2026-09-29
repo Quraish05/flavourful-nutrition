@@ -240,7 +240,7 @@ display:
       access:
         type: perm
         options:
-          perm: 'access content'
+          perm: 'access content overview'
       cache:
         type: tag
         options: {  }
@@ -369,3 +369,4 @@ display:
         - user.permissions
       tags:
         - 'config:field.storage.node.field_recipe_cuisine_type'
+

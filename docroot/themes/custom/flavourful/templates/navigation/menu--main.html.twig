@@ -1,0 +1,51 @@
+{#
+/**
+ * @file
+ * The main menu, rendered as a mega menu.
+ *
+ * A top-level item with an entry in `panels` renders as a disclosure — a
+ * button that opens a panel of grouped links. Anything without one renders as
+ * a plain link, so adding a top-level menu link never breaks the menu; it
+ * simply has no panel until preprocess gives it one.
+ *
+ * Panel content is derived rather than authored. The top-level links are
+ * content, created by scripts/seed-menu.php; everything inside a panel comes
+ * from NavigationHooks::preprocessMenu(), which also folds each item's own
+ * children into the panel's first group.
+ *
+ * Only the main menu reaches this template: the block's #theme is menu__main,
+ * and the account and secondary menus keep the generic one.
+ *
+ * Available variables:
+ * - items: the menu tree. Only the top level is used here.
+ * - panels: groups of links keyed by top-level link title, from preprocess.
+ * - attributes: HTML attributes for the wrapping ul.
+ *
+ * @see Drupal\flavourful\Hook\NavigationHooks
+ * @see templates/navigation/menu.html.twig
+ */
+#}
+<ul{{ attributes.addClass('menu', 'mega-menu') }}>
+  {% for item in items %}
+    {% set groups = panels[item.title] ?? null %}
+    {%
+      set classes = [
+        'menu-item',
+        'mega-menu__item',
+        item.in_active_trail ? 'menu-item--active-trail',
+      ]
+    %}
+    <li{{ item.attributes.addClass(classes) }}>
+      {% if groups %}
+        {% include 'flavourful:mega-menu' with {
+          label: item.title,
+          panel_id: 'mega-panel-' ~ loop.index,
+          heading_level: 3,
+          groups: groups,
+        } only %}
+      {% else %}
+        {{ link(item.title, item.url) }}
+      {% endif %}
+    </li>
+  {% endfor %}
+</ul>

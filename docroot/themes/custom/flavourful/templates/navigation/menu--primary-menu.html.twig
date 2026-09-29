@@ -1,19 +1,27 @@
 {#
 /**
  * @file
- * The primary-menu — rendered by this theme's generic menu template.
+ * The primary-menu region's menu.
  *
- * Exists only to displace Olivero's template of the same name, which this theme
- * would otherwise inherit. Olivero's version emits its own mobile-navigation
- * markup — `primary-nav__*` classes, `data-drupal-selector` hooks, a caret
- * span — and attaches `olivero/navigation-secondary`, whose CSS
+ * Olivero appends a region-based suggestion — see OliveroHooks::themeSuggestionsMenuAlter(),
+ * which adds `menu__` ~ the region name. It lands after `menu__main`, and the
+ * last suggestion wins, so this file always beats menu--main.html.twig for any
+ * menu placed in the primary-menu region. Anything that wants to vary by menu
+ * has to be dispatched from here.
+ *
+ * This file also displaces Olivero's own template of the same name, which
+ * would otherwise be inherited. Olivero's version emits its own
+ * mobile-navigation markup — `primary-nav__*` classes, `data-drupal-selector`
+ * hooks, a caret span — and attaches `olivero/navigation-secondary`, whose CSS
  * absolutely positions the menu and fights the site-masthead component that is
  * laying it out.
  *
- * Delegating keeps one menu implementation. The site-masthead component styles
- * the plain `ul` / `li` / `a` this produces.
- *
+ * @see templates/navigation/menu--main.html.twig
  * @see templates/navigation/menu.html.twig
  */
 #}
-{% include '@flavourful/navigation/menu.html.twig' %}
+{% if menu_name == 'main' %}
+  {% include '@flavourful/navigation/menu--main.html.twig' %}
+{% else %}
+  {% include '@flavourful/navigation/menu.html.twig' %}
+{% endif %}
