@@ -1,0 +1,108 @@
+/**
+ * Mega menu organism.
+ * Auto-attached by SDC wherever the menu renders, so its styles travel with
+ * the markup. Consumes the global --fr-* design tokens.
+ *
+ * The panel is positioned against the masthead rather than the trigger: a
+ * full-width panel anchored to a narrow button would be clipped by the
+ * button's own stacking context. site-masthead.css owns the row; this file
+ * owns only the disclosure.
+ */
+
+.mega-menu__trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--fr-space-2xs);
+  padding: var(--fr-space-2xs) 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  font-family: var(--fr-font-label);
+  font-size: var(--fr-size-label);
+  letter-spacing: var(--fr-track-label);
+  text-transform: inherit;
+  cursor: pointer;
+}
+
+.mega-menu__trigger:hover,
+.mega-menu__trigger[aria-expanded='true'] {
+  color: var(--fr-brass-bright);
+}
+
+/* A visible focus ring is the whole point of using a button. Never remove it
+   without replacing it — keyboard users have nothing else to go on. */
+.mega-menu__trigger:focus-visible {
+  outline: 2px solid var(--fr-brass);
+  outline-offset: 3px;
+}
+
+/* The caret is decorative; the state is announced by aria-expanded. */
+.mega-menu__trigger::after {
+  content: '';
+  width: 0.4em;
+  height: 0.4em;
+  border-right: 1px solid currentColor;
+  border-bottom: 1px solid currentColor;
+  transform: translateY(-0.15em) rotate(45deg);
+  transition: transform var(--fr-duration) var(--fr-ease);
+}
+
+.mega-menu__trigger[aria-expanded='true']::after {
+  transform: translateY(0.1em) rotate(-135deg);
+}
+
+.mega-menu__panel {
+  position: absolute;
+  inset-inline: 0;
+  z-index: 20;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  gap: var(--fr-space-lg);
+  padding: var(--fr-space-md) var(--fr-space-lg) var(--fr-space-lg);
+  border-block-end: 1px solid var(--fr-rule-strong);
+  background: var(--fr-ground, #14110c);
+}
+
+/* Belt and braces: the attribute is the state, and a stray display rule on a
+   grid container would otherwise override it. */
+.mega-menu__panel[hidden] {
+  display: none;
+}
+
+.mega-menu__group-title {
+  margin: 0 0 var(--fr-space-sm);
+  color: var(--fr-bone-muted);
+  font-family: var(--fr-font-label);
+  font-size: var(--fr-size-label);
+  letter-spacing: var(--fr-track-label);
+  text-transform: uppercase;
+}
+
+.mega-menu__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--fr-space-2xs);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* At phone width there is no hover and no room for columns, so the same
+   markup becomes an accordion: the panel sits in flow under its trigger. */
+@media (max-width: 47.9375rem) {
+  .mega-menu__panel {
+    position: static;
+    padding-inline: 0;
+    border-block-end: 0;
+    grid-template-columns: 1fr;
+    gap: var(--fr-space-md);
+  }
+}
+
+/* Respect a reduced-motion preference: the caret still turns, instantly. */
+@media (prefers-reduced-motion: reduce) {
+  .mega-menu__trigger::after {
+    transition: none;
+  }
+}

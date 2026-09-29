@@ -118,7 +118,7 @@ display:
       access:
         type: perm
         options:
-          perm: 'access content'
+          perm: 'access content overview'
       cache:
         type: tag
         options: {  }
@@ -259,3 +259,4 @@ display:
         - 'user.node_grants:view'
         - user.permissions
       tags: {  }
+

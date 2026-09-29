@@ -4,7 +4,6 @@ status: true
 dependencies:
   config:
     - node.type.recipe
-    - system.menu.main
   module:
     - node
     - user
@@ -533,8 +532,8 @@ display:
       display_extenders: {  }
       path: glossary
       menu:
-        type: normal
-        title: 'Recipes A–Z'
+        type: none
+        title: ''
         description: ''
         weight: 0
         expanded: false
@@ -551,3 +550,4 @@ display:
         - 'user.node_grants:view'
         - user.permissions
       tags: {  }
+
