@@ -376,7 +376,7 @@ display:
           exposed: true
           expose:
             operator_id: field_type_of_diet_target_id_op
-            label: 'Diet Type (field_type_of_diet)'
+            label: Diet
             description: ''
             use_operator: false
             operator: field_type_of_diet_target_id_op
@@ -421,7 +421,7 @@ display:
           exposed: true
           expose:
             operator_id: field_recipe_cuisine_type_target_id_op
-            label: 'Recipe Cuisine Type (field_recipe_cuisine_type)'
+            label: Cuisine
             description: ''
             use_operator: false
             operator: field_recipe_cuisine_type_target_id_op
@@ -482,7 +482,7 @@ display:
             reduce: false
           is_grouped: true
           group_info:
-            label: 'difficulty (field_difficulty)'
+            label: Difficulty
             description: ''
             identifier: field_difficulty_value
             optional: true
