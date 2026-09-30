@@ -4,6 +4,7 @@ status: true
 dependencies:
   config:
     - core.entity_view_mode.node.card
+    - core.entity_view_mode.node.rss
     - field.storage.node.field_story_type
     - field.storage.node.field_summary
     - node.type.article
@@ -401,6 +402,37 @@ display:
         - 'languages:language_interface'
         - url
         - url.query_args
+        - 'user.node_grants:view'
+        - user.permissions
+      tags:
+        - 'config:field.storage.node.field_story_type'
+        - 'config:field.storage.node.field_summary'
+  feed_1:
+    id: feed_1
+    display_title: Feed
+    display_plugin: feed
+    position: 3
+    display_options:
+      style:
+        type: rss
+        options:
+          uses_fields: false
+          description: 'Long-form writing from the Flavourful kitchen: technique, sources, and the stories behind the recipes.'
+      row:
+        type: node_rss
+        options: {  }
+      display_extenders: {  }
+      path: articles/rss.xml
+      displays:
+        page_1: page_1
+        default: '0'
+        page_2: '0'
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_content'
+        - 'languages:language_interface'
+        - url
         - 'user.node_grants:view'
         - user.permissions
       tags:

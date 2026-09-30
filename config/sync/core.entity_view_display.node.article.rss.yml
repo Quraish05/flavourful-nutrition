@@ -1,0 +1,50 @@
+uuid: 4e936dfb-4559-4ec3-bcc9-0ed075174751
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.rss
+    - field.field.node.article.body
+    - field.field.node.article.field_chef
+    - field.field.node.article.field_hero
+    - field.field.node.article.field_reading_time
+    - field.field.node.article.field_recipes
+    - field.field.node.article.field_story_type
+    - field.field.node.article.field_story_year
+    - field.field.node.article.field_summary
+    - field.field.node.article.field_takeaways
+    - field.field.node.article.field_topics
+    - node.type.article
+  module:
+    - layout_builder
+    - user
+third_party_settings:
+  layout_builder:
+    enabled: false
+    allow_custom: false
+id: node.article.rss
+targetEntityType: node
+bundle: article
+mode: rss
+content:
+  field_summary:
+    type: basic_string
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 0
+    region: content
+hidden:
+  body: true
+  field_chef: true
+  field_hero: true
+  field_reading_time: true
+  field_recipes: true
+  field_story_type: true
+  field_story_year: true
+  field_takeaways: true
+  field_topics: true
+  langcode: true
+  links: true
+  search_api_excerpt: true
+
