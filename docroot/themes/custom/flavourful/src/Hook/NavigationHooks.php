@@ -216,7 +216,13 @@ class NavigationHooks {
 
     $links = [];
     foreach ($terms as $term) {
-      if (!$term->isPublished() || !$term->access('view')) {
+      // access('view') is the whole check — it already returns FALSE on an
+      // unpublished term for anyone without 'administer taxonomy'. An
+      // isPublished() guard in front of it looks like belt and braces but
+      // short-circuits before access() runs, so it drops the term for the
+      // admins access() would have let through, and makes the
+      // user.permissions context below describe variation that cannot happen.
+      if (!$term->access('view')) {
         continue;
       }
 
