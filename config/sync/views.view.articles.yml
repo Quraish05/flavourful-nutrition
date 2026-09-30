@@ -412,7 +412,7 @@ display:
     display_plugin: page
     position: 1
     display_options:
-      exposed_block: true
+      exposed_block: false
       display_extenders: {  }
       path: articles
     cache_metadata:
