@@ -32,7 +32,9 @@ use Drupal\views\Views;
  */
 class NavigationHooks {
 
-  /** Rows to list when a view exposes no filters to derive groups from. */
+  /**
+   * Rows to list when a view exposes no filters to derive groups from.
+   */
   private const ROW_LIMIT = 12;
 
   public function __construct(
@@ -319,7 +321,9 @@ class NavigationHooks {
     return ['label' => $label, 'url' => $this->generate($url, $cache)];
   }
 
-  /** Renders a Url to a string without dropping its cacheability on the floor. */
+  /**
+   * Renders a Url to a string without dropping its cacheability on the floor.
+   */
   private function generate(Url $url, CacheableMetadata $cache): string {
     // toString(TRUE) rather than toString(): the plain form discards the URL's
     // cacheability instead of letting it bubble.
