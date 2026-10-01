@@ -46,5 +46,8 @@ props:
     tone:
       type: string
       title: Tone
+      description: >-
+        `muted` for a supporting row beneath a headline; `bone` when the row
+        carries the only text on its ground and needs to hold its own.
       enum: [bone, muted]
       default: muted

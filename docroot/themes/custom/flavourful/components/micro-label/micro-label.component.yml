@@ -28,6 +28,9 @@ props:
     size:
       type: string
       title: Size
+      description: >-
+        `sm` is the standard tracked label; `md` lifts it to the larger label
+        size for a standalone eyebrow sitting above a headline.
       enum: [sm, md]
       default: sm
     tag:

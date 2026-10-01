@@ -17,6 +17,9 @@ props:
     title:
       type: string
       title: Title
+      description: >-
+        The section name. Rendered at `heading_level`, or as a purely
+        decorative strip label when that is 0.
     heading_level:
       type: integer
       title: Heading level
@@ -39,5 +42,9 @@ props:
     tone:
       type: string
       title: Tone
+      description: >-
+        Colour of the title: `brass` for a standard section rule, `bone` to lift
+        it on a busy ground, `muted` for a secondary grouping that should not
+        compete with the section above it.
       enum: [brass, bone, muted]
       default: brass

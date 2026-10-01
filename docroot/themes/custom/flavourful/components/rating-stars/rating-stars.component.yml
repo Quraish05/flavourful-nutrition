@@ -6,20 +6,31 @@ description: >-
   value is announced from a single visually-hidden sentence, because five
   separate star glyphs read as noise on a screen reader.
 
-  The content model has no rating field yet. Callers pass `value` only when
-  they have one; with no value the component renders nothing at all, so a page
-  never shows an empty or zeroed rating.
+  The content model has no rating field yet, so whether an item has a rating is
+  the caller's question, not this component's: `value` is required, and a
+  caller with nothing to show omits the whole component. A rating of 0 is a
+  real rating and renders as five empty stars — it is not the same as unrated.
 props:
   type: object
+  required: [value]
   properties:
     value:
       type: number
       title: Value
-      description: 'Rating out of `max`. Omit entirely when unrated.'
+      description: >-
+        Rating out of `max`. Required: an unrated item is the caller's decision
+        not to include this component at all, not a prop it leaves empty. Both
+        callers already guard on `rating is not null` before including, and
+        making that the contract means a third one that forgets fails loudly in
+        development instead of rendering nothing.
       minimum: 0
     max:
       type: integer
       title: Maximum
+      description: >-
+        How many stars are drawn, and the denominator `value` is measured
+        against — it reaches the accessible text as "Rated 4.5 out of 5". Change
+        it only if the rating scale itself changes; the design assumes five.
       default: 5
       minimum: 1
     show_value:

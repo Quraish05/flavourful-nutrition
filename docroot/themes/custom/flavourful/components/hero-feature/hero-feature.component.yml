@@ -15,6 +15,9 @@ props:
     title:
       type: string
       title: Title
+      description: >-
+        The headline. Rendered at `heading_level`, or as a bare link with no
+        heading when that is 0.
     heading_level:
       type: integer
       title: Heading level

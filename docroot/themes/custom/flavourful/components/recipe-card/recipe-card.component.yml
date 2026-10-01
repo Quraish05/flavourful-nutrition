@@ -16,6 +16,9 @@ props:
     title:
       type: string
       title: Title
+      description: >-
+        The recipe name. Rendered at `heading_level`, or inside a plain
+        paragraph when that is 0 — never as an unmarked string.
     url:
       type: string
       title: URL
@@ -63,6 +66,11 @@ props:
     variant:
       type: string
       title: Variant
+      description: >-
+        `compact` is the square-thumbnail row of the "Recently added" grid,
+        `stacked` is the wider card with a 3:2 image, `list` drops the image for
+        a text-only row. They differ in proportion rather than in content, so
+        one set of props fills all three.
       enum: [compact, stacked, list]
       default: compact
 slots:
