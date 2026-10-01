@@ -1,0 +1,93 @@
+{#
+/**
+ * @file
+ * Article card molecule. See article-card.component.yml for the props/slots
+ * contract. Rendered from node--article--card.html.twig, which is the only
+ * template an `entity:node` row plugin leaves you — a Views row template never
+ * fires under it.
+ */
+#}
+{% set variant = variant|default('compact') %}
+{% set level = heading_level %}
+
+<article{{ attributes.addClass('article-card', 'article-card--' ~ variant) }}>
+
+  {#
+    aria-hidden + tabindex="-1" is deliberate: this link duplicates the title
+    link below, so it is removed from the accessibility tree and the tab order.
+    Nothing content-bearing may live inside it — recipe-card learned that the
+    hard way, having put its difficulty badge here and silently dropped it from
+    the accessibility tree along with the link (WCAG 1.3.1).
+  #}
+  {% if variant != 'list' %}
+    <a class="article-card__media" href="{{ url }}" tabindex="-1" aria-hidden="true">
+      {% block media %}{% endblock %}
+    </a>
+  {% endif %}
+
+  <div class="article-card__body">
+
+    {#
+      The eyebrow stands alone — there is no second item to share a row with.
+      recipe-card pairs it with a difficulty badge, which is why that component
+      has a `__topline` wrapper and this one does not.
+    #}
+    {% if eyebrow %}
+      {{ include('flavourful:micro-label', {
+        text: eyebrow,
+        tone: 'brass',
+        tag: 'p',
+      }, with_context = false) }}
+    {% endif %}
+
+    {#
+      The heading level is a prop, not a constant: the same card sits under the
+      page h1 on /articles and under an h2 section when embedded. Level 0 drops
+      the heading entirely, for a context whose h1 already names this article —
+      a second heading there would duplicate the title and break the outline.
+    #}
+    {% if level %}
+      <h{{ level }} class="article-card__title">
+        <a href="{{ url }}" rel="bookmark">{{ title }}</a>
+      </h{{ level }}>
+    {% else %}
+      <p class="article-card__title">
+        <a href="{{ url }}" rel="bookmark">{{ title }}</a>
+      </p>
+    {% endif %}
+
+    {#
+      Shown in every variant, unlike recipe-card, which hides it on `compact`.
+      The standfirst is what a reader chooses an article on — a compact article
+      row carrying only a headline gives them nothing to choose with, where a
+      recipe row still has its thumbnail and its time.
+    #}
+    {% if summary %}
+      <p class="article-card__summary">{{ summary }}</p>
+    {% endif %}
+
+    {#
+      Author, published date, reading time. `dot` separators rather than the
+      hero's brass rules — at card scale a rule between every item is noise.
+    #}
+    {% if meta is not empty %}
+      {{ include('flavourful:meta-list', {
+        items: meta,
+        separator: 'dot',
+        tone: 'muted',
+      }, with_context = false) }}
+    {% endif %}
+
+    {#
+      Captured through an inline block rather than block('tags'): block() throws
+      when a caller has not defined the slot, and a card without topics is
+      normal — one of the five articles has none.
+    #}
+    {% set tags %}{% block tags %}{% endblock %}{% endset %}
+    {% if tags|trim is not empty %}
+      <div class="article-card__tags">{{ tags }}</div>
+    {% endif %}
+
+  </div>
+
+</article>

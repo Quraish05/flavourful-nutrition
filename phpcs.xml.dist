@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ruleset name="flavourful">
+  <description>
+    Drupal coding standards for this repo's custom code, with one deliberate
+    departure: a docblock whose whole body is a single short sentence may be
+    written on one line.
+
+    Previously CI passed --standard=Drupal,DrupalPractice on the command line,
+    which cannot express an exclusion. Moving the ruleset into a file is what
+    makes the departure reviewable rather than a per-file argument.
+  </description>
+
+  <file>docroot/modules/custom</file>
+  <file>docroot/themes/custom</file>
+
+  <rule ref="Drupal">
+    <!--
+      Allows `/** Reads a scalar field value. */` instead of the three-line
+      form. The two sniffs are what reject it: ContentAfterOpen objects to
+      anything after the opening tag, SpacingBeforeShort to the description not
+      starting on its own line. Both only fire on the one-line form; a
+      multi-line docblock is still checked exactly as before, and every other
+      Drupal rule — including the ones that require a docblock to exist at all,
+      end in a full stop and start with a capital — still applies.
+    -->
+    <exclude name="Drupal.Commenting.DocComment.ContentAfterOpen"/>
+    <exclude name="Drupal.Commenting.DocComment.SpacingBeforeShort"/>
+  </rule>
+
+  <rule ref="DrupalPractice"/>
+</ruleset>

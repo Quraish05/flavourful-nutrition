@@ -5,6 +5,10 @@
 # phpstan sees only the FieldItemInterface type hint and cannot resolve the
 # concrete item class. The code is correct.
 #
+# The three moved from Hook/RecipeHooks.php to NodeFieldTrait.php when the field
+# readers were extracted so ArticleCardTrait could share them — same findings,
+# new file, so only the path changed.
+#
 # Do not add to this file to make a new error go away. Regenerate it only when
 # a listed finding is genuinely fixed:
 #
@@ -16,10 +20,10 @@ parameters:
 			message: '#^Access to an undefined property Drupal\\Core\\Field\\FieldItemInterface\:\:\$entity\.$#'
 			identifier: property.notFound
 			count: 2
-			path: docroot/themes/custom/flavourful/src/Hook/RecipeHooks.php
+			path: docroot/themes/custom/flavourful/src/NodeFieldTrait.php
 
 		-
 			message: '#^Access to an undefined property Drupal\\Core\\Field\\FieldItemInterface\:\:\$value\.$#'
 			identifier: property.notFound
 			count: 1
-			path: docroot/themes/custom/flavourful/src/Hook/RecipeHooks.php
+			path: docroot/themes/custom/flavourful/src/NodeFieldTrait.php

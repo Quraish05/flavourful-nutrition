@@ -1,0 +1,171 @@
+/**
+ * Article card molecule.
+ * Auto-attached by SDC wherever the card renders, so its styles travel with the
+ * markup. Consumes the global --fr-* design tokens.
+ *
+ * Deliberately parallel to recipe-card rather than shared with it: the two
+ * cards sit in the same grids and must line up, but an article leads with its
+ * standfirst where a recipe leads with its thumbnail. Keeping them as two files
+ * means changing one cannot silently restyle the other.
+ *
+ * Cellar's cards are not cards in the material sense — no surface, no border,
+ * no shadow. They are text blocks separated by the grid's own gaps. There is no
+ * background or box here on purpose.
+ */
+.article-card {
+  position: relative;
+  display: grid;
+  gap: var(--fr-space-sm);
+  min-width: 0;
+}
+
+/* -- Media ----------------------------------------------------------------- */
+.article-card__media {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  background-color: var(--fr-ink-deep);
+}
+
+.article-card__media :is(img, picture) {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: opacity var(--fr-duration) var(--fr-ease);
+}
+
+/*
+ * A rendered image field arrives wrapped: <div class="field field__item"><img>.
+ * A height on the img alone resolves against that auto-height wrapper, so the
+ * image sits at its intrinsic size instead of cropping to fill the well. The
+ * wrapper has to be given the height first.
+ *
+ * :where() keeps specificity at zero so a variant can override without a fight.
+ */
+.article-card__media > :where(*),
+.article-card__media :where(.field, .field__item, picture) {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.article-card:hover .article-card__media :is(img, picture) {
+  opacity: 0.82;
+}
+
+/*
+ * The placeholder is what renders today: no article has a hero image, so this
+ * is the live state rather than the fallback.
+ */
+.article-card__placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  background-color: var(--fr-ink-raised);
+  color: var(--fr-brass-dim);
+  font-size: 1.5rem;
+}
+
+/* -- Body ------------------------------------------------------------------ */
+.article-card__body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--fr-space-2xs);
+  min-width: 0;
+}
+
+.article-card__title {
+  margin: 0;
+  max-width: none;
+  font-family: var(--fr-font-display);
+  font-size: var(--fr-size-display-sm);
+  font-weight: 400;
+  letter-spacing: var(--fr-track-tight);
+  line-height: 1.15;
+}
+
+.article-card__title a {
+  color: var(--fr-bone);
+  text-decoration: none;
+}
+
+.article-card:hover .article-card__title a,
+.article-card__title a:focus-visible {
+  color: var(--fr-brass);
+}
+
+/*
+ * Stretch the title link across the whole card so the thumbnail is clickable
+ * without a second focusable element. The ::after needs a positioned ancestor,
+ * which .article-card provides.
+ */
+.article-card__title a::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+}
+
+/*
+ * Three lines rather than recipe-card's two. The standfirst is what a reader
+ * chooses an article on, where a recipe is chosen on its image and its time.
+ */
+.article-card__summary {
+  margin: 0;
+  max-width: 52ch;
+  color: var(--fr-bone-muted);
+  font-size: var(--fr-size-body-sm);
+  line-height: 1.6;
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+}
+
+/* -- Tags slot ------------------------------------------------------------- */
+.article-card__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--fr-space-3xs);
+}
+
+/* -- Variant: compact ------------------------------------------------------ */
+/*
+ * A fixed square thumbnail beside the text — fixed rather than fractional so a
+ * row of cards keeps its thumbnails aligned regardless of headline length.
+ */
+.article-card--compact {
+  grid-template-columns: 4.5rem minmax(0, 1fr);
+  align-items: start;
+}
+
+.article-card--compact .article-card__media {
+  aspect-ratio: 1;
+}
+
+.article-card--compact .article-card__title {
+  font-size: 1.3125rem;
+}
+
+/* -- Variant: stacked ------------------------------------------------------ */
+.article-card--stacked {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.article-card--stacked .article-card__media {
+  aspect-ratio: 3 / 2;
+}
+
+/* -- Variant: list --------------------------------------------------------- */
+/*
+ * Text only, separated by a rule — for rails and any listing where the images
+ * would compete with a lead story.
+ */
+.article-card--list {
+  grid-template-columns: minmax(0, 1fr);
+  padding-block-end: var(--fr-space-sm);
+  border-block-end: 1px solid var(--fr-rule);
+}

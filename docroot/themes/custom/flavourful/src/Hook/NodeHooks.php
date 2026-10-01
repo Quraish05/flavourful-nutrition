@@ -2,14 +2,23 @@
 
 namespace Drupal\flavourful\Hook;
 
-use Drupal\Core\Field\FieldItemListInterface;
+use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\flavourful\ArticleCardTrait;
+use Drupal\flavourful\NodeFieldTrait;
 use Drupal\node\NodeInterface;
 
 /**
- * OOP hook implementations for recipes.
+ * The theme's single hook_preprocess_node() implementation.
+ *
+ * A theme gets exactly one implementation of each hook — ThemeManager::invoke()
+ * throws "should not implement preprocess_node more than once" otherwise — and
+ * a hook class is a service only while it carries a #[Hook] attribute, so a
+ * second class cannot be injected into this one. Themes also get no
+ * .services.yml to declare one by hand. Hence one class per hook, with the
+ * per-bundle work split into traits.
  *
  * Turns recipe fields into the flat prop arrays the components take. The
  * mapping lives here rather than in Twig for two reasons: the templates stay
@@ -19,31 +28,43 @@ use Drupal\node\NodeInterface;
  * Hook classes are registered as autowired services, so the constructor
  * arguments resolve from the interface aliases in core.services.yml.
  */
-class RecipeHooks {
+class NodeHooks {
 
+  use ArticleCardTrait;
+  use NodeFieldTrait;
   use StringTranslationTrait;
 
   public function __construct(
     protected RouteMatchInterface $routeMatch,
+    protected DateFormatterInterface $dateFormatter,
   ) {}
 
-  /**
-   * Implements hook_preprocess_node() via the #[Hook] attribute.
-   */
+  /** Implements hook_preprocess_node() via the #[Hook] attribute. */
   #[Hook('preprocess_node')]
   public function preprocessNode(array &$variables): void {
     $node = $variables['node'] ?? NULL;
-    if (!$node instanceof NodeInterface || $node->bundle() !== 'recipe') {
+    if (!$node instanceof NodeInterface) {
       return;
     }
 
-    $total = (int) $this->value($node, 'field_total_time');
+    if ($node->bundle() === 'article') {
+      $this->preprocessArticle($variables, $node);
+      return;
+    }
+
+    if ($node->bundle() !== 'recipe') {
+      return;
+    }
+
+    $total = (int) $this->fieldValue($node, 'field_total_time');
     $variables['is_quick'] = $total > 0 && $total <= 30;
     if ($variables['is_quick']) {
       $variables['attributes']['class'][] = 'recipe--quick';
     }
 
-    $this->setCardContext($variables);
+    if (($variables['view_mode'] ?? '') === 'teaser') {
+      $this->setCardContext($variables, 'view.recipes.page_1');
+    }
     $this->addRecipeProps($variables, $node);
 
     // field_hero is configured with `label: above`, which printed the word
@@ -63,35 +84,28 @@ class RecipeHooks {
    * h1, so h2. Embedded in a node page they sit under an h2 section heading
    * ("Related Recipes", "More from this chef"), so h3.
    */
-  private function setCardContext(array &$variables): void {
-    if (($variables['view_mode'] ?? '') !== 'teaser') {
-      return;
-    }
-
+  private function setCardContext(array &$variables, string $listing_route): void {
     // A listing row may override both, because only the View knows which of its
     // rows is the lead story. The keys arrive on the row's render array — see
     // \Drupal\flavourful\Hook\ListingHooks.
     $elements = $variables['elements'] ?? [];
     $variables['card_variant'] = $elements['#card_variant'] ?? 'compact';
+    // 2 on the bundle's own listing, where cards sit directly under the page
+    // h1; 3 anywhere else, where they sit under an h2 section heading.
     $variables['card_heading_level'] = $elements['#card_heading_level']
-      ?? ($this->routeMatch->getRouteName() === 'view.recipes.page_1' ? 2 : 3);
+      ?? ($this->routeMatch->getRouteName() === $listing_route ? 2 : 3);
   }
 
-  /**
-   * Builds every prop array the recipe templates hand to components.
-   */
+  /** Builds every prop array the recipe templates hand to components. */
   private function addRecipeProps(array &$variables, NodeInterface $node): void {
-    $prep = (int) $this->value($node, 'field_prep_time');
-    $cook = (int) round((float) $this->value($node, 'field_cooking_time'));
-    $total = (int) $this->value($node, 'field_total_time');
-    $difficulty = $this->value($node, 'field_difficulty');
+    $prep = (int) $this->fieldValue($node, 'field_prep_time');
+    $cook = (int) round((float) $this->fieldValue($node, 'field_cooking_time'));
+    $total = (int) $this->fieldValue($node, 'field_total_time');
+    $difficulty = $this->fieldValue($node, 'field_difficulty');
 
     $chef = $this->referencedEntity($node, 'field_chef');
     $variables['chef_name'] = $chef?->label();
-    // A chef the current user cannot view must not become a broken link.
-    $variables['chef_url'] = $chef && $chef->access('view')
-      ? $chef->toUrl()->toString()
-      : NULL;
+    $variables['chef_url'] = $this->accessibleUrl($chef);
 
     $variables['recipe_eyebrow'] = $this->referencedEntity($node, 'field_recipe_cuisine_type')?->label();
 
@@ -105,7 +119,7 @@ class RecipeHooks {
     // enum on the one recipe that has no difficulty set. Reading the field in
     // PHP gives a real NULL.
     $variables['recipe_difficulty'] = $difficulty ?: NULL;
-    $variables['recipe_summary'] = $this->value($node, 'field_summary') ?: '';
+    $variables['recipe_summary'] = $this->fieldValue($node, 'field_summary') ?: '';
 
     // -- The card / hero meta row -------------------------------------------
     // Every entry carries a `label`, which meta-list renders visually-hidden.
@@ -117,7 +131,7 @@ class RecipeHooks {
     // the recipe page's spec strip — so a third copy said the same word twice
     // per card. It was also what pushed the row to two lines, orphaning a
     // leading "·" at the start of the wrap.
-    $variables['recipe_meta'] = $this->compact([
+    $variables['recipe_meta'] = $this->dropEmptyRows([
       ['label' => $this->t('Chef'), 'value' => $variables['chef_name'], 'url' => $variables['chef_url']],
       ['label' => $this->t('Total time'), 'value' => $this->duration($total)],
     ]);
@@ -127,7 +141,7 @@ class RecipeHooks {
     // in tabular figures and the columns line up. Rows with no value are
     // dropped by the component, so a recipe with no prep time shows two
     // columns rather than an empty one.
-    $variables['recipe_spec'] = $this->compact([
+    $variables['recipe_spec'] = $this->dropEmptyRows([
       ['label' => $this->t('Total'), 'value' => $this->durationValue($total), 'suffix' => $this->durationUnit($total)],
       ['label' => $this->t('Prep'), 'value' => $this->durationValue($prep), 'suffix' => $this->durationUnit($prep)],
       ['label' => $this->t('Cook'), 'value' => $this->durationValue($cook), 'suffix' => $this->durationUnit($cook)],
@@ -190,9 +204,7 @@ class RecipeHooks {
     return $rows;
   }
 
-  /**
-   * Reads the method field into a flat list of step strings.
-   */
+  /** Reads the method field into a flat list of step strings. */
   private function methodSteps(NodeInterface $node): array {
     if (!$node->hasField('field_method_steps')) {
       return [];
@@ -208,34 +220,7 @@ class RecipeHooks {
     return $steps;
   }
 
-  /**
-   * Builds tag-pill rows from a term reference field.
-   *
-   * Each chip links to its term page, so the tag row doubles as a way into the
-   * related listings — which is what makes it worth the space.
-   */
-  private function termChips(NodeInterface $node, string $field): array {
-    if (!$node->hasField($field)) {
-      return [];
-    }
-
-    $chips = [];
-    foreach ($node->get($field) as $item) {
-      $term = $item->entity;
-      if (!$term || !$term->access('view')) {
-        continue;
-      }
-      $chips[] = [
-        'label' => $term->label(),
-        'url' => $term->toUrl()->toString(),
-      ];
-    }
-    return $chips;
-  }
-
-  /**
-   * Formats a duration in minutes as a display string, e.g. "1 hr 20 min".
-   */
+  /** Formats a duration in minutes as a display string, e.g. "1 hr 20 min". */
   private function duration(int $minutes): ?string {
     if ($minutes <= 0) {
       return NULL;
@@ -269,47 +254,12 @@ class RecipeHooks {
     return rtrim(rtrim(number_format($hours, 1, '.', ''), '0'), '.');
   }
 
-  /**
-   * The unit half of a duration — see durationValue().
-   */
+  /** The unit half of a duration — see durationValue(). */
   private function durationUnit(int $minutes): ?string {
     if ($minutes <= 0) {
       return NULL;
     }
     return $minutes < 60 ? (string) $this->t('min') : (string) $this->t('hr');
-  }
-
-  /**
-   * Drops rows whose value is empty, so components never render a blank cell.
-   */
-  private function compact(array $rows): array {
-    return array_values(array_filter(
-      $rows,
-      static fn(array $row): bool => ($row['value'] ?? NULL) !== NULL && $row['value'] !== '',
-    ));
-  }
-
-  /**
-   * Reads a scalar field value, or NULL when the field is absent or empty.
-   */
-  private function value(NodeInterface $node, string $field): mixed {
-    if (!$node->hasField($field)) {
-      return NULL;
-    }
-    $items = $node->get($field);
-    return $items->isEmpty() ? NULL : $items->first()->value;
-  }
-
-  /**
-   * Reads the first referenced entity from a reference field.
-   */
-  private function referencedEntity(NodeInterface $node, string $field): mixed {
-    if (!$node->hasField($field)) {
-      return NULL;
-    }
-    $items = $node->get($field);
-    assert($items instanceof FieldItemListInterface);
-    return $items->isEmpty() ? NULL : $items->first()->entity;
   }
 
 }

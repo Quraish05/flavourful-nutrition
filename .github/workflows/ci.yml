@@ -25,7 +25,7 @@ jobs:
         run: composer install --no-interaction --no-progress
 
       - name: Coding standards (Drupal)
-        run: vendor/bin/phpcs --standard=Drupal,DrupalPractice docroot/modules/custom docroot/themes/custom
+        run: vendor/bin/phpcs
 
       # Configured by phpstan.neon at level 2. This ran at the implicit level 0
       # until 2026-09-16, which checks little beyond "does it parse".

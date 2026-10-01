@@ -133,7 +133,7 @@ class ListingHooks {
     if (isset($variables['rows'][0]['content'])) {
       $variables['rows'][0]['content']['#card_variant'] = 'stacked';
       // The lead card sits directly under the page h1, so its title is an h2 —
-      // one level up from the grid cards behind it, which RecipeHooks sets to
+      // one level up from the grid cards behind it, which NodeHooks sets to
       // h2 as well on the listing route but h3 here.
       $variables['rows'][0]['content']['#card_heading_level'] = 2;
       $variables['rows'][0]['attributes']->addClass('home__lead-row');
