@@ -1,0 +1,44 @@
+uuid: 05f1b51f-3528-43f4-ac13-510966edd4f9
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.rss
+    - field.field.node.recipe.field_chef
+    - field.field.node.recipe.field_cooking_time
+    - field.field.node.recipe.field_difficulty
+    - field.field.node.recipe.field_hero
+    - field.field.node.recipe.field_prep_time
+    - field.field.node.recipe.field_recipe_cuisine_type
+    - field.field.node.recipe.field_recipe_ingredients
+    - field.field.node.recipe.field_summary
+    - field.field.node.recipe.field_total_time
+    - field.field.node.recipe.field_type_of_diet
+    - node.type.recipe
+id: node.recipe.rss
+targetEntityType: node
+bundle: recipe
+mode: rss
+content:
+  field_summary:
+    type: basic_string
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 0
+    region: content
+hidden:
+  field_chef: true
+  field_cooking_time: true
+  field_difficulty: true
+  field_hero: true
+  field_prep_time: true
+  field_recipe_cuisine_type: true
+  field_recipe_ingredients: true
+  field_total_time: true
+  field_type_of_diet: true
+  langcode: true
+  links: true
+  recipe_articles_entity_view_1: true
+  search_api_excerpt: true
+
