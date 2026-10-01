@@ -18,7 +18,8 @@
  *
  * Available variables:
  * - items: the menu tree. Only the top level is used here.
- * - panels: groups of links keyed by top-level link title, from preprocess.
+ * - items.*.panel: groups of links for that item, from preprocess. Absent on
+ *   any item whose link is not a view page.
  * - attributes: HTML attributes for the wrapping ul.
  *
  * @see Drupal\flavourful\Hook\NavigationHooks
@@ -27,7 +28,8 @@
 #}
 <ul{{ attributes.addClass('menu', 'mega-menu') }}>
   {% for item in items %}
-    {% set groups = panels[item.title] ?? null %}
+    {% set groups = item.panel ?? null %}
+
     {%
       set classes = [
         'menu-item',
