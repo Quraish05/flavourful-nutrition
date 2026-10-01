@@ -1,0 +1,126 @@
+/**
+ * Article header organism.
+ * Auto-attached by SDC wherever it renders. Consumes the global --fr-* tokens.
+ */
+.article-header {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--fr-space-xs);
+  padding-block-end: var(--fr-space-lg);
+  margin-block-end: var(--fr-space-lg);
+  border-block-end: 1px solid var(--fr-rule);
+}
+
+.article-header__topline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--fr-space-2xs) var(--fr-space-sm);
+  margin: 0;
+  max-width: none;
+}
+
+.article-header__year {
+  color: var(--fr-bone-muted);
+  font-family: var(--fr-font-label);
+  font-size: var(--fr-size-label);
+  letter-spacing: var(--fr-track-label);
+  text-transform: uppercase;
+}
+
+.article-header__title {
+  margin: 0;
+  max-width: 20ch;
+  color: var(--fr-bone);
+  font-family: var(--fr-font-display);
+  font-size: var(--fr-size-display-lg);
+  font-weight: 400;
+  letter-spacing: var(--fr-track-tight);
+  line-height: 1.08;
+  /* Keeps a two-line headline from leaving one word stranded on line two. */
+  text-wrap: balance;
+}
+
+/*
+ * Larger than body copy and a different colour, so it reads as a standfirst
+ * without being a heading. The size is what does that work, not the markup.
+ */
+.article-header__deck {
+  margin: 0;
+  max-width: 54ch;
+  color: var(--fr-bone-muted);
+  font-size: var(--fr-size-body-lg);
+  line-height: 1.5;
+}
+
+/* -- Byline ---------------------------------------------------------------- */
+.article-header__byline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--fr-space-2xs) var(--fr-space-sm);
+  margin: var(--fr-space-2xs) 0 0;
+  max-width: none;
+  color: var(--fr-bone-muted);
+  font-family: var(--fr-font-label);
+  font-size: var(--fr-size-label);
+  letter-spacing: var(--fr-track-label);
+  text-transform: uppercase;
+}
+
+.article-header__author a {
+  color: var(--fr-bone);
+  text-decoration: none;
+  border-block-end: 1px solid var(--fr-brass-dim);
+}
+
+.article-header__author a:hover,
+.article-header__author a:focus-visible {
+  color: var(--fr-brass);
+  border-block-end-color: var(--fr-brass);
+}
+
+/*
+ * Separators are pseudo-elements, not characters in the markup: a literal "·"
+ * is read aloud by some screen readers and not others, where a pseudo-element
+ * is reliably silent and reliably visible.
+ */
+.article-header__date::before,
+.article-header__reading-time::before {
+  content: '';
+  display: inline-block;
+  width: 1px;
+  height: 0.85em;
+  margin-inline-end: var(--fr-space-sm);
+  background-color: var(--fr-brass-dim);
+  vertical-align: -0.1em;
+}
+
+/* -- Topics ---------------------------------------------------------------- */
+.article-header__topics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--fr-space-3xs);
+  margin: var(--fr-space-2xs) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* -- Media ----------------------------------------------------------------- */
+.article-header__media {
+  width: 100%;
+  margin: var(--fr-space-md) 0 0;
+}
+
+.article-header__media :is(img, picture) {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+@media (min-width: 48rem) {
+  .article-header {
+    gap: var(--fr-space-sm);
+  }
+}

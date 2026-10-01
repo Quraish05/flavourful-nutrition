@@ -1,0 +1,104 @@
+$schema: 'https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json'
+name: Article header
+status: stable
+description: >-
+  Organism — the masthead of a single article: eyebrow, headline, standfirst,
+  byline and topics, above an optional hero image.
+
+  Almost every decision here is an accessibility one rather than a styling one.
+  The standfirst is a paragraph, not a heading, because it is a sentence rather
+  than a section label and a heading would put it in the outline. The date is a
+  real `time` element with a machine-readable `datetime`. Topics are a genuine
+  list, so a screen reader announces how many there are before reading them.
+
+  It carries its own byline rather than reaching for chef-byline. That component
+  declares four props and a slot, of which only `name` and `url` are ever
+  supplied — chef nodes have no portrait and no rating field — and it has one
+  consumer. Sharing it here would mean designing for a second consumer against
+  an API that has not earned its first.
+props:
+  type: object
+  required: [title, heading_level]
+  properties:
+    title:
+      type: string
+      title: Title
+      description: 'The headline. Rendered at `heading_level`.'
+    heading_level:
+      type: integer
+      title: Heading level
+      description: >-
+        1 when this header *is* the page heading, which is the only context it
+        has today. 2 is allowed for a future context that already has an h1 —
+        a preview pane, say. There is no 0: a header with no heading is not a
+        header, and the body below it opens at h2 expecting something above.
+      enum: [1, 2]
+    eyebrow:
+      type: string
+      title: Eyebrow
+      description: >-
+        The story type above the headline — "Journey", "Technique". Pass the
+        human label, not field_story_type's stored key.
+    story_year:
+      type: integer
+      title: Year the story happened
+      description: >-
+        The year the events described took place, which is not the publication
+        year and sits beside the eyebrow rather than in the byline for exactly
+        that reason. Rendered as "Set in 1998" so the number is never a bare
+        figure whose meaning depends on its position.
+      minimum: 1000
+    deck:
+      type: string
+      title: Standfirst
+      description: >-
+        The standfirst, rendered as a paragraph. Never a heading: it is a
+        sentence about the article, and putting it in the document outline
+        gives a screen-reader user a heading that names nothing.
+    author_name:
+      type: string
+      title: Author name
+      description: 'Doubles as the link text when `author_url` is supplied.'
+    author_url:
+      type: string
+      title: Author URL
+      description: >-
+        Omit for an author the reader cannot reach — an unlinked name is better
+        than a link to a 403.
+    published:
+      type: string
+      title: Published date
+      description: 'Human-readable date, e.g. "18 September 2026".'
+    published_iso:
+      type: string
+      title: Published date, machine-readable
+      description: >-
+        An ISO 8601 date for the `datetime` attribute. Supply it with
+        `published` or neither: a `time` element without `datetime` is just a
+        span, and the formatted date alone is not parseable.
+    reading_time:
+      type: string
+      title: Reading time
+      description: 'Already formatted, e.g. "6 min read".'
+    topics:
+      type: array
+      title: Topics
+      description: >-
+        Rendered as a real list of tag-pill atoms. A prop rather than a slot
+        because a slot cannot repeat — Twig blocks do not iterate. See the
+        slots-versus-props rule in the theme README.
+      items:
+        type: object
+        required: [label]
+        properties:
+          label:
+            type: string
+          url:
+            type: string
+slots:
+  media:
+    title: Media
+    description: >-
+      The hero image as a rendered image field, so its image style and alt text
+      survive. No article has one yet, and the header simply omits the figure
+      when the slot is empty rather than reserving space for it.

@@ -6,7 +6,7 @@ use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-use Drupal\flavourful\ArticleCardTrait;
+use Drupal\flavourful\ArticlePreprocessTrait;
 use Drupal\flavourful\NodeFieldTrait;
 use Drupal\node\NodeInterface;
 
@@ -30,7 +30,7 @@ use Drupal\node\NodeInterface;
  */
 class NodeHooks {
 
-  use ArticleCardTrait;
+  use ArticlePreprocessTrait;
   use NodeFieldTrait;
   use StringTranslationTrait;
 

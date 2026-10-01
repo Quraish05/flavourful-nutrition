@@ -1,0 +1,93 @@
+{#
+/**
+ * @file
+ * Article header organism. See article-header.component.yml for the contract.
+ */
+#}
+<header{{ attributes.addClass('article-header') }}>
+
+  {#
+    Eyebrow and story year share a row: both frame the piece before it starts,
+    where the byline below attributes it. "Set in" is spelled out because 1998
+    on its own is a number whose meaning would come only from its position.
+  #}
+  {% if eyebrow or story_year %}
+    <p class="article-header__topline">
+      {% if eyebrow %}
+        {{ include('flavourful:micro-label', {
+          text: eyebrow,
+          tone: 'brass',
+        }, with_context = false) }}
+      {% endif %}
+      {% if story_year %}
+        <span class="article-header__year">{{ 'Set in @year'|t({ '@year': story_year }) }}</span>
+      {% endif %}
+    </p>
+  {% endif %}
+
+  <h{{ heading_level }} class="article-header__title">{{ title }}</h{{ heading_level }}>
+
+  {#
+    A paragraph, never a heading. The standfirst is a sentence about the
+    article, so a heading would add an entry to the outline that names no
+    section — and screen-reader users navigate by that outline.
+  #}
+  {% if deck %}
+    <p class="article-header__deck">{{ deck }}</p>
+  {% endif %}
+
+  {#
+    The byline is markup here rather than a shared component — see the note in
+    the component.yml. `time` carries a machine-readable datetime; without it
+    the element is decorative and the date is unparseable by anything.
+  #}
+  {% if author_name or published or reading_time %}
+    <p class="article-header__byline">
+      {% if author_name %}
+        <span class="article-header__author">
+          {%- if author_url -%}
+            <a href="{{ author_url }}" rel="author">{{ author_name }}</a>
+          {%- else -%}
+            {{ author_name }}
+          {%- endif -%}
+        </span>
+      {% endif %}
+
+      {% if published and published_iso %}
+        <time datetime="{{ published_iso }}" class="article-header__date">{{ published }}</time>
+      {% endif %}
+
+      {% if reading_time %}
+        <span class="article-header__reading-time">{{ reading_time }}</span>
+      {% endif %}
+    </p>
+  {% endif %}
+
+  {#
+    A genuine list, so assistive tech announces "list, 2 items" before reading
+    them. A row of bare links gives no such boundary, and topic chips are
+    exactly the kind of thing a reader wants to skip past as a group.
+  #}
+  {% if topics is not empty %}
+    <ul class="article-header__topics" aria-label="{{ 'Topics'|t }}">
+      {% for topic in topics %}
+        <li>
+          {{ include('flavourful:tag-pill', {
+            label: topic.label,
+            url: topic.url,
+          }, with_context = false) }}
+        </li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+
+  {#
+    Captured through an inline block: block('media') throws when a caller has
+    not defined it, and no article has a hero image today.
+  #}
+  {% set media %}{% block media %}{% endblock %}{% endset %}
+  {% if media|trim is not empty %}
+    <figure class="article-header__media">{{ media }}</figure>
+  {% endif %}
+
+</header>

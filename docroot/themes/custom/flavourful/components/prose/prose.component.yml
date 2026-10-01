@@ -1,0 +1,34 @@
+$schema: 'https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json'
+name: Prose
+status: stable
+description: >-
+  Molecule — the wrapper for long-form body copy. Owns the reading measure, the
+  vertical rhythm between headings and paragraphs, inline-link underlining, and
+  the treatment of lists, blockquotes and rules inside editor-authored HTML.
+
+  All slot, no props, deliberately: the content is already-rendered markup from
+  a text field, and there is nothing here for the component to reason about. A
+  component whose content is entirely slots has nothing to require — see the
+  slots-versus-props rule in the theme README.
+
+  The empty `props` block below is not noise. The theme sets
+  `enforce_prop_schemas: true`, and SDC rejects a component with no `props` key
+  at all — "does not provide schema information" — even when it genuinely has
+  no props. Declaring an empty object is how a slots-only component satisfies
+  that.
+
+  It styles headings; it cannot renumber them. The body arrives as `basic_html`
+  with its heading levels already chosen by the editor, and the seeded articles
+  use `h2` throughout. That is correct only because article-header emits the
+  page's single `h1` — put this on a page with no `h1` and the outline starts at
+  `h2` with nothing above it.
+props:
+  type: object
+  properties: {}
+slots:
+  content:
+    title: Content
+    description: >-
+      The rendered body field. Pass `content.body`, not `node.body.value` — the
+      rendered field has been through the text format's filters, and the raw
+      value has not.

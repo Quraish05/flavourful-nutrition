@@ -1,0 +1,115 @@
+/**
+ * Prose molecule.
+ * Auto-attached by SDC wherever it renders. Consumes the global --fr-* tokens.
+ *
+ * Every selector here is a descendant of .prose on purpose. The markup comes
+ * from an editor through a text format, so there are no classes to hook — the
+ * component has to style bare `p`, `h2`, `a`, `ul` and `blockquote`, and
+ * confining that to .prose is what stops it leaking into the rest of the page.
+ */
+.prose {
+  color: var(--fr-bone);
+  font-size: var(--fr-size-body);
+  line-height: 1.7;
+}
+
+/*
+ * A measure, not a width. Long-form text is unreadable much past 70 characters
+ * a line regardless of how wide the column is.
+ */
+.prose > * {
+  max-width: 68ch;
+}
+
+.prose > * + * {
+  margin-block-start: var(--fr-space-md);
+}
+
+/* -- Headings -------------------------------------------------------------- */
+/*
+ * More space above than below, so a heading binds to the text it introduces
+ * rather than floating between two blocks.
+ */
+.prose :is(h2, h3, h4) {
+  margin-block: var(--fr-space-lg) var(--fr-space-xs);
+  font-family: var(--fr-font-display);
+  font-weight: 400;
+  letter-spacing: var(--fr-track-tight);
+  line-height: 1.2;
+}
+
+.prose h2 {
+  font-size: var(--fr-size-display-sm);
+}
+
+.prose h3 {
+  font-size: 1.25rem;
+}
+
+.prose h4 {
+  font-size: 1.0625rem;
+  letter-spacing: var(--fr-track-label);
+  text-transform: uppercase;
+}
+
+/* The first child never needs its leading space — the wrapper supplies it. */
+.prose > :first-child {
+  margin-block-start: 0;
+}
+
+/* -- Inline links ---------------------------------------------------------- */
+/*
+ * Underlined, always. Colour alone would be the only thing distinguishing a
+ * link from its surrounding sentence, which fails WCAG 1.4.1 for anyone who
+ * cannot separate brass from bone. text-underline-offset keeps the rule clear
+ * of the descenders in a serif body face.
+ */
+.prose a {
+  color: var(--fr-brass);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+}
+
+.prose a:hover,
+.prose a:focus-visible {
+  color: var(--fr-bone);
+  text-decoration-thickness: 2px;
+}
+
+/* -- Lists ----------------------------------------------------------------- */
+.prose :is(ul, ol) {
+  padding-inline-start: var(--fr-space-md);
+}
+
+.prose li + li {
+  margin-block-start: var(--fr-space-2xs);
+}
+
+.prose li::marker {
+  color: var(--fr-brass-dim);
+}
+
+/* -- Quotes ---------------------------------------------------------------- */
+/*
+ * A rule on the leading edge rather than quotation glyphs: the design has no
+ * decorative quote marks, and a glyph would be read aloud.
+ */
+.prose blockquote {
+  margin-inline: 0;
+  padding-inline-start: var(--fr-space-md);
+  border-inline-start: 1px solid var(--fr-brass-dim);
+  color: var(--fr-bone-muted);
+  font-style: italic;
+}
+
+.prose hr {
+  margin-block: var(--fr-space-lg);
+  border: 0;
+  border-block-start: 1px solid var(--fr-rule);
+}
+
+.prose :is(strong, b) {
+  color: var(--fr-bone);
+  font-weight: 600;
+}

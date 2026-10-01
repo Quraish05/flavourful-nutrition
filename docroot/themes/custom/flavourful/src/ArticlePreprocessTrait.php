@@ -23,24 +23,36 @@ use Drupal\node\NodeInterface;
  * yet — article-header and prose are still to come — so this does nothing there
  * rather than half-preparing props nothing consumes.
  */
-trait ArticleCardTrait {
+trait ArticlePreprocessTrait {
 
   /** Preprocesses an article node. Called from NodeHooks::preprocessNode(). */
   private function preprocessArticle(array &$variables, NodeInterface $node): void {
-    if (($variables['view_mode'] ?? '') !== 'card') {
+    $view_mode = $variables['view_mode'] ?? '';
+
+    if ($view_mode === 'card') {
+      $this->setCardContext($variables, 'view.articles.page_1');
+    }
+    elseif ($view_mode !== 'full' && $view_mode !== 'default') {
       return;
     }
 
-    $this->setCardContext($variables, 'view.articles.page_1');
     $this->addArticleProps($variables, $node);
 
-    // field_hero is configured `label: above` on node.article.card, exactly as
-    // it is on the recipe displays, so without this the word "Hero" prints over
-    // every image. A label is never right for a field handed to a component's
-    // media slot — the slot is the label. Latent today because no article has a
-    // hero image, which is precisely why it would have been missed.
-    if (isset($variables['content']['field_hero'])) {
-      $variables['content']['field_hero']['#label_display'] = 'hidden';
+    // field_hero is configured `label: above` on every article display, so
+    // without this the word "Hero" prints over the image. A label is never
+    // right for a field handed to a component's media slot — the slot is the
+    // label. Latent today because no article has a hero image, which is
+    // precisely why it would have been missed.
+    // Every component on the article displays is configured `label: above`,
+    // and a label travels inside the *rendered* field — so passing
+    // content.body to prose carries the word "Body" with it. The fields handed
+    // to a component or an aside have their label suppressed here; the ones
+    // left to render on their own keep theirs, because there they are the only
+    // thing naming the value.
+    foreach (['field_hero', 'body', 'field_takeaways'] as $field) {
+      if (isset($variables['content'][$field])) {
+        $variables['content'][$field]['#label_display'] = 'hidden';
+      }
     }
   }
 
@@ -75,6 +87,24 @@ trait ArticleCardTrait {
     ]);
 
     $variables['article_tags'] = $this->termChips($node, 'field_topics');
+
+    // -- The full page -------------------------------------------------------
+    // article-header needs the author and date split out rather than folded
+    // into the meta row, because it renders the date inside a `time` element
+    // with a machine-readable datetime that meta-list has no way to express.
+    $variables['article_author_name'] = $chef?->label();
+    $variables['article_author_url'] = $chef_url;
+    // Cast, but keep NULL as NULL. An integer field reads back as the string
+    // "1998", and article-header declares story_year as type: integer — SDC
+    // validates that strictly and rejects the string outright. A blanket (int)
+    // would turn an empty field into the year 0 instead of omitting it.
+    $story_year = $this->fieldValue($node, 'field_story_year');
+    $variables['article_story_year'] = $story_year !== NULL ? (int) $story_year : NULL;
+    $variables['article_published'] = $this->publishedDate($node);
+    $variables['article_published_iso'] = $this->publishedDateIso($node);
+    $variables['article_reading_time'] = $reading_time > 0
+      ? (string) $this->t('@count min read', ['@count' => $reading_time])
+      : NULL;
   }
 
   /** The human label of field_story_type, or NULL when it is empty. */
@@ -92,10 +122,26 @@ trait ArticleCardTrait {
     return isset($allowed[$key]) ? (string) $allowed[$key] : NULL;
   }
 
-  /** The publication date, in the site's medium format. */
+  /** The publication date as an ISO 8601 string, for a `datetime` attribute. */
+  private function publishedDateIso(NodeInterface $node): ?string {
+    $created = $node->getCreatedTime();
+    // 'Y-m-d' rather than a full timestamp: the time of day is not something
+    // the page shows, and a datetime that claims more precision than the
+    // rendered text is a small lie a parser will believe.
+    return $created ? $this->dateFormatter->format($created, 'custom', 'Y-m-d') : NULL;
+  }
+
+  /**
+   * The publication date, as a date and nothing more.
+   *
+   * Not the site's 'medium' format, which appends the time: "Fri, 18 Sep 2026
+   * - 20:03" beside a datetime of "2026-09-18" is text claiming more precision
+   * than the machine-readable attribute carries, and the time of day is not
+   * something an article page has any reason to publish.
+   */
   private function publishedDate(NodeInterface $node): ?string {
     $created = $node->getCreatedTime();
-    return $created ? $this->dateFormatter->format($created, 'medium') : NULL;
+    return $created ? $this->dateFormatter->format($created, 'custom', 'j F Y') : NULL;
   }
 
 }

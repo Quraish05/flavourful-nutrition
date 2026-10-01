@@ -119,9 +119,16 @@ class PageHooks {
 
     $variables['is_bleed'] = $is_recipe_page;
 
+    // Two different questions, and they were the same one until articles got a
+    // template. Only recipes bleed; recipes *and* articles render their own h1,
+    // so the page-title block has to go on both.
+    $renders_own_heading = $this->routeMatch->getRouteName() === 'entity.node.canonical'
+      && $node instanceof NodeInterface
+      && in_array($node->bundle(), ['recipe', 'article'], TRUE);
+
     $this->addSidebarLabels($variables, $is_recipe_page, $cache);
 
-    $this->dropDuplicatePageTitle($variables);
+    $this->dropDuplicatePageTitle($variables, $renders_own_heading);
 
     $cache->applyTo($variables);
   }
@@ -129,8 +136,9 @@ class PageHooks {
   /**
    * Removes the page-title block on node pages that render their own heading.
    *
-   * The recipe template puts the h1 inside the hero, beside the image, as the
-   * design requires. The page-title block would add a second h1 above it —
+   * The recipe template puts the h1 inside the hero and the article template
+   * inside article-header, as the design requires. The page-title block would
+   * add a second h1 above either one —
    * the same text twice, and a document outline with two level-1 headings,
    * which is a WCAG 1.3.1 failure and not something CSS can fix by hiding one.
    *
@@ -144,8 +152,8 @@ class PageHooks {
    * templates/content/page-title.html.twig, which can test the rendered markup
    * directly rather than guessing at it from here.
    */
-  private function dropDuplicatePageTitle(array &$variables): void {
-    if (!$variables['is_bleed']) {
+  private function dropDuplicatePageTitle(array &$variables, bool $renders_own_heading): void {
+    if (!$renders_own_heading) {
       return;
     }
 

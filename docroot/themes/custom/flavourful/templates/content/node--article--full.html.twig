@@ -1,0 +1,105 @@
+{#
+/**
+ * @file
+ * A single article page.
+ *
+ * Maps node fields onto article-header and prose. Before this existed the page
+ * rendered the default display raw, with eight visible field labels —
+ * "Standfirst", "Body", "Author", "Year this happened" — printed above their
+ * values, because every component on node.article.default is configured
+ * `label: above`.
+ *
+ * The scalar props come from src/ArticlePreprocessTrait.php rather than being
+ * read out of `node.field_*` here: an empty field read in Twig returns an
+ * empty array rather than NULL, and a typed SDC prop rejects it.
+ *
+ * Heading outline: article-header emits the page's single h1, and the body's
+ * editor-authored headings start at h2. That is the only reason the body's
+ * levels are correct — see the note in prose.component.yml.
+ *
+ * @see template_preprocess_node()
+ * @see \Drupal\flavourful\ArticlePreprocessTrait
+ */
+#}
+{% set header_props = {
+  title: label,
+  heading_level: 1,
+  eyebrow: article_eyebrow,
+  story_year: article_story_year,
+  deck: article_summary,
+  author_name: article_author_name,
+  author_url: article_author_url,
+  published: article_published,
+  published_iso: article_published_iso,
+  reading_time: article_reading_time,
+  topics: article_tags,
+}|filter(v => v is not null) %}
+
+<article{{ attributes.addClass('article') }}>
+
+  {#
+    `only` keeps this template's context out of the component, so a node
+    variable sharing a prop name (`title`, `label`, `content`) cannot silently
+    override what is set above.
+  #}
+  {% embed 'flavourful:article-header' with header_props|merge({
+    hero_media: content.field_hero,
+  }) only %}
+    {% block media %}
+      {#
+        No placeholder here, unlike article-card. A card in a grid needs to hold
+        its shape beside its neighbours; a single page has nothing to line up
+        with, so an absent hero simply means no figure.
+      #}
+      {{ hero_media }}
+    {% endblock %}
+  {% endembed %}
+
+  {% embed 'flavourful:prose' with { body: content.body } only %}
+    {% block content %}{{ body }}{% endblock %}
+  {% endembed %}
+
+  {#
+    Takeaways are a separate text field, deliberately outside prose: they are a
+    pull-out summary rather than part of the argument, and giving them the same
+    measure and rhythm as the body would read as more body.
+  #}
+  {% if content.field_takeaways|render|trim is not empty %}
+    <aside class="article__takeaways">
+      {{ include('flavourful:section-header', {
+        title: 'Takeaways'|t,
+        heading_level: 2,
+        tone: 'brass',
+      }, with_context = false) }}
+      {{ content.field_takeaways }}
+    </aside>
+  {% endif %}
+
+  {#
+    The referenced recipes, as recipe-card teasers rather than the bare link
+    list the display used to emit. The formatter is now
+    entity_reference_entity_view at `teaser`, so each one renders through
+    node--recipe--teaser.html.twig and arrives as the same card the listings
+    use — NodeHooks gives it heading level 3 here, because the route is not
+    the recipes listing, which is correct under the h2 below.
+  #}
+  {% if content.field_recipes|render|trim is not empty %}
+    <section class="article__recipes">
+      {{ include('flavourful:section-header', {
+        title: 'Recipes this story is about'|t,
+        heading_level: 2,
+        tone: 'brass',
+      }, with_context = false) }}
+      {{ content.field_recipes }}
+    </section>
+  {% endif %}
+
+  {#
+    Everything the two components and the takeaways aside already render is
+    suppressed in preprocess, so this prints only what is left — contextual
+    links, and any field added to the display later. Without it a new field
+    would be invisible rather than merely unstyled.
+  #}
+  {{ content|without('field_hero', 'body', 'field_summary', 'field_chef', 'field_topics', 'field_story_type', 'field_reading_time', 'field_takeaways', 'field_recipes', 'field_story_year') }}
+
+</article>
