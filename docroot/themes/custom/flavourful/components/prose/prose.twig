@@ -1,0 +1,14 @@
+{#
+/**
+ * @file
+ * Prose molecule. See prose.component.yml for the slots contract.
+ *
+ * Deliberately thin: one element, one slot. Everything this component does is
+ * in prose.css, scoped to `.prose` so it reaches editor-authored markup it
+ * cannot add classes to.
+ */
+#}
+{% set content %}{% block content %}{% endblock %}{% endset %}
+{% if content|trim is not empty %}
+  <div{{ attributes.addClass('prose') }}>{{ content }}</div>
+{% endif %}
