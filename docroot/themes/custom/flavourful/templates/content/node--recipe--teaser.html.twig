@@ -8,7 +8,7 @@
  * node fields onto it. The exact same component renders on the full node page
  * (node--recipe.html.twig) — edit the component once, both update.
  *
- * The scalar props come from src/Hook/RecipeHooks.php rather than being read
+ * The scalar props come from src/Hook/NodeHooks.php rather than being read
  * out of `node.field_*` here, so the field names live in one place and this
  * template stays a mapping rather than a query.
  *
@@ -19,12 +19,12 @@
  *   (components inside a slot — the thing props can't do).
  *
  * @see template_preprocess_node()
- * @see \Drupal\flavourful\Hook\RecipeHooks
+ * @see \Drupal\flavourful\Hook\NodeHooks
  */
 #}
 {#
-  Every value here comes from RecipeHooks, never from `node.field_*` — see the
-  comment on RecipeHooks::addRecipeProps() for why reading a field in Twig is
+  Every value here comes from NodeHooks, never from `node.field_*` — see the
+  comment on NodeHooks::addRecipeProps() for why reading a field in Twig is
   not safe when it may be empty.
 
   The trailing `|filter` drops the nulls a sparse recipe produces (no cuisine

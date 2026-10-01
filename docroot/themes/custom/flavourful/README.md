@@ -137,7 +137,12 @@ interface aliases in `core.services.yml` — no `create()` needed.
   links. Also drops two blocks that would otherwise break the outline: the
   site-branding block (the masthead renders the wordmark itself) and, on recipe
   pages, the page-title block (the hero renders the `h1`).
-- **`RecipeHooks`** — recipe fields → component props. The only file that knows a
+- **`NodeHooks`** — the theme's single `preprocess_node`. A theme gets exactly
+  one implementation of each hook, and a hook class is a service only while it
+  carries `#[Hook]`, so a second class cannot be injected into the first and
+  themes get no `.services.yml`. Hence one class, with the per-bundle work in
+  traits: recipe handling inline, articles in `ArticleCardTrait`, field reading
+  shared via `NodeFieldTrait`. The only file that knows a
   recipe field name.
 - **`ListingHooks`** — which listing row is the lead story. The instruction
   travels as `#card_variant` on the row's render array, the same channel

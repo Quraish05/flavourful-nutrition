@@ -1,0 +1,87 @@
+$schema: 'https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json'
+name: Article card
+status: stable
+description: >-
+  Molecule — an article summary card. Typed props for its scalar data, slots for
+  its media and tag areas (the latter holds tag-pill atoms).
+
+  The sibling of recipe-card, and deliberately not a variant of it: the two
+  differ in content rather than proportion. An article has an author and a
+  reading time where a recipe has a cook time and a difficulty badge, and
+  folding both into one component would mean a prop set where half is always
+  null.
+
+  Three variants, matching recipe-card so a mixed listing stays coherent:
+  `compact` is the square-thumbnail row, `stacked` is wider with a 3:2 image,
+  `list` drops the image for a text-only row.
+props:
+  type: object
+  required: [title, url, heading_level]
+  properties:
+    title:
+      type: string
+      title: Title
+      description: >-
+        The article headline. Rendered at `heading_level`, or inside a plain
+        paragraph when that is 0 — never as an unmarked string.
+    url:
+      type: string
+      title: URL
+      description: 'Canonical link to the article.'
+    heading_level:
+      type: integer
+      title: Heading level
+      description: >-
+        Level for the card title. Pass the level the host context needs, not a
+        constant: 2 directly under a page h1, 3 under an h2 section. Pass 0 to
+        render the title without a heading wrapper, for a context where an h1
+        already names the same article.
+      enum: [0, 2, 3, 4, 5, 6]
+    eyebrow:
+      type: string
+      title: Eyebrow
+      description: >-
+        The story type above the headline — "Journey", "Technique". Pass the
+        human label, not field_story_type's stored key; `recipe_story` is a
+        machine name and reads like one.
+    summary:
+      type: string
+      title: Summary
+      description: 'Standfirst copy, clamped to 3 lines in the stacked variant.'
+    meta:
+      type: array
+      title: Meta items
+      description: >-
+        The byline row — author, published date, reading time. Passed to the
+        meta-list atom, so supply a `label` on any value that is not
+        self-describing: "6 min" alone says nothing about what it measures.
+      items:
+        type: object
+        required: [value]
+        properties:
+          label:
+            type: string
+          value:
+            type: string
+          url:
+            type: string
+    variant:
+      type: string
+      title: Variant
+      description: >-
+        `compact` is the square-thumbnail row of a listing grid, `stacked` is
+        the wider card with a 3:2 image, `list` drops the image for a text-only
+        row. They differ in proportion rather than in content, so one set of
+        props fills all three.
+      enum: [compact, stacked, list]
+      default: compact
+slots:
+  media:
+    title: Media
+    description: >-
+      Hero image as a rendered image field, so its image style, alt text and
+      cacheability survive — or a placeholder. No article has a hero yet, so
+      the placeholder branch is the one that renders today.
+  tags:
+    title: Tags
+    description: 'Topic pills — fill with tag-pill atoms.'
