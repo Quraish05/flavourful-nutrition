@@ -58,12 +58,51 @@ loads on a page that does not use it.
 - **Separators are pseudo-elements, not characters.** A literal `—` between meta
   items is read aloud by some screen readers and not others; a pseudo-element is
   reliably silent and reliably visible.
-- **Absent data renders nothing, never a zero or a placeholder.** `rating-stars`
-  with no value emits no markup at all.
+- **Absent data renders nothing, never a zero or a placeholder.** `meta-list`
+  skips empty values; `chef-byline` just gets shorter without a rating. Where
+  the absence is the *caller's* question rather than the component's, the prop
+  is required instead and the caller omits the component — `rating-stars` works
+  that way, which is why a rating of 0 draws five empty stars rather than
+  vanishing.
 - **Slots are captured through an inline block:**
   `{% set x %}{% block x %}{% endblock %}{% endset %}`. Twig's `block('x')`
   *throws* when a caller has not defined the block, and a caller filling only
   some slots is the normal case.
+
+### Slots or props?
+
+**Content belongs in a slot. Configuration belongs in a prop.** The library
+already follows this — 16 slots across six components — it had just never been
+written down.
+
+The test is one question: **can the host already render this?** If what you want
+to pass is markup something else produced — a rendered field, a block, another
+component — it is a slot. If it is a value the component reasons about — a
+level, a variant, a label, a URL — it is a prop.
+
+`recipe-card` is the worked example, and `node--recipe--teaser.html.twig` shows
+why it matters:
+
+- **`media` takes `content.field_hero`**, the rendered field. Image style,
+  responsive `srcset`, alt text and cacheability all survive untouched. As a
+  `type: string` prop the component would have to rebuild the `<img>` itself,
+  and alt text would become a second prop that nobody keeps in step with the
+  image. The caller fills the slot with a placeholder glyph when the field is
+  empty — a decision about *this* context, which is exactly what a slot is for.
+- **`tags` takes `tag-pill` atoms.** A prop cannot express "a list of
+  components"; the schema would have to flatten them to strings and the card
+  would end up re-implementing the pill.
+
+**The exception: a slot cannot repeat.** Twig blocks do not iterate, so a
+*list* stays a prop even when each item carries markup — `method-steps.steps`
+and `recipe-tools.steps` are arrays of strings that may contain inline markup,
+and `spec-table.items`, `meta-list.items` and `ingredient-list`'s rows are
+arrays of objects. Repetition beats the content/configuration split.
+
+A component whose content is **entirely** slots has nothing to require:
+`utility-bar` is three slots plus two optional presentational props, and that is
+a finished shape rather than a gap. Its `label` in particular must stay optional
+— naming a landmark that holds no navigation is worse than leaving it unnamed.
 
 ### Two SDC gotchas worth knowing
 

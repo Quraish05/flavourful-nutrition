@@ -6,9 +6,13 @@ description: >-
   start / centre / end: the date and a breadcrumb trail on the left, the issue
   line in the middle, account links on the right.
 
-  All slots, no props: what goes in the bar is entirely context-dependent
-  (a homepage shows a date, a recipe shows its trail), and every one of those
-  is already-rendered markup rather than a scalar.
+  All slots, no required props, deliberately: what goes in the bar is entirely
+  context-dependent (a homepage shows a date, a recipe shows its trail), and
+  every one of those is already-rendered markup rather than a scalar. Both
+  props that do exist are presentational and optional by design — `tone` has a
+  default, and `label` must stay optional because naming a landmark that holds
+  no navigation is worse than leaving it unnamed. A component whose content is
+  entirely slots has nothing to require.
 props:
   type: object
   properties:

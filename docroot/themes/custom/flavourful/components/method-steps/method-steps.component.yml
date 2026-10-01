@@ -21,5 +21,10 @@ props:
     numeral:
       type: string
       title: Numeral style
+      description: >-
+        `roman` is the design's default; `decimal` suits a long method, where
+        roman numerals stop being scannable past about eight steps. Either way
+        the numeral is a CSS counter on ::before, so assistive tech announces
+        the list's own ordinal rather than reading "III" as three letters.
       enum: [roman, decimal]
       default: roman

@@ -14,6 +14,9 @@ props:
     name:
       type: string
       title: Chef name
+      description: >-
+        The chef's name. Doubles as the link text, and so the accessible
+        name of the link, whenever `url` is supplied.
     url:
       type: string
       title: URL
@@ -21,6 +24,10 @@ props:
     rating:
       type: number
       title: Rating
+      description: >-
+        Score out of 5, handed to the rating-stars atom together with
+        `rating_count`. No field feeds this yet; absent, the row simply gets
+        shorter.
       minimum: 0
     rating_count:
       type: integer

@@ -21,6 +21,9 @@ props:
     home_url:
       type: string
       title: Home URL
+      description: >-
+        Destination of the wordmark link. The site root is right almost
+        always; override it for a sub-site or a language-prefixed front page.
       default: /
     established:
       type: string
@@ -31,6 +34,11 @@ props:
     layout:
       type: string
       title: Layout
+      description: >-
+        `centered` gives both nav groups equal flex basis, which is what centres
+        the wordmark on the *page* rather than in the space left over; `inline`
+        puts it flush to the leading edge with nav and actions trailing.
+        `established` renders only under `centered`.
       enum: [centered, inline]
       default: centered
 slots:

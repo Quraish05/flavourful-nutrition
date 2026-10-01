@@ -34,6 +34,9 @@ props:
     size:
       type: string
       title: Size
+      description: >-
+        Padding and label size. `sm` for a button inside a card or a dense
+        row; `md` for a standalone call to action.
       enum: [sm, md]
       default: md
     icon_after:

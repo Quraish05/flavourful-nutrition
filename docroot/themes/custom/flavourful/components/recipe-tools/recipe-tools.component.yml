@@ -45,15 +45,24 @@ props:
     steps:
       type: array
       title: Method steps
+      description: >-
+        The method, one step per item, passed through to the method-steps
+        molecule. May contain inline markup.
       items:
         type: string
     ingredients_heading:
       type: string
       title: Ingredients heading
+      description: >-
+        Heading above the ingredient list. Overridable so a non-recipe
+        context can relabel it; the default suits every recipe on the site.
       default: Ingredients
     method_heading:
       type: string
       title: Method heading
+      description: >-
+        Heading above the method, overridable for the same reason as
+        `ingredients_heading`.
       default: Method
     heading_level:
       type: integer

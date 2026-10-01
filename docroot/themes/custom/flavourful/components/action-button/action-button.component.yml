@@ -21,11 +21,20 @@ props:
     variant:
       type: string
       title: Variant
+      description: >-
+        Matches the button atom's variants, so an action and a link sitting side
+        by side cannot drift apart. `plain` emits no colours at all, leaving a
+        host context — an overlay, a stepper — to style it through a passed
+        class.
       enum: [outline, brass, solid, plain]
       default: plain
     size:
       type: string
       title: Size
+      description: >-
+        Padding and label size, borrowed from the button atom. `sm` inside a
+        dense row, `md` standalone. Ignored by the `plain` variant, which takes
+        no .btn classes at all.
       enum: [sm, md]
       default: md
 
