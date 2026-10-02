@@ -40,7 +40,7 @@
 #}
 {{ attach_library('flavourful/recipes') }}
 
-<article{{ attributes.addClass('recipe-page', page ? 'recipe-page--bleed') }}>
+<article{{ attributes.addClass('recipe-page') }}>
 
   {{ title_prefix }}
 
@@ -117,7 +117,6 @@
         {% embed 'flavourful:chef-byline' with {
           name: chef_name,
           url: chef_url,
-          picture: chef_picture,
         }|filter(v => v is not null) only %}
           {% block avatar %}
             {#

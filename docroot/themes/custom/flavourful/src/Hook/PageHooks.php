@@ -109,19 +109,13 @@ class PageHooks {
     $this->addCategoryBar($variables, $cache);
     $this->addFooterLinks($variables, $cache);
 
-    // A full-bleed main lets the recipe hero's image reach the viewport edge.
-    // Decided here so the list of bleeding routes lives in one place;
-    // page.html.twig only reads the flag.
     $node = $this->routeMatch->getParameter('node');
     $is_recipe_page = $this->routeMatch->getRouteName() === 'entity.node.canonical'
       && $node instanceof NodeInterface
       && $node->bundle() === 'recipe';
 
-    $variables['is_bleed'] = $is_recipe_page;
-
-    // Two different questions, and they were the same one until articles got a
-    // template. Only recipes bleed; recipes *and* articles render their own h1,
-    // so the page-title block has to go on both.
+    // Recipes and articles both render their own h1, so the page-title block
+    // has to go on both; only recipes take the sidebar labels.
     $renders_own_heading = $this->routeMatch->getRouteName() === 'entity.node.canonical'
       && $node instanceof NodeInterface
       && in_array($node->bundle(), ['recipe', 'article'], TRUE);
