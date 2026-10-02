@@ -1,7 +1,21 @@
 {#
 /**
  * @file
- * Theme override to display a pager.
+ * Pager override. The markup is core's starterkit version, kept on purpose.
+ *
+ * This theme's base theme is Olivero, so deleting this file does not fall back
+ * to core's neutral pager — it falls back to Olivero's, which renders the
+ * current page as bare text rather than a link. `aria-current="page"` is set
+ * in PHP onto item.attributes, and Olivero prints those attributes only inside
+ * the link it omits on that very page, so the current page would end up with
+ * no programmatic marker at all. Olivero's template also inlines its own SVG
+ * arrows and emits `pager__link` and `pager__item--active`, none of which this
+ * theme styles.
+ *
+ * Only `type: full` displays reach this file; `type: mini` ones get
+ * views-mini-pager.html.twig, which this theme has genuinely rewritten. No
+ * display paginates through here today — frontpage is the only full pager and
+ * it lists 6 promoted nodes against a page size of 10.
  *
  * Available variables:
  * - heading_id: Pagination heading ID.

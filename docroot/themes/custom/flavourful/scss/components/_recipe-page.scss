@@ -12,18 +12,6 @@
   gap: $space-lg;
 }
 
-// The design's recipe detail runs edge to edge with the image bleeding to the
-// viewport. Inside a full-bleed main the text column still needs a gutter.
-.recipe-page--bleed {
-  .recipe-page__body {
-    padding-inline: $space-sm;
-
-    @include respond-to('md') {
-      padding-inline: $space-lg;
-    }
-  }
-}
-
 .recipe-page__tags {
   display: flex;
   flex-wrap: wrap;

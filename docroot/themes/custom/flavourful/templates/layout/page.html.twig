@@ -43,7 +43,6 @@
  * - utility_date, utility_date_iso: the date at the head of the utility bar.
  * - category_items, recipe_count: the cuisine strip and its tally.
  * - footer_links: the flattened footer menu.
- * - is_bleed: whether main should run edge to edge.
  *
  * Note on `{% embed ... with {...} only %}` throughout this file: `only` stops
  * this template's own context reaching the component, which matters because a
@@ -155,10 +154,20 @@
     No aria-label on <main>: there is only ever one main landmark on a page, so
     a label tells a screen reader nothing it does not already announce.
   #}
-  <main class="page-main{{ is_bleed ? ' page-main--bleed' }}">
-    <a id="main-content" tabindex="-1"></a>{# link is in html.html.twig #}
+  <main class="page-main">
 
     <div class="layout-content">
+      {#
+        The skip-link target belongs inside the content column, not directly
+        under <main>. Starterkit puts it there because its <main> is a plain
+        block; this one is the flex row, so a direct child is a flex item even
+        with no width — and the 4rem column gap was then applied after it,
+        starting the content column 64px right of every other container on the
+        page. Below 64rem the row becomes a column and the same gap put 32px of
+        dead space above the content instead.
+      #}
+      <a id="main-content" tabindex="-1"></a>{# link is in html.html.twig #}
+
       {{ page.content }}
     </div>{# /.layout-content #}
 

@@ -53,11 +53,13 @@
    */
   font-size: clamp(1.0625rem, 4.5vw, 1.5rem);
   font-weight: 400;
-  /* The wide tracking *is* the wordmark. Padding-inline-start compensates for
-     the trailing letter-space, which would otherwise push it off-centre. */
+  /* The wide tracking *is* the wordmark. It leaves a trailing letter-space
+     after the final letter, which an equal padding-inline-start used to
+     balance. That was dropped: optical centring of the wordmark alone matters
+     less than starting it on the same line as every other container on the
+     page, which is what a reader actually sees. */
   letter-spacing: var(--fr-track-wide);
   line-height: 1.15;
-  padding-inline-start: var(--fr-track-wide);
   text-transform: uppercase;
   /* Wraps rather than overflows on a narrow screen; `balance` keeps the two
      lines even rather than leaving one word alone on the second. */

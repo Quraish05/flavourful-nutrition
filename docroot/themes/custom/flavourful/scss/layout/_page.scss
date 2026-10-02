@@ -44,17 +44,6 @@
   }
 }
 
-// A full-bleed page opts out of the container so a hero can reach the viewport
-// edge. Added by page.html.twig on the node types that want it.
-.page-main--bleed {
-  max-width: none;
-  padding-inline: 0;
-
-  @include respond-to('md') {
-    padding-inline: 0;
-  }
-}
-
 .layout-content {
   order: 2;
   flex: 1 1 auto;
@@ -270,8 +259,11 @@
     margin: 0;
   }
 
+  // The box every item sits in. Links get one each; in the mini pager the
+  // current page is text rather than a link, so the <li> carrying
+  // aria-current needs the same box drawn on it instead.
   a,
-  .pager__item--current {
+  &__item[aria-current='page'] {
     @include label-type;
     display: block;
     min-width: 2.25rem;
@@ -288,9 +280,13 @@
     color: $color-brass;
   }
 
-  // The current page. Brass border *and* brass text, plus aria-current in the
-  // markup — core's pager template already sets it.
-  &__item--current {
+  // The current page. Brass border *and* brass text, so colour is never the
+  // only carrier. Keyed on aria-current rather than on a class because that
+  // attribute lands on the right element in both templates — the <li> in the
+  // mini pager, the <a> in the full one, where PagerPreprocess sets it. The
+  // `--current` class this used to target is emitted only by Claro and
+  // default_admin, so it styled nothing on the front end.
+  [aria-current='page'] {
     border-color: $color-brass;
     color: $color-brass;
   }

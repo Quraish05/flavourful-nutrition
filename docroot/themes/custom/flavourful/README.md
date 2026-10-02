@@ -104,6 +104,30 @@ A component whose content is **entirely** slots has nothing to require:
 a finished shape rather than a gap. Its `label` in particular must stay optional
 — naming a landmark that holds no navigation is worse than leaving it unnamed.
 
+### When *not* to share a component
+
+`article-header` has a byline. So does `chef-byline`. They were deliberately
+not merged — the first time this library has had to answer that question
+rather than simply add a component.
+
+What they share is one `<a rel="author">`. Everything else differs, because
+they answer different questions: `chef-byline` is *who this person is* —
+avatar, name, standing — beside a recipe headline; `article-header`'s byline
+is *where this text came from* — author, date, reading time — under an article
+headline. A merged component would need all five surfaces optional, and would
+then be a wrapper around a link.
+
+Generalising would also have widened an API that has not earned the consumer
+it already has. `chef-byline` declares four props and a slot; its one caller
+supplies two. `avatar` is passed empty on purpose and `rating`/`rating_count`
+have no field behind them — the chef bundle has exactly one field,
+`field_chef_name`. Three of five surfaces are speculative.
+
+**Share markup when two callers want the same thing, not when they want
+things that look alike.** Count the surfaces both would use. If the shared
+component needs most of its API optional to serve both, what they have in
+common is smaller than a component.
+
 ### Two SDC gotchas worth knowing
 
 **A `null` prop is not an absent prop.** SDC validates props against the
