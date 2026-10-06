@@ -14,7 +14,7 @@ The item reads *"build `/articles` twice, compare, delete the loser."* Taken lit
 
 **The repo already made this decision, and it is neither of the two options.** `views.view.recipes` uses the grid style with a row plugin of `entity:node`, `view_mode: teaser` — so it picked rendered entity. But the props reaching the `recipe-card` component do not come from that view mode:
 
-- **Scalars come from preprocess.** `RecipeHooks::addRecipeProps()` in [`src/Hook/RecipeHooks.php`](../../docroot/themes/custom/flavourful/src/Hook/RecipeHooks.php) supplies `recipe_eyebrow`, `recipe_summary`, `recipe_meta`, `recipe_difficulty`. The template is explicit about why: a typed SDC prop declared `type: string` **rejects null outright**, and an empty field read in Twig is exactly null. Hence the `|filter(v => v is not null)` on the props map.
+- **Scalars come from preprocess.** `RecipeHooks::addRecipeProps()` in [`src/Hook/RecipeHooks.php`](../../docroot/themes/custom/flavourful/src/Hook/NodeHooks.php) supplies `recipe_eyebrow`, `recipe_summary`, `recipe_meta`, `recipe_difficulty`. The template is explicit about why: a typed SDC prop declared `type: string` **rejects null outright**, and an empty field read in Twig is exactly null. Hence the `|filter(v => v is not null)` on the props map.
 - **The `media` slot takes the rendered field**, `content.field_hero`, deliberately — "so its image style, alt text and cacheability are preserved."
 - **The `tags` slot takes `tag-pill` components** — components inside a slot, which props cannot express.
 

@@ -22,7 +22,15 @@ use Symfony\Component\Routing\Exception\RouteNotFoundException;
 final class RecipeStats {
 
   /**
-   * Cached per request — both callers ask on the same page render.
+   * Memoised per instance, which is not the same as per request.
+   *
+   * PageHooks and ListingHooks construct one of these each, so on the front
+   * page — the only page where both fire — the count query runs twice. That is
+   * deliberate rather than overlooked: a theme gets no services.yml to share
+   * one instance through, and the alternative is a static singleton whose
+   * lifetime is the PHP process rather than the request, which goes stale in
+   * Drush and in tests. One extra access-checked COUNT on one page is the
+   * cheaper of the two mistakes.
    */
   private ?int $count = NULL;
 

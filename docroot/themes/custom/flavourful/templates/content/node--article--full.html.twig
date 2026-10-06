@@ -95,6 +95,15 @@
   {% endif %}
 
   {#
+    Extension point for the per-story-type templates that the
+    node__article__<type> suggestion reaches — see
+    \Drupal\flavourful\Hook\NodeHooks::themeSuggestionsNodeAlter(). Empty by
+    default: most story types have nothing to add beyond the eyebrow that
+    article-header already prints.
+  #}
+  {% block story_note %}{% endblock %}
+
+  {#
     Everything the two components and the takeaways aside already render is
     suppressed in preprocess, so this prints only what is left — contextual
     links, and any field added to the display later. Without it a new field

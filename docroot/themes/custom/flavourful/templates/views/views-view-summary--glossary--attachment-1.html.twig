@@ -37,6 +37,7 @@
  * @see template_preprocess_views_view_summary()
  */
 #}
+{{ attach_library('flavourful/glossary') }}
 <nav class="item-list" aria-label="{{ 'Browse recipes by first letter'|t }}">
 	<ul class="views-summary">
 		{% for row in rows %}

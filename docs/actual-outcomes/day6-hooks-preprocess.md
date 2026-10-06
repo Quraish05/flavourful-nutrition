@@ -4,6 +4,13 @@
 >
 > What actually got built when the [Day 6 lab](../objectives/day6-hooks-preprocess.md) met the running project. This is the **outcome** companion to the plan — it does not re-teach the hook system or repeat the code comments already in the objective; it records what shipped, what diverged, and why. Read [Day 6](../objectives/day6-hooks-preprocess.md) first, then this. Sits alongside the [Day 4–5 outcomes](day4-5-site-studio-nutrition.md) and the cross-cutting [`lessons-learned.md`](lessons-learned.md).
 
+> **Later rename (Week 5–7).** Everything below calls the class `RecipeHooks`,
+> which is what it was called at the time. It is now `NodeHooks`: a theme gets
+> exactly one implementation of each hook, so when articles needed
+> `preprocess_node` too the class had to become the bundle-agnostic one, with
+> per-bundle work in traits. The links point at `NodeHooks.php`; the prose is
+> left as written.
+
 ---
 
 ## Objective → outcome map
@@ -15,7 +22,7 @@
 | [§3](../objectives/day6-hooks-preprocess.md) — `hook_entity_presave` stores `field_total_time` | `flavourful_nutrition_entity_presave()` narrows to recipe nodes and sets `field_total_time = field_prep_time + field_cooking_time`, with fieldable/`hasField` guards. | Done — but the two fields had to be created first (see deviations) |
 | [§4](../objectives/day6-hooks-preprocess.md) — preprocess adds `is_quick` + `recipe--quick` class | `flavourful_nutrition_preprocess_node()` sets `is_quick` (≤30 min) and appends the class; [`node--recipe.html.twig`](../../docroot/themes/custom/flavourful/templates/content/node--recipe.html.twig) prints the badge. | Done |
 | [§5](../objectives/day6-hooks-preprocess.md) — `hook_theme_suggestions_node_alter` per cuisine | `flavourful_nutrition_theme_suggestions_node_alter()` adds `node__recipe__<cuisine>`; [`node--recipe--italian.html.twig`](../../docroot/themes/custom/flavourful/templates/content/node--recipe--italian.html.twig) created. | Partial — suggestion works, template is an unmodified copy |
-| [§6](../objectives/day6-hooks-preprocess.md) — rewrite preprocess as a `#[Hook]` class | [`RecipeHooks.php`](../../docroot/themes/custom/flavourful/src/Hook/RecipeHooks.php) written, but under the **theme** with the **module** namespace, and the procedural version was left in place. | Deviated — the swap did not actually happen (see deviations) |
+| [§6](../objectives/day6-hooks-preprocess.md) — rewrite preprocess as a `#[Hook]` class | [`RecipeHooks.php`](../../docroot/themes/custom/flavourful/src/Hook/NodeHooks.php) written, but under the **theme** with the **module** namespace, and the procedural version was left in place. | Deviated — the swap did not actually happen (see deviations) |
 | [§7](../objectives/day6-hooks-preprocess.md) — `hook_update_N` backfill | Not implemented. | Not attempted — §7 is flagged "awareness" only |
 
 Supporting change: Twig debug (`debug`/`auto_reload`/`cache:false`) enabled in [`development.services.yml`](../../docroot/sites/development.services.yml) so the §5 suggestion comments are visible in page source.
@@ -76,7 +83,7 @@ $entity->set('field_total_time', $prep + $cook);
 
 **4. Cuisine suggestion uses the real reference field** — `field_recipe_cuisine_type` in place of `field_cuisine`; the `node__recipe__<machine>` mapping is otherwise verbatim.
 
-**5. `#[Hook]` class present but not wired in** — [`RecipeHooks.php`](../../docroot/themes/custom/flavourful/src/Hook/RecipeHooks.php) mirrors the §6 body, but the procedural `flavourful_nutrition_preprocess_node()` was **not** deleted. See deviation 5 for why the intended swap is a no-op.
+**5. `#[Hook]` class present but not wired in** — [`RecipeHooks.php`](../../docroot/themes/custom/flavourful/src/Hook/NodeHooks.php) mirrors the §6 body, but the procedural `flavourful_nutrition_preprocess_node()` was **not** deleted. See deviation 5 for why the intended swap is a no-op.
 
 ---
 

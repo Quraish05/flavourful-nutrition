@@ -1,0 +1,9 @@
+// =============================================================================
+// glossary.scss  ->  css/glossary.css
+// -----------------------------------------------------------------------------
+// The A–Z letter row, attached by hand from
+// templates/views/views-view-summary--glossary--attachment-1.html.twig.
+// One partial, not the components barrel — see "Where component CSS lives" in
+// README.md.
+// =============================================================================
+@use 'components/views-summary';

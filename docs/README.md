@@ -78,6 +78,8 @@ If you only read four documents, read these in order:
 | Articles content model (prerequisite) | [plan](plans/plan-articles-content-model.md) | No outcome note yet |
 | Week 4–6: Views to real depth | — | [day7b](actual-outcomes/day7b-advanced-views.md) (named after Day 7, which it revisits) |
 | Week 4–6 item 4: Fields versus view modes | [plan](plans/plan-articles-fields-vs-view-modes.md) | ↑ [day7b](actual-outcomes/day7b-advanced-views.md) |
+| Week 6–8: Twig Tweak, used once and critiqued | — | [twig-tweak-critique](actual-outcomes/twig-tweak-critique.md) |
+| Week 6–8: autoescape and the trust boundary | — | [autoescape-and-the-trust-boundary](actual-outcomes/autoescape-and-the-trust-boundary.md) |
 
 The article SDC components (`article-card`, `prose`, `article-header`) have no doc yet. Their record is the commit history on `feat/article-card` and `feat/article-page`.
 
@@ -93,6 +95,8 @@ The article SDC components (`article-card`, `prose`, `article-header`) have no d
 | Hooks and preprocess | Day 6 · [day6](actual-outcomes/day6-hooks-preprocess.md) |
 | Views | Days 1 and 7 · [day7](actual-outcomes/day7-rest-export.md) · [day7b](actual-outcomes/day7b-advanced-views.md) · Phase 1 [Views output plan](plans/plan-a11y-views-output.md) |
 | Twig and components (SDC) | Days 8 and 9 · [day8](actual-outcomes/day8-twig-templates.md) · [day9](actual-outcomes/day9-sdc.md) · Phase 2 article components (commits only) |
+| Contrib: Twig Tweak | Phase 2 · [twig-tweak-critique](actual-outcomes/twig-tweak-critique.md) — why it was never needed, and the deprecation that settles it |
+| Escaping and security | Phase 2 · [autoescape-and-the-trust-boundary](actual-outcomes/autoescape-and-the-trust-boundary.md) — `MarkupInterface` as the one boundary, and the Views rewrite side of it |
 | Search and facets | Day 10 · [day10](actual-outcomes/day10-solr-search.md) · Phase 1 [facets plan](plans/plan-a11y-range-slider-and-facets.md) |
 | Accessibility | Phase 1 · [audit](actual-outcomes/accessibility-audit.md) · [screen-reader log](actual-outcomes/screen-reader-test-log.md) |
 | CI | Phase 1 [CI gates plan](plans/plan-ci-a11y-gates.md) · [`.github/workflows/ci.yml`](../.github/workflows/ci.yml) |

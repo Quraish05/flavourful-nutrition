@@ -66,13 +66,37 @@ class NodeHooks {
       $this->setCardContext($variables, 'view.recipes.page_1');
     }
     $this->addRecipeProps($variables, $node);
+  }
 
-    // field_hero is configured with `label: above`, which printed the word
-    // "hero" over every card and hero image. A label is never right for a field
-    // that is handed to a component's media slot — the slot is the label — so
-    // it is suppressed here rather than by asking every template to strip it.
-    if (isset($variables['content']['field_hero'])) {
-      $variables['content']['field_hero']['#label_display'] = 'hidden';
+  /**
+   * Implements hook_theme_suggestions_node_alter() via the #[Hook] attribute.
+   *
+   * Adds node__article__<story type> — node__article__interview, and so on.
+   * field_story_type is a list_string, so the stored value is already a machine
+   * name; the per-cuisine hook in flavourful_nutrition has to preg_replace its
+   * suffix because it derives one from a term *label* instead.
+   *
+   * Restricted to the full view mode, and that restriction is the whole trap.
+   * A suggestion added here lands at the *end* of the list, which makes it the
+   * *highest* priority — so an unrestricted node__article__journey would
+   * outrank core's node__article__card and render every article card in every
+   * listing through the full-page template. The per-cuisine hook shipped that
+   * bug once; its docblock records it.
+   */
+  #[Hook('theme_suggestions_node_alter')]
+  public function themeSuggestionsNodeAlter(array &$suggestions, array $variables): void {
+    $node = $variables['elements']['#node'] ?? NULL;
+    if (!$node instanceof NodeInterface || $node->bundle() !== 'article') {
+      return;
+    }
+
+    if (($variables['elements']['#view_mode'] ?? '') !== 'full') {
+      return;
+    }
+
+    $type = $this->fieldValue($node, 'field_story_type');
+    if ($type) {
+      $suggestions[] = 'node__article__' . $type;
     }
   }
 
