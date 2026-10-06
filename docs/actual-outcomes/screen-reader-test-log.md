@@ -137,6 +137,25 @@ And the parity note: after all of this, a screen-reader user can now tell which 
 
 ---
 
+## Task 7 — Open a mega-menu panel and reach a filtered listing
+
+**Routes:** all (the menu is in the masthead) · **Criterion probed:** 4.1.2, 2.1.1, 2.1.2, 2.4.1
+
+| What was checked | Result | Criterion | Evidence | Result |
+|---|---|---|---|---|
+| Triggers are real buttons, not links | 3 of 3 are `<button type="button">` with `aria-expanded` and `aria-controls` | 4.1.2 (A) | DOM | **Pass** |
+| Closed state is announced, not merely styled | `aria-expanded="false"` on all 3 at load; all 3 panels carry `hidden` | 4.1.2 (A) | DOM | **Pass** |
+| Every `aria-controls` resolves | 3 distinct panel ids, 3 panels | 4.1.2 (A) | DOM | **Pass** |
+| Landmark is distinguishable from the other two navs | `nav` "Main navigation", beside "Recipe categories" and "User account menu" — three named navs, all distinct, on all 9 routes | 1.3.1, 2.4.1 (A) | A11y tree | **Pass** |
+| Keyboard-only operation | Tab reaches each trigger, Space opens without scrolling, Tab walks the panel, Escape closes and returns focus to the trigger | 2.1.1, 2.1.2 (A) | Keyboard | **Pass** |
+| Announcement with a screen reader | No blocking defect reported | 4.1.2 (A) | **VO** | **Pass** |
+
+**What the `VO` tag means here, precisely.** The run was done by the developer with VoiceOver and the verdict was *"worked decently"*. Per the legend at the top of this document, that is a verdict and **not a captured utterance** — no claim is made in this row about the exact words spoken. Upgrading it to `VO + caption` would mean screenshotting the Caption Panel while opening a panel, walking it and pressing Escape, and is listed under remaining work with the others.
+
+**The automated sweep cannot cover half of this.** `scripts/a11y-sweep.py` reads *rendered source*, and its own docstring is explicit that it cannot see "anything JavaScript writes after load". The menu's `aria-expanded` and `hidden` are toggled by `mega-menu.js`, so every DOM row above describes the **closed** state only. The opened state is reachable only by driving a browser — which is why the keyboard and VO rows are not optional extras here, they are the only evidence for half the component.
+
+---
+
 ## Zoom, reflow and motion preferences
 
 Run by the developer alongside the six tasks.

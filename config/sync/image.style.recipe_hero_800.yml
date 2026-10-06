@@ -1,0 +1,15 @@
+uuid: 3ac1c3bb-6dd1-4545-aa45-327549419814
+langcode: en
+status: true
+dependencies: {  }
+name: recipe_hero_800
+label: recipe_hero_800
+effects:
+  c972ef10-99e0-40f8-843e-14d62bcb2bfb:
+    uuid: c972ef10-99e0-40f8-843e-14d62bcb2bfb
+    id: image_scale
+    weight: 1
+    data:
+      width: 800
+      height: null
+      upscale: false

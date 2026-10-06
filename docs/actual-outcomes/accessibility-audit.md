@@ -249,7 +249,11 @@ python3 scripts/a11y-sweep.py     # 9 routes; exits non-zero if anything is flag
 python3 scripts/contrast.py       # 17 token pairs against their painted backgrounds
 ```
 
-As of 2026-09-15 the sweep flags **two** routes, both the same open finding (O-1), and clears the other seven. The contrast script reports **five** failing pairs, which are O-2 and O-3.
+As of 2026-09-15 the sweep flagged **two** routes, both the same open finding (O-1), and the contrast script reported **five** failing pairs (O-2 and O-3).
+
+**As of 2026-10-06 both are clean:** the sweep reports *9 routes, 0 flagged*, and `contrast.py` reports *19 pairs, 0 failing*. The three findings were fixed in the work that followed; the figures above are kept so the direction of travel is legible.
+
+**A false positive fixed in the script, 2026-10-06.** The sweep built a landmark's accessible name from the raw `aria-labelledby` **ID** instead of resolving it, so `<nav aria-labelledby="block-flavourful-main-menu-menu">` was reported as `#block-flavourful-main-menu-menu` and read as an unnamed landmark. It is not — the menu blocks label their `<nav>` with a visually-hidden `<h2>`, which is correct. `labelled_by_text()` now follows each reference, strips tags and joins them in order, as accessible name computation does, and falls back to `#id` when the reference points at nothing, since a dangling `aria-labelledby` is itself worth seeing. The site has **three named `nav` landmarks on every route** — "Main navigation", "Recipe categories", "User account menu" — and the tool had been hiding two of them.
 
 Both scripts encode their own false positives rather than leaving them for the next reader to rediscover. The sweep excludes `<a>` without `href` (the skip-link target is not a link), `<a aria-hidden="true">` (a deliberately hidden duplicate is not an *unnamed* link — it is not exposed at all), and `<header>` inside `<main>` (not a `banner` under HTML-AAM). Each of those was a false failure the script produced before the exclusion was added.
 
