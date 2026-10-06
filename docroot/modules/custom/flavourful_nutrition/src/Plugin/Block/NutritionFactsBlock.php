@@ -4,6 +4,7 @@ namespace Drupal\flavourful_nutrition\Plugin\Block;
 
 use Drupal\Core\Block\Attribute\Block;
 use Drupal\Core\Block\BlockBase;
+use Drupal\Core\Cache\Cache;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
@@ -57,11 +58,21 @@ final class NutritionFactsBlock extends BlockBase implements ContainerFactoryPlu
     }
     $calories = 0;
     $protein = 0;
-    foreach ($node->get('field_recipe_ingredients')->referencedEntities() as $term) {
+    $terms = $node->get('field_recipe_ingredients')->referencedEntities();
+
+    foreach ($terms as $term) {
       $n = $this->client->getNutritionForIngredient($term->label());
       $calories += $n['calories'];
       $protein += $n['protein'];
     }
+    // The API is keyed on each term's *label*, so a rename changes the result.
+    // Nothing else invalidates that: the node's own tag does not fire when
+    // a term it merely references is edited.
+    $tags = $node->getCacheTags();
+    foreach ($terms as $term) {
+      $tags = Cache::mergeTags($tags, $term->getCacheTags());
+    }
+
     return [
       '#theme' => 'item_list',
       '#title' => $this->t('Estimated nutrition'),
@@ -69,8 +80,23 @@ final class NutritionFactsBlock extends BlockBase implements ContainerFactoryPlu
         $this->t('Calories: @c kcal', ['@c' => $calories]),
         $this->t('Protein: @p g', ['@p' => round($protein, 1)]),
       ],
-      // Correct caching: rebuild when THIS node changes, not on every request.
-      '#cache' => ['tags' => $node->getCacheTags()],
+      // Rebuild when this node changes, or when any ingredient term it
+      // references is renamed.
+      //
+      // `route` is what makes this block *per recipe*. Without it the block
+      // has no declared variation at all, so every recipe page resolves to one
+      // cache entry and the first recipe rendered supplies the figures for all
+      // of them. RouteCacheContext hashes the raw route parameters, not just
+      // the route name, so one entry per node is what it yields.
+      //
+      // No max-age: NutritionClient already caches each API lookup for 24h in
+      // cache.default, so the freshness of the external data is its concern,
+      // not this block's. Capping max-age here would re-solve a solved problem
+      // and make the block uncacheable for a reason that no longer applies.
+      '#cache' => [
+        'contexts' => ['route'],
+        'tags' => $tags,
+      ],
     ];
   }
 
