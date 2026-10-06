@@ -13,7 +13,7 @@ dependencies:
 id: flavourful_diettype
 theme: flavourful
 region: sidebar_second
-weight: 0
+weight: -7
 provider: null
 plugin: 'facet_block:diet_type'
 settings:

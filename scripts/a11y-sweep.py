@@ -94,6 +94,27 @@ def skips(levels):
     return found
 
 
+def labelled_by_text(body, ids):
+    """Resolve an aria-labelledby ID list to the text it points at.
+
+    Reporting the raw ID made correctly-named landmarks read as unnamed: the
+    menu blocks label their <nav> with a visually-hidden <h2>, which is right,
+    and showed up here as `#block-flavourful-main-menu-menu`. aria-labelledby
+    takes a space-separated list, so each reference is resolved and joined in
+    order, which is what the accessible name computation does.
+    """
+    parts = []
+    for ref in ids.split():
+        m = re.search(r'id="%s"[^>]*>(.*?)</' % re.escape(ref), body, re.S)
+        if m:
+            text = re.sub(r"<[^>]+>", "", m.group(1)).strip()
+            if text:
+                parts.append(text)
+    # Fall back to the reference when it points at nothing - a dangling
+    # aria-labelledby is itself a defect worth seeing.
+    return " ".join(parts) if parts else "#" + ids
+
+
 def landmarks(body):
     """Return [(tag, name_or_None, in_main)] for landmark-capable elements."""
     out = []
@@ -104,9 +125,12 @@ def landmarks(body):
         attrs = m.group(0)
         label = re.search(r'aria-label="([^"]*)"', attrs)
         labelledby = re.search(r'aria-labelledby="([^"]*)"', attrs)
-        name = label.group(1) if label else (
-            "#" + labelledby.group(1) if labelledby else None
-        )
+        if label:
+            name = label.group(1)
+        elif labelledby:
+            name = labelled_by_text(body, labelledby.group(1))
+        else:
+            name = None
         nested = -1 < main_start < m.start() < main_end
         out.append((tag, name, nested))
     return out

@@ -13,6 +13,7 @@ dependencies:
     - field.field.node.recipe.field_summary
     - field.field.node.recipe.field_total_time
     - field.field.node.recipe.field_type_of_diet
+    - image.style.recipe_hero_800
     - node.type.recipe
   module:
     - image
@@ -54,7 +55,7 @@ content:
     label: hidden
     settings:
       image_link: ''
-      image_style: ''
+      image_style: recipe_hero_800
       image_loading:
         attribute: lazy
     third_party_settings: {  }
