@@ -30,6 +30,17 @@ articles:
       css/articles.css: {}
 
 
+# The glossary's A-Z letter row. Attached by hand from
+# views-view-summary--glossary--attachment-1.html.twig, the one template that
+# renders it. Its own entrypoint rather than the components barrel, so
+# /glossary does not pull the recipes listing, home bands and recipe detail
+# to style one strip.
+glossary:
+  version: VERSION
+  css:
+    component:
+      css/glossary.css: {}
+
 recipe-interactions:
   version: 1.x
   js:

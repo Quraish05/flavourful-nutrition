@@ -38,22 +38,6 @@ trait ArticlePreprocessTrait {
 
     $this->addArticleProps($variables, $node);
 
-    // field_hero is configured `label: above` on every article display, so
-    // without this the word "Hero" prints over the image. A label is never
-    // right for a field handed to a component's media slot — the slot is the
-    // label. Latent today because no article has a hero image, which is
-    // precisely why it would have been missed.
-    // Every component on the article displays is configured `label: above`,
-    // and a label travels inside the *rendered* field — so passing
-    // content.body to prose carries the word "Body" with it. The fields handed
-    // to a component or an aside have their label suppressed here; the ones
-    // left to render on their own keep theirs, because there they are the only
-    // thing naming the value.
-    foreach (['field_hero', 'body', 'field_takeaways'] as $field) {
-      if (isset($variables['content'][$field])) {
-        $variables['content'][$field]['#label_display'] = 'hidden';
-      }
-    }
   }
 
   /**

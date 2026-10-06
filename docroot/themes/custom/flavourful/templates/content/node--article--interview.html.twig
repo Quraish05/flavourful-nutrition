@@ -1,0 +1,32 @@
+{#
+/**
+ * @file
+ * Interview articles — full page.
+ *
+ * Reached through the `node--article--<story type>` suggestion that
+ * \Drupal\flavourful\Hook\NodeHooks::themeSuggestionsNodeAlter() adds for the
+ * full view mode. It extends the standard article page rather than restating
+ * it, so the header, prose, takeaways and recipes all stay in one place and
+ * this file carries only what is specific to the form.
+ *
+ * The note is about the *form*, not about this article: a published interview
+ * is always a compressed transcript, and saying so is standard practice rather
+ * than a fact that needs a field. That is the test a per-story-type template
+ * has to pass — it must know something the eyebrow does not already say.
+ *
+ * pairing-note is reused rather than copied. Its name is recipe-flavoured but
+ * its contract is not: the component describes itself as "the ruled aside
+ * carrying an editorial note" and offers two different labels as examples.
+ *
+ * @see templates/content/node--article--full.html.twig
+ * @see \Drupal\flavourful\Hook\NodeHooks::themeSuggestionsNodeAlter()
+ */
+#}
+{% extends '@flavourful/content/node--article--full.html.twig' %}
+
+{% block story_note %}
+  {{ include('flavourful:pairing-note', {
+    label: 'Editor’s note'|t,
+    text: 'This conversation has been edited for length and clarity.'|t,
+  }, with_context = false) }}
+{% endblock %}

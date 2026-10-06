@@ -51,7 +51,7 @@ content:
     region: content
   field_hero:
     type: image
-    label: above
+    label: hidden
     settings:
       image_link: ''
       image_style: ''

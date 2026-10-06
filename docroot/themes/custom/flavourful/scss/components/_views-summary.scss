@@ -1,0 +1,45 @@
+// =============================================================================
+// Views A–Z summary
+// -----------------------------------------------------------------------------
+// Its own partial, and its own library, because it renders on exactly one page.
+// It used to live in _recipes-listing.scss, which meant /glossary had to pull
+// the whole recipes stylesheet — listing, home bands and recipe detail — for
+// this one selector family, attached from preprocess rather than a template.
+// =============================================================================
+@use '../abstracts' as *;
+
+// The glossary attachment renders bare <span>s with a literal " | " separator
+// and no list semantics. The template override supplies the list; this styles
+// it as the design's category bar so the two strips match.
+.views-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-2xs $space-sm;
+  margin-block-end: $space-lg;
+  padding-block-end: $space-sm;
+  @include bare-list;
+  @include rule;
+
+  li {
+    margin: 0;
+  }
+
+  a {
+    @include label-type($size-label-lg);
+    color: $color-bone-muted;
+    text-decoration: none;
+    font-variant-numeric: lining-nums;
+
+    &:hover {
+      color: $color-bone;
+    }
+  }
+
+  // The current letter. aria-current in the markup carries this for assistive
+  // tech; the brass underline is what carries it visually — colour alone would
+  // not (WCAG 1.4.1).
+  a[aria-current] {
+    color: $color-brass;
+    @include rule('block-end', $color-brass);
+  }
+}

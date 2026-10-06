@@ -165,7 +165,7 @@ interface aliases in `core.services.yml` — no `create()` needed.
   one implementation of each hook, and a hook class is a service only while it
   carries `#[Hook]`, so a second class cannot be injected into the first and
   themes get no `.services.yml`. Hence one class, with the per-bundle work in
-  traits: recipe handling inline, articles in `ArticleCardTrait`, field reading
+  traits: recipe handling inline, articles in `ArticlePreprocessTrait`, field reading
   shared via `NodeFieldTrait`. The only file that knows a
   recipe field name.
 - **`ListingHooks`** — which listing row is the lead story. The instruction
@@ -178,6 +178,36 @@ interface aliases in `core.services.yml` — no `create()` needed.
 Cacheability is collected into a `CacheableMetadata` and applied once at the end
 of each hook. The utility-bar date sets `max-age` to the seconds remaining until
 midnight rather than `0`, so one decorative line does not disable the page cache.
+
+### Template or preprocess?
+
+Not a choice between the two. The theme answers it three ways, split by the
+*kind* of decision rather than by component:
+
+- **Read in preprocess.** Field values, formatted dates, access-checked URLs,
+  anything that can be absent. `node.field_x.value` does not return `null` on
+  an empty field — see the footgun above — and `access('view')` and
+  `DateFormatter` need services. `NodeHooks` and its traits are the only files
+  that know a field name.
+- **Compose in the template.** Which component, which slots take which rendered
+  field, which variant suits *this* context. `node--recipe--teaser.html.twig`
+  and `node--article--card.html.twig` are maps from scalars onto a component,
+  with no queries in them.
+- **Send per-context instructions through the render array.** Which row is the
+  lead story is a fact about the listing, not about the card, so
+  `ListingHooks` writes `#card_variant` and `#card_heading_level` onto row 0 —
+  the same channel `#view_mode` travels on. `NodeHooks` reads them back out of
+  `$variables['elements']`.
+
+That third one is the one worth copying. The alternative is a page stylesheet
+forcing a component into a different shape, and the whole point of a variant
+prop is that the instruction is data rather than a specificity fight.
+
+**The catch, found building `article-card`:** under an `entity:node` row plugin
+there is no Views row template at all. `views-view-unformatted` renders the
+node directly, so a `views-view-row--*.html.twig` never fires and the only
+per-row template you get is `node--article--card.html.twig`. If a row template
+seems to be ignored, this is why.
 
 ## Front-end build (SCSS)
 
@@ -277,6 +307,38 @@ Defined in `flavourful.libraries.yml`:
   `ul.menu a.is-active { color: #000 }` is *higher* specificity than the theme's
   own rule, which rendered the active nav item black on a near-black ground.
 - **`flavourful/noop`** — an intentionally empty library. See below.
+
+### Where component CSS lives
+
+Three homes, and the rule for each is about *whose decision it is*:
+
+- **A component's own CSS sits beside its Twig** — `components/x/x.css` —
+  declared in no library and attached by SDC on render. Nothing to remember,
+  and it cannot load on a page that does not render the component.
+- **Page-level arrangement** — grids, bands, column splits, the stack of
+  sections on a detail page — goes in a library attached by hand from the view
+  or node template that lays them out.
+- **Tokens, typography and the page shell** are `global-styling`, site-wide.
+
+A page library may reach into a component, but only so far. **Which shape the
+component takes is the component's decision, selected by a prop; how that shape
+is proportioned in one named page slot may be the page's.** `.home__lead` sets
+the lead card's type scale, column ratio and media crop, and that is fine —
+those are facts about the lead slot. What it never does is *choose* `stacked`;
+that arrives as `#card_variant` from `ListingHooks`. The test: delete the page
+library and every component must still render as a correct, complete thing,
+just untuned for its slot.
+
+**One entrypoint per page library, not the barrel.** `articles.scss` pulls a
+single partial, `@use 'components/articles-listing'`. `recipes.scss` pulls
+`@use 'components'`, the whole barrel, so `css/recipes.css` carries the listing
+*and* the home bands *and* the recipe-detail stack — and three templates
+attach it: `node--recipe.html.twig`, `views-view--recipes--page-1.html.twig`
+and `views-view--frontpage.html.twig`. Measured, roughly 70% of that file is
+listing CSS, 14% home, 14% recipe detail, so each page loads about three
+times what it uses. It is 4.3 KB, so this is an architecture point, not a
+performance one — but the recipe detail page has no business carrying the home
+page's grid, and the barrel is what makes that invisible.
 
 ### Olivero
 

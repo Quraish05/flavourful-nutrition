@@ -292,6 +292,29 @@
   }
 }
 
+// -- Contextual links -------------------------------------------------------
+// Admin chrome, not design: core's contextual module absolutely positions its
+// pencil at top 6px / right 0 of whatever block it belongs to. The main menu
+// is a block in the masthead, so that lands squarely on the nav links and
+// swallows the clicks meant for them — and with the toolbar module not
+// installed there is no Edit button to switch them off.
+//
+// Lifted above the band rather than hidden. "Edit menu" is genuinely useful,
+// the masthead's own block padding leaves room for it, and nothing in the
+// header clips it. Only user 1 ever sees any of this: contextual links need
+// the `access contextual links` permission, which no role here holds.
+//
+// The descendant selector is load-bearing, not habit. global.css is in the
+// `base` group and contextual.theme.css is in `component`, which loads after
+// it — the same ordering that let six starterkit stylesheets beat this theme
+// on equal specificity (see README, Asset libraries). A bare `.contextual`
+// here would be overridden; `.masthead .contextual` outranks it (0,2,0) and
+// wins whatever the order.
+.masthead .contextual {
+  top: auto;
+  bottom: calc(100% + #{$space-3xs});
+}
+
 // -- Powered by Drupal ------------------------------------------------------
 // The credit block, if an editor leaves it placed. Set as a tracked label so it
 // reads as a footer credit rather than as a line of the site's prose.
