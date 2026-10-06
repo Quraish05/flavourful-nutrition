@@ -9,7 +9,7 @@ dependencies:
 id: flavourful_recipenutritionfacts
 theme: flavourful
 region: sidebar_second
-weight: 0
+weight: -5
 provider: null
 plugin: flavourful_nutrition_facts
 settings:

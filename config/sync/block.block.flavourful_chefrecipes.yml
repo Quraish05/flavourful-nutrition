@@ -10,7 +10,7 @@ dependencies:
 id: flavourful_chefrecipes
 theme: flavourful
 region: sidebar_second
-weight: 10
+weight: -4
 provider: null
 plugin: flavourful_recipe_chef_recipes
 settings:
