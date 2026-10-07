@@ -14,10 +14,10 @@ includes:
 parameters:
   level: 2
   paths:
-    - docroot/modules/custom
-    - docroot/themes/custom
+    - web/modules/custom
+    - web/themes/custom
   # Compiled CSS, fixtures and vendor code inside the theme are not ours.
   excludePaths:
     analyseAndScan:
-      - docroot/themes/custom/*/node_modules
+      - web/themes/custom/*/node_modules
 

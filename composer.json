@@ -22,6 +22,7 @@
         "drupal/core-project-message": "^11.4",
         "drupal/core-recipe-unpack": "^11.4",
         "drupal/core-recommended": "^11.4",
+        "drupal/devel": "^5.5",
         "drupal/eva": "^3.1",
         "drupal/facets": "^3.0",
         "drupal/pathauto": "^1.15",
@@ -29,7 +30,8 @@
         "drupal/search_api_searchstax": "^1.0",
         "drupal/search_api_solr": "^4.3",
         "drupal/twig_tweak": "^3.4",
-        "drush/drush": "^13.7"
+        "drush/drush": "^13.7",
+        "pantheon-systems/drupal-integrations": "^11"
     },
     "conflict": {
         "drupal/drupal": "*"
@@ -57,35 +59,42 @@
     "extra": {
         "drupal-scaffold": {
             "locations": {
-                "web-root": "docroot/"
-            }
+                "web-root": "web/"
+            },
+            "allowed-packages": [
+                "pantheon-systems/drupal-integrations"
+            ],
+            "file-mapping": {
+                "[project-root]/.gitattributes": false
+            },
+            "gitignore": false
         },
         "installer-paths": {
-            "docroot/core": [
+            "web/core": [
                 "type:drupal-core"
             ],
-            "docroot/libraries/{$name}": [
+            "web/libraries/{$name}": [
                 "type:drupal-library"
             ],
-            "docroot/modules/contrib/{$name}": [
+            "web/modules/contrib/{$name}": [
                 "type:drupal-module"
             ],
-            "docroot/profiles/contrib/{$name}": [
+            "web/profiles/contrib/{$name}": [
                 "type:drupal-profile"
             ],
-            "docroot/themes/contrib/{$name}": [
+            "web/themes/contrib/{$name}": [
                 "type:drupal-theme"
             ],
             "drush/Commands/contrib/{$name}": [
                 "type:drupal-drush"
             ],
-            "docroot/modules/custom/{$name}": [
+            "web/modules/custom/{$name}": [
                 "type:drupal-custom-module"
             ],
-            "docroot/profiles/custom/{$name}": [
+            "web/profiles/custom/{$name}": [
                 "type:drupal-custom-profile"
             ],
-            "docroot/themes/custom/{$name}": [
+            "web/themes/custom/{$name}": [
                 "type:drupal-custom-theme"
             ],
             "recipes/{$name}": [
@@ -116,7 +125,6 @@
     },
     "require-dev": {
         "drupal/coder": "^9.0",
-        "drupal/devel": "^5.5",
         "mglaman/phpstan-drupal": "^2.0",
         "phpstan/extension-installer": "^1.4",
         "phpstan/phpstan": "^2.2"

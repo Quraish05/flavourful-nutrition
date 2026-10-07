@@ -20,10 +20,10 @@ parameters:
 			message: '#^Access to an undefined property Drupal\\Core\\Field\\FieldItemInterface\:\:\$entity\.$#'
 			identifier: property.notFound
 			count: 2
-			path: docroot/themes/custom/flavourful/src/NodeFieldTrait.php
+			path: web/themes/custom/flavourful/src/NodeFieldTrait.php
 
 		-
 			message: '#^Access to an undefined property Drupal\\Core\\Field\\FieldItemInterface\:\:\$value\.$#'
 			identifier: property.notFound
 			count: 1
-			path: docroot/themes/custom/flavourful/src/NodeFieldTrait.php
+			path: web/themes/custom/flavourful/src/NodeFieldTrait.php
