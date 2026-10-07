@@ -25,6 +25,13 @@
   }
 }
 
+// -- Exposed filters --------------------------------------------------------
+// The same gap /recipes leaves under its filters, so the first row does not
+// sit on the fieldset's bottom border.
+.articles-view .view-filters {
+  margin-block-end: $space-xl;
+}
+
 // -- List -------------------------------------------------------------------
 // One column, not a grid: a row leads with a standfirst that needs a
 // comfortable measure, and prose in narrow tracks reads badly. The grid
