@@ -881,6 +881,13 @@ if (file_exists('/var/www/site-php') && isset($_ENV['AH_SITE_GROUP'])) {
   require '/var/www/site-php/' . $_ENV['AH_SITE_GROUP'] . '/' . $_ENV['AH_SITE_GROUP'] . '-settings.inc';
 }
 
+// Pantheon settings (database credentials, hash salt, private files path).
+// settings.pantheon.php is scaffolded by pantheon-systems/drupal-integrations.
+// Only applied on Pantheon environments.
+if (isset($_ENV['PANTHEON_ENVIRONMENT']) && file_exists(__DIR__ . '/settings.pantheon.php')) {
+  include __DIR__ . '/settings.pantheon.php';
+}
+
 // Automatically generated include for settings managed by ddev.
 if (getenv('IS_DDEV_PROJECT') == 'true' && file_exists(__DIR__ . '/settings.ddev.php')) {
   include __DIR__ . '/settings.ddev.php';

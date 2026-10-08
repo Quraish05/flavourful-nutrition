@@ -10,8 +10,8 @@
     makes the departure reviewable rather than a per-file argument.
   </description>
 
-  <file>docroot/modules/custom</file>
-  <file>docroot/themes/custom</file>
+  <file>web/modules/custom</file>
+  <file>web/themes/custom</file>
 
   <rule ref="Drupal">
     <!--

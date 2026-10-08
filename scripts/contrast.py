@@ -19,7 +19,7 @@ border qualifies, a decorative rule between sections does not. The `criterion`
 column records which is which, so raising a token does not quietly restyle
 things that were never in scope.
 
-Tokens come from docroot/themes/custom/flavourful/scss/abstracts/_variables.scss.
+Tokens come from web/themes/custom/flavourful/scss/abstracts/_variables.scss.
 When that file changes, update PALETTE and re-run.
 
 Usage:

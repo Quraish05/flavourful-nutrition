@@ -35,7 +35,7 @@ jobs:
       # There is deliberately no test step. There were no tests, phpunit was
       # not installed, and the step read:
       #
-      #   vendor/bin/phpunit docroot/modules/custom || true
+      #   vendor/bin/phpunit web/modules/custom || true
       #
       # so every run logged "vendor/bin/phpunit: No such file or directory" and
       # reported green. A step that cannot fail is worse than no step: it reads
@@ -66,7 +66,7 @@ jobs:
       # contrast work. Rebuilding and diffing is the only way to know the
       # artefact matches its source.
       - name: CSS artefacts are in sync with their source
-        working-directory: docroot/themes/custom/flavourful
+        working-directory: web/themes/custom/flavourful
         run: |
           npm ci
           npm run build
