@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+
+## Description: Switch DDEV between the development and measurement profiles
+## Usage: measure on|off
+## Example: "ddev measure on" or "ddev measure off"
+
+# `on` writes a gitignored flag file that sets FLAVOURFUL_PROFILE=measure, which
+# makes settings.local.php skip its performance overrides, then turns Twig debug
+# off in the database. `off` removes the flag and turns Twig debug back on.
+# Dev mode is restored with php:eval, not `drush theme:dev on`, because that
+# also writes css/js preprocess FALSE to active config and config:status drifts.
+
+set -euo pipefail
+
+flag="${DDEV_APPROOT}/.ddev/config.measure.yaml"
+
+case "${1:-}" in
+  on)
+    printf 'web_environment:\n  - FLAVOURFUL_PROFILE=measure\n' > "$flag"
+    ddev restart
+    ddev drush theme:dev off
+    ;;
+  off)
+    rm -f "$flag"
+    ddev restart
+    ddev drush php:eval '\Drupal::keyValue("development_settings")->setMultiple(["twig_debug" => TRUE, "twig_cache_disable" => TRUE]);'
+    ddev drush cr
+    ;;
+  *)
+    echo "Usage: ddev measure on|off" >&2
+    exit 1
+    ;;
+esac
