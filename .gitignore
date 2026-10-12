@@ -31,6 +31,13 @@
 /web/sites/*/settings.pantheon.php
 /web/sites/*/default.services.pantheon.preproduction.yml
 
+# Measurement-profile flag, created and removed by `ddev measure on|off`.
+/.ddev/config.measure.yaml
+
+# Raw DevTools trace exports saved to the repo root while recording. The kept
+# copies are gzipped under docs/actual-outcomes/performance-baseline/traces/.
+/trace-*
+
 # --- User-generated & runtime content ----------------------------------------
 /web/sites/*/files/
 /web/sites/*/private/
