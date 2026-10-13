@@ -1,0 +1,6 @@
+home | cache-control: must-revalidate, no-cache, private expires: Sun, 19 Nov 1978 05:00:00 GMT x-drupal-cache: HIT 
+articles | cache-control: must-revalidate, no-cache, private expires: Sun, 19 Nov 1978 05:00:00 GMT x-drupal-cache: HIT 
+article-node | cache-control: must-revalidate, no-cache, private expires: Sun, 19 Nov 1978 05:00:00 GMT x-drupal-cache: HIT 
+recipes | cache-control: must-revalidate, no-cache, private expires: Sun, 19 Nov 1978 05:00:00 GMT x-drupal-cache: HIT 
+recipe-node | cache-control: must-revalidate, no-cache, private expires: Sun, 19 Nov 1978 05:00:00 GMT x-drupal-cache: HIT 
+recipe-search | cache-control: must-revalidate, no-cache, private expires: Sun, 19 Nov 1978 05:00:00 GMT x-drupal-cache: HIT 

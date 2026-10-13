@@ -1,0 +1,6 @@
+home | x-drupal-cache: HIT | x-drupal-dynamic-cache: HIT
+articles | x-drupal-cache: HIT | x-drupal-dynamic-cache: HIT
+article-node | x-drupal-cache: HIT | x-drupal-dynamic-cache: HIT
+recipes | x-drupal-cache: HIT | x-drupal-dynamic-cache: HIT
+recipe-node | x-drupal-cache: HIT | x-drupal-dynamic-cache: HIT
+recipe-search | x-drupal-cache: HIT | x-drupal-dynamic-cache: UNCACHEABLE (poor cacheability)
