@@ -20,8 +20,46 @@ separate lab series with their own settings, listed under *DevTools traces*.
 > **Status: definitions, Lighthouse settings and measurement profile in place.
 > DevTools traces recorded: the article node (2026-10-09) and a facet click on
 > `/recipe-search` (2026-10-10), plus an XHGui profile of `/recipe-search`
-> (2026-10-12) and the repeat view on Pantheon Dev (2026-10-12). The Lighthouse
-> tables (item 6) are still to come.**
+> (2026-10-12) and the repeat view on Pantheon Dev (2026-10-12). Lighthouse
+> baseline of the six frozen URLs recorded (2026-10-12, `899039d`), with the
+> page-cache "before" (`max_age` 0). The jQuery UI removal has no "before":
+> it changed no page.**
+
+---
+
+## The frozen URL set
+
+These six URLs are **frozen** as of 2026-10-12. Every baseline number, and
+every "after" number in Weeks 9–16, is taken on exactly these pages, so a
+before and an after always describe the same page. Nothing here is being
+fixed or changed. The point is the opposite: these slugs must stay as they
+are, so that numbers taken months apart can still be compared.
+
+| # | URL | Template it represents | Node | LCP element (verified 2026-10-07) |
+|---|---|---|---|---|
+| 1 | `/` | Homepage | — | `<img>` hero, `loading="lazy"` |
+| 2 | `/articles` | Article listing (Views, AJAX filter) | — | `p.articles-header__lead` (text) |
+| 3 | `/articles/four-years-they-let-me-make-carbonara` | Article node | 68 | `p.article-header__deck` (text) |
+| 4 | `/recipes` | Recipe card grid | — | `p.recipes-header__lead` (text), from the Lighthouse baseline of 2026-10-12 |
+| 5 | `/recipes/spaghetti-carbonara` | Recipe node (Site Studio display) | 46 | `p.hero__summary` (text) |
+| 6 | `/recipe-search` | Search with facets (Solr) | — | `h1.page-title` (text) |
+
+All six returned `200` with the expected page title on 2026-10-12. The
+article is node 68, the same page as the DevTools article trace below, so its
+Lighthouse row and its trace row describe the same page.
+
+**Rules that keep the set frozen:**
+
+- **Use these exact URLs:** a single slash after the host, no query strings,
+  and `/recipe-search` unfiltered.
+- **Measure all six every time,** or say which are missing and why. For
+  example, `/recipe-search` can't be measured on Pantheon Dev, which has no
+  Solr.
+- **Don't rename these slugs.** Changing a node's title or its Pathauto
+  pattern can change its alias. If an alias has to change, add a dated note
+  under this table rather than editing the row, so older numbers stay traceable.
+  The node IDs (68, 46) are the fallback: `/node/68` and `/node/46` always
+  reach the same content.
 
 ---
 
@@ -89,6 +127,46 @@ The four config differences are `search_api_solr.solr_field_type.*` items
 **Capture the cacheability headers before switching on,** because the
 measurement profile removes them.
 
+### Cacheability headers per URL — 2026-10-12
+
+Taken under the development profile, on the second anonymous `curl` of each
+frozen URL. `X-Drupal-Cache` and `X-Drupal-Dynamic-Cache` read `MISS` on all
+six, because the development profile sends both caches to
+`cache.backend.null`. They say nothing about the site, and the measurement
+profile's numbers are the ones that count. All six send
+`Cache-Control: max-age=900, public`.
+
+| # | URL | `X-Drupal-Cache-Max-Age` | Contexts beyond the shared set |
+|---|---|---|---|
+| 1 | `/` | 27,289 s (until midnight) | `timezone`, `url.path`, `url.query_args`, `url.site` |
+| 2 | `/articles` | 27,288 s (until midnight) | `languages:language_content`, `timezone`, `url` |
+| 3 | `/articles/four-years-they-let-me-make-carbonara` | 27,288 s (until midnight) | `layout_builder_is_active:node`, `timezone`, `url.path`, `url.query_args:_wrapper_format`, `url.query_args:field_recipe_cuisine_type_target_id`, `url.site` |
+| 4 | `/recipes` | 27,288 s (until midnight) | `languages:language_content`, `timezone`, `url` |
+| 5 | `/recipes/spaghetti-carbonara` | 27,286 s (until midnight) | `languages:language_content`, `layout_builder_is_active:node`, `timezone`, `url` |
+| 6 | `/recipe-search` | **0 (Uncacheable)** | `facets_filter:f`, `languages:language_content`, `url` (no `timezone`) |
+
+**The shared set,** on all six: `cookies:big_pipe_nojs`,
+`languages:language_interface`, `route`, `session.exists`, `theme`,
+`user.node_grants:view`, `user.permissions`, `user.roles:authenticated`.
+
+**What it says:**
+
+- **Five URLs expire at the next midnight, not after a fixed time.** The
+  utility-bar date (`PageHooks::addUtilityDate()`,
+  `web/themes/custom/flavourful/src/Hook/PageHooks.php:201`) sets the max-age
+  to the seconds left until midnight in the site's timezone (Asia/Kolkata). It
+  was taken at 16:25 IST, so about 7.6 hours were left. The number depends on
+  the time of day it is read, so compare "until midnight", not the seconds.
+- **`/recipe-search` is max-age 0,** and its dynamic page cache reads
+  `UNCACHEABLE (poor cacheability)`, which is what the facets add. For
+  anonymous visitors, Internal Page Cache still stores it (see *Facet click*
+  below), so the measurement profile will report a `HIT` there.
+- **Every page varies by the `/recipes` cuisine filter**
+  (`url.query_args:field_recipe_cuisine_type_target_id`, added by the category
+  strip at `PageHooks.php:231`). It shows by name only on the article node,
+  because the other pages already vary by the whole URL or by all query
+  arguments. It is harmless for the frozen URLs, which carry no query string.
+
 ---
 
 ## The three metrics, and what makes a number mean something
@@ -148,6 +226,147 @@ Two lab limits follow from the definitions above:
   them in separate columns, and TBT is never written up as INP.
 - **Lab CLS only sees the load.** A shift caused by a facet click after the
   page has loaded does not appear in a navigation report.
+
+---
+
+## Lighthouse baseline — 2026-10-12
+
+**SHA `899039d`, measurement profile** (`ddev measure on`), nothing modified
+outside `docs/`. Lighthouse **13.5.0** CLI, headless Chrome 153, mobile preset:
+`formFactor: mobile`, `throttlingMethod: simulate` (150 ms RTT, 4× CPU),
+412 × 823 at DPR 1.75. Performance category only. **5 runs per URL; each
+column is the median of its own five values, with min–max in brackets.** All
+runs were made logged out, against a warm page cache. Raw output and the 30
+gzipped reports are in
+[`performance-baseline/lighthouse/2026-10-12/`](performance-baseline/lighthouse/2026-10-12/),
+and the commands are in
+[`plan-perf-lighthouse-baseline.md`](../plans/plan-perf-lighthouse-baseline.md).
+
+### Server: TTFB and cache headers
+
+TTFB is `curl`'s `time_starttransfer`, in ms, anonymous. **Cold** is the first
+request after `ddev drush cr`; **warm** is the request straight after it, a
+page-cache `HIT`. Five of each per URL. These are DDEV numbers, so they include
+Docker overhead on macOS.
+
+| # | URL | TTFB cold | TTFB warm | `X-Drupal-Cache` | `X-Drupal-Dynamic-Cache` |
+|---|---|---|---|---|---|
+| 1 | `/` | 568 (466–735) | 14 (13–28) | `HIT` | `HIT` |
+| 2 | `/articles` | 534 (442–715) | 26 (13–49) | `HIT` | `HIT` |
+| 3 | article node | 428 (387–630) | 14 (12–48) | `HIT` | `HIT` |
+| 4 | `/recipes` | 756 (615–1,211) | 41 (13–221) | `HIT` | `HIT` |
+| 5 | recipe node | **1,552** (1,228–1,850) | 51 (34–68) | `HIT` | `HIT` |
+| 6 | `/recipe-search` | 587 (423–805) | 25 (19–100) | `HIT` | **`UNCACHEABLE (poor cacheability)`** |
+
+`X-Drupal-Cache` is read on a repeat request. `X-Drupal-Dynamic-Cache` is read
+after clearing only the page bin (`drush cache:clear bin page`), because a
+page-cache `HIT` replays the dynamic-cache header it was stored with.
+
+### Browser: Lighthouse
+
+| # | URL | LCP (ms) | LCP element | CLS | TBT (ms) | Transfer (bytes) | Requests |
+|---|---|---|---|---|---|---|---|
+| 1 | `/` | 1,510 (1,505–1,660) | `img.image-style-recipe-hero-800`, `loading="lazy"` | 0 | 0 | 184,793 | 9 |
+| 2 | `/articles` | 1,888 (1,881–1,902) | `p.articles-header__lead` | 0 | 0 (0–12) | 197,165 | 11 |
+| 3 | article node | 1,506 (1,504–1,512) | `p.article-header__deck` | 0.012 | 0 | 185,618 | 9 |
+| 4 | `/recipes` | 1,593 (1,582–1,638) | `p.recipes-header__lead` | 0 | 0 (0–1) | 150,239 | 9 |
+| 5 | recipe node | 1,807 (1,804–1,812) | `p.hero__summary` | 0.009 | 0 | 198,118 | 9 |
+| 6 | `/recipe-search` | 1,659 (1,657–1,699) | `h1.page-title` | 0 | 0 | 178,306 | 10 |
+
+The LCP element was the same in all five runs of every URL. Transfer bytes
+varied by under 0.1% and request counts not at all. The CLS on rows 3 and 5
+came from one element each, every run: `div.prose` on the article node and
+`div.hero__aside` on the recipe node.
+
+### What it says
+
+- **All six pages are in the *Good* band for LCP and CLS, in the lab.** LCP is
+  1.5–1.9 s against 2.5 s, and CLS is 0.012 at most against 0.1. That
+  says nothing about real visitors (see the first paragraph).
+- **TBT is 0 almost everywhere.** No page runs enough JavaScript at load to
+  block the main thread at 4× CPU. Week 11–14's INP work has to come from
+  interactions, not from load.
+- **The page cache is worth 20–40× on TTFB.** Warm is 14–51 ms, cold is
+  428–1,552 ms. A warm server is all Lighthouse ever sees, so its LCP numbers
+  sit on top of a 14–51 ms server.
+- **The recipe node is the slowest page to build:** 1,552 ms cold, about 3×
+  the article node, and the slowest warm. It is the only page rendered by Site
+  Studio. That makes it the first candidate for an XHGui profile in Week 9–12.
+- **`/articles` has the slowest LCP** (1,888 ms) and the most requests (11), on
+  a warm server, so the cause is in the browser half. It is the only page that
+  loads jQuery 4.0 (27.9 kB) and a 20.9 kB footer aggregate, for the view's
+  AJAX exposed filter. Whether those scripts delay the LCP text is not yet
+  shown; a trace of `/articles` is the way to check.
+- **The only image LCP is still lazy-loaded** (`/`), as recorded on
+  2026-10-07.
+
+### The page-cache "before": `max_age` 0 — 2026-10-12
+
+`fbf3b43` changed `system.performance` `cache.page.max_age` from 0 to 900.
+To reproduce the before, it was set back to 0 in active config
+(`ddev drush cset`), measured, and returned to 900 in the same session. Same
+SHA, profile and Lighthouse settings as above. Raw output is in
+[`lighthouse/2026-10-12/max-age-0/`](performance-baseline/lighthouse/2026-10-12/max-age-0/),
+and the steps are in
+[`plan-perf-page-cache-before.md`](../plans/plan-perf-page-cache-before.md).
+
+**What the setting controls.** Core's Internal Page Cache ignores it:
+*"Because of this, page cache ignores max age"*
+(`web/core/modules/page_cache/src/StackMiddleware/PageCache.php:268-269`). It
+only sets the `Cache-Control` header for browsers and CDNs
+(`FinishResponseSubscriber.php:164`, `:254`). The measurement confirms it:
+
+| | `max_age` 900 (baseline) | `max_age` 0 (before `fbf3b43`) |
+|---|---|---|
+| `Cache-Control` | `max-age=900, public` | `must-revalidate, no-cache, private` |
+| `Expires` | — | `Sun, 19 Nov 1978 05:00:00 GMT` |
+| `X-Drupal-Cache` on a repeat request | `HIT` on all six | **`HIT` on all six** |
+| TTFB warm, median range across the six URLs | 14–51 ms | 16–34 ms |
+| Article node: LCP | 1,506 ms (1,504–1,512) | 1,503 ms (1,360–1,667) |
+| Article node: CLS, TBT, requests | 0.012, 0, 9 | 0.012, 0 (0–12), 9 |
+| Article node: transfer | 185,618 bytes | 185,387 bytes |
+
+TTFB cold per URL at `max_age` 0, for the record: `/` 586, `/articles` 537,
+article node 581, `/recipes` 582, recipe node 2,170, `/recipe-search` 540
+(medians in ms, raw in `max-age-0/ttfb.txt`).
+
+**What it says:**
+
+- **On DDEV, `max_age` 0 is not slower.** Drupal's page cache served a `HIT`
+  either way, so warm TTFB and the article node's LCP sit inside each other's
+  noise. Transfer is 231 bytes smaller at 0, which is the size of the
+  headers, not the page.
+- **What `max_age` 0 costs is reuse outside Drupal, and DDEV can't show it.**
+  `no-cache, private` tells a CDN not to store the HTML, and tells the browser
+  to revalidate every time. DDEV has no CDN, and Lighthouse clears the browser
+  cache every run. The place it would show is Pantheon Dev, behind its CDN:
+  every visit would reach PHP instead of the edge. That measurement changes
+  the hosted site's config, so it has not been made.
+- **Cold TTFB was noisier in this session.** The recipe node's cold median is
+  2,170 ms against 1,552 ms in the baseline, and the article node's 581 against
+  428. A cold request after `drush cr` does the same work whatever `max_age`
+  is, so this is run-to-run variation on the machine, not the setting. Treat
+  cold TTFB as accurate to a few hundred ms, and compare it only across many
+  runs.
+- **So the honest before/after for `fbf3b43` is a header, not a speed-up.** It
+  belongs in the case study as "the HTML became cacheable by browsers and
+  CDNs", measured on Pantheon if it is measured at all.
+
+### No "before" for the jQuery UI removal (`48bbdad`)
+
+Decided 2026-10-12: **not reproduced, and dropped from the deliverables.**
+`48bbdad` uninstalled `facets_range_widget`, `jquery_ui_slider` and
+`jquery_ui_touch_punch`, and removed three Composer packages
+(`drupal/jquery_ui_slider`, `drupal/jquery_ui_touch_punch`,
+`politsin/jquery-ui-touch-punch`). None of them was ever attached to a page:
+both facets use the checkbox widget, and the slider's vendor library was never
+downloaded. The commit checked that the stylesheet and script lists on `/`,
+`/recipes` and `/recipe-search` were byte-identical before and after. **Its
+front-end cost was 0 bytes and 0 requests**, so a reproduction (80 commits
+back, plus re-enabling uninstalled modules) would only measure that again.
+`jquery_ui` itself stays, because Site Studio requires it. The jQuery a visitor
+does download is core's jQuery 4.0 on `/articles`, for the Views AJAX filter,
+which `48bbdad` did not touch.
 
 ---
 
