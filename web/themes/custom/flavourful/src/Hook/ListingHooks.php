@@ -20,7 +20,8 @@ use Drupal\Core\Pager\PagerManagerInterface;
  * which is the same channel `#view_mode` and `#node` already use — so it
  * arrives in hook_preprocess_node() as $variables['elements']['#card_variant']
  * without any global state, and without page CSS having to reach inside the
- * recipe-card component to override its own variant.
+ * recipe-card component to override its own variant. The lead row also gets
+ * an extra render-cache key, because the variant changes the card's markup.
  */
 class ListingHooks {
 
@@ -126,6 +127,13 @@ class ListingHooks {
       // one level up from the grid cards behind it, which NodeHooks sets to
       // h2 as well on the listing route but h3 here.
       $variables['rows'][0]['content']['#card_heading_level'] = 2;
+      // Neither key is part of the card's render-cache key, and row position is
+      // not a cache context. So the lead gets a cache entry of its own: without
+      // it, the lead and the same recipe's compact card on any other listing
+      // would share one cached copy, and whichever rendered first would win.
+      if (!empty($variables['rows'][0]['content']['#cache']['keys'])) {
+        $variables['rows'][0]['content']['#cache']['keys'][] = 'lead';
+      }
       $variables['rows'][0]['attributes']->addClass('home__lead-row');
     }
   }

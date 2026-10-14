@@ -2,6 +2,7 @@
 
 namespace Drupal\flavourful\Hook;
 
+use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Routing\RouteMatchInterface;
@@ -114,10 +115,20 @@ class NodeHooks {
     // \Drupal\flavourful\Hook\ListingHooks.
     $elements = $variables['elements'] ?? [];
     $variables['card_variant'] = $elements['#card_variant'] ?? 'compact';
+    if (isset($elements['#card_heading_level'])) {
+      $variables['card_heading_level'] = $elements['#card_heading_level'];
+      return;
+    }
+
     // 2 on the bundle's own listing, where cards sit directly under the page
     // h1; 3 anywhere else, where they sit under an h2 section heading.
-    $variables['card_heading_level'] = $elements['#card_heading_level']
-      ?? ($this->routeMatch->getRouteName() === $listing_route ? 2 : 3);
+    $variables['card_heading_level'] = $this->routeMatch->getRouteName() === $listing_route ? 2 : 3;
+    // The level now depends on the route, so the card's cached markup has to
+    // vary by it. Without the context, the first page to render a card fixes
+    // its level on every other page.
+    CacheableMetadata::createFromRenderArray($variables)
+      ->addCacheContexts(['route.name'])
+      ->applyTo($variables);
   }
 
   /** Builds every prop array the recipe templates hand to components. */
