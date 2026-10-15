@@ -377,3 +377,14 @@ turn a missing chef into an uncacheable card. In the dev profile, the rendered
 HTML of `/recipes` and article 68 is byte-identical before and after (asset
 cache-busting tokens aside): the fix adds cache metadata only. The rename
 re-test under the measurement profile is step 8 of the plan.
+
+**Re-test, 2026-10-15 (`measure` checked), the same rename:**
+
+| Page | Component | Showed the new name? |
+|---|---|---|
+| `/recipes` | moussaka's card | **Yes** |
+| `/` | moussaka's card | **Yes** |
+| article 68 | the header's topic pills | **Yes** |
+
+Saving a term now clears every card and header that shows it, and the next
+request rebuilds them with the new name.
