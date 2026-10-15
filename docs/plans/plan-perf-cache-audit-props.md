@@ -2,7 +2,7 @@
 
 > Branch: `perf/cache-audit-props` (from `master` at `dfbc263`) · Created: 2026-10-14 · Last updated: 2026-10-15
 >
-> **Status: In progress — step 8 of 9.** The missing tag was confirmed (step 3) and is fixed in code (step 7). The re-test under the measurement profile is next.
+> **Status: Complete.** The missing tag was confirmed (step 3), fixed (step 7) and re-tested clean under the measurement profile (step 8): renamed terms now show at once on both cards and in the article's pills. Result: Part 3 of `cache-layers-and-a-real-leak.md`, PR #57.
 
 **Goal:** find out whether a recipe card or an article header keeps showing a
 term's old name after the term is renamed, because the preprocess code that
@@ -78,8 +78,8 @@ rebuilt page reuses it. So the test reads the card's markup, not
 | 5 | Record the verdict in Part 3 of the write-up | `cache-layers-and-a-real-leak.md` | Claude | Done |
 | 6 | Tick Notion's SDC checkbox; add a fix checkbox if confirmed | Notion | Claude | Done |
 | 7 | Fix the prop builders: register each referenced chef and term, and keep the access result's and URL's metadata | `src/NodeFieldTrait.php`, `src/ArticlePreprocessTrait.php`, `src/Hook/NodeHooks.php` | You and Claude | Done |
-| 8 | Re-run the rename test: all three "after" lines now print `yes` | measurement profile | You | Not started |
-| 9 | Record the re-test in the write-up, tick Notion's fix checkbox | write-up, Notion | Claude | Not started |
+| 8 | Re-run the rename test: all three "after" lines now print `yes` | measurement profile | You | Done: all three `yes` |
+| 9 | Record the re-test in the write-up, tick Notion's fix checkbox | write-up, Notion | Claude | Done |
 
 ### Step 3 — the rename test (you)
 
@@ -190,6 +190,11 @@ echo "after   article  pill ZZTEST:   $(inpart "$B$A" article-header tag-pill ZZ
 ```
 
 Then step 4 to rename both terms back and switch the profile off.
+
+**Result, 2026-10-15 (`measure` confirmed):** all three "before" lines `yes`,
+and all three "after" lines **`yes`**. Moussaka's card on `/recipes` and `/`,
+and article 68's topic pills, showed the new names straight after the save.
+**The fix works.**
 
 ---
 
