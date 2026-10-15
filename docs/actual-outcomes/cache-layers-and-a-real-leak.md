@@ -326,3 +326,54 @@ same orders as before:** every card showed its own page's value.
 plus once more for the homepage lead. With three card routes that is a few
 entries per recipe, not a measurable change in the cache's size.
 
+### The components' props, and a third leak (a missing tag)
+
+> Phase 3, Week 9–12 item 1 · 2026-10-15 · Steps and raw output:
+> [`plan-perf-cache-audit-props.md`](../plans/plan-perf-cache-audit-props.md)
+
+**The components themselves can't leak.** All 26 component templates under
+`web/themes/custom/flavourful/components/` call no function but `include()`.
+They read no route, user, date or entity, and show only their props.
+
+**The code that builds their props can.** `NodeFieldTrait` turns referenced
+entities into plain strings, and nothing adds the entity's cache tag:
+
+| Prop | Built from | Metadata dropped |
+|---|---|---|
+| `recipe_eyebrow` (the cuisine on a card) | the term's `label()`, `NodeHooks.php:145` | `taxonomy_term:<id>` |
+| `chef_name`, `article_author_name` | the chef node's `label()`, `NodeHooks.php:142`, `ArticlePreprocessTrait.php:79` | `node:<id>` of the chef |
+| `article_tags` (topic pills) | `termChips()`: label and `toUrl()->toString()`, `NodeFieldTrait.php:70-71` | each term's tag, and the URL's metadata |
+
+**Watched happening.** Under the measurement profile (`measure` checked), the
+pages were warmed, then cuisine term 35 "Greek" and topic term 77 "Family" were
+renamed and saved, and the pages were reloaded without clearing anything:
+
+| Page | Component | Showed the new name? |
+|---|---|---|
+| `/recipes` | moussaka's card | **No, still "Greek"** |
+| `/` | moussaka's card | **No, still "Greek"** |
+| article 68 | the header's topic pills | **No, still "Family"** |
+
+**Leak confirmed: a missing tag.** Saving a term clears everything tagged with
+it, and these cards and headers aren't tagged with it. They keep the old name
+until the recipe or article itself is saved. On `/` and `/recipes` the stale
+copy must be the card's own render-cache entry: the category strip makes both
+pages depend on every cuisine term (`PageHooks.php:250`), so the pages
+themselves were rebuilt. Which layer served the stale article header wasn't
+recorded. The chef props share the cause, but weren't tested, because renaming
+a chef node could rewrite its URL alias.
+
+Both terms were renamed back, and `config:status` was unchanged (term names
+are content).
+
+**The fix (2026-10-15).** The prop builders now register what they read.
+`NodeFieldTrait::accessibleUrl()` and `termChips()` take a `CacheableMetadata`
+and record the access result (`access('view', NULL, TRUE)`), the URL's metadata
+(`toUrl()->toString(TRUE)`) and each term. `addRecipeProps()` and
+`addArticleProps()` register the chef and cuisine, and apply it all to the
+element at the end. Each registration is guarded: passing `NULL` to
+`addCacheableDependency()` would set the element's max-age to 0, which would
+turn a missing chef into an uncacheable card. In the dev profile, the rendered
+HTML of `/recipes` and article 68 is byte-identical before and after (asset
+cache-busting tokens aside): the fix adds cache metadata only. The rename
+re-test under the measurement profile is step 8 of the plan.
