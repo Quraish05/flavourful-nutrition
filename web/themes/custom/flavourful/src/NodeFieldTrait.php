@@ -2,6 +2,7 @@
 
 namespace Drupal\flavourful;
 
+use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\node\NodeInterface;
@@ -44,9 +45,22 @@ trait NodeFieldTrait {
    *
    * An entity the current user has no access to must not become a link they
    * cannot follow, so the caller gets NULL and renders plain text instead.
+   *
+   * The access result and the generated URL both carry cache metadata, which
+   * a plain bool and a plain string would drop, so both go into $cache.
    */
-  protected function accessibleUrl(?EntityInterface $entity): ?string {
-    return $entity && $entity->access('view') ? $entity->toUrl()->toString() : NULL;
+  protected function accessibleUrl(?EntityInterface $entity, CacheableMetadata $cache): ?string {
+    if (!$entity) {
+      return NULL;
+    }
+    $access = $entity->access('view', NULL, TRUE);
+    $cache->addCacheableDependency($access);
+    if (!$access->isAllowed()) {
+      return NULL;
+    }
+    $url = $entity->toUrl()->toString(TRUE);
+    $cache->addCacheableDependency($url);
+    return $url->getGeneratedUrl();
   }
 
   /**
@@ -55,7 +69,7 @@ trait NodeFieldTrait {
    * Each chip links to its term page, so the tag row doubles as a way into the
    * related listings — which is what makes it worth the space.
    */
-  protected function termChips(NodeInterface $node, string $field): array {
+  protected function termChips(NodeInterface $node, string $field, CacheableMetadata $cache): array {
     if (!$node->hasField($field)) {
       return [];
     }
@@ -63,12 +77,20 @@ trait NodeFieldTrait {
     $chips = [];
     foreach ($node->get($field) as $item) {
       $term = $item->entity;
-      if (!$term || !$term->access('view')) {
+      if (!$term) {
+        continue;
+      }
+      // Only the label and URL reach the component, so without this the
+      // element would not carry the term's tag, and renaming the term would
+      // leave the old label in every cached chip.
+      $cache->addCacheableDependency($term);
+      $url = $this->accessibleUrl($term, $cache);
+      if ($url === NULL) {
         continue;
       }
       $chips[] = [
         'label' => $term->label(),
-        'url' => $term->toUrl()->toString(),
+        'url' => $url,
       ];
     }
     return $chips;

@@ -138,11 +138,24 @@ class NodeHooks {
     $total = (int) $this->fieldValue($node, 'field_total_time');
     $difficulty = $this->fieldValue($node, 'field_difficulty');
 
-    $chef = $this->referencedEntity($node, 'field_chef');
-    $variables['chef_name'] = $chef?->label();
-    $variables['chef_url'] = $this->accessibleUrl($chef);
+    // The chef and cuisine reach the components only as a label and a URL, so
+    // the card has to declare them as dependencies itself. Without that it
+    // carries only the recipe's tag, and renaming the chef or the term leaves
+    // the old name in every cached card until the recipe is saved.
+    $cache = CacheableMetadata::createFromRenderArray($variables);
 
-    $variables['recipe_eyebrow'] = $this->referencedEntity($node, 'field_recipe_cuisine_type')?->label();
+    $chef = $this->referencedEntity($node, 'field_chef');
+    if ($chef) {
+      $cache->addCacheableDependency($chef);
+    }
+    $variables['chef_name'] = $chef?->label();
+    $variables['chef_url'] = $this->accessibleUrl($chef, $cache);
+
+    $cuisine = $this->referencedEntity($node, 'field_recipe_cuisine_type');
+    if ($cuisine) {
+      $cache->addCacheableDependency($cuisine);
+    }
+    $variables['recipe_eyebrow'] = $cuisine?->label();
 
     // Both templates take these from here rather than reading node.field_*
     // directly in Twig, and that is not just tidiness. On an *empty* field,
@@ -189,8 +202,8 @@ class NodeHooks {
     // it is built by iterating the field rather than reading ->entity, so
     // raising either field's cardinality needs no change here.
     $variables['recipe_tags'] = array_merge(
-      $this->termChips($node, 'field_type_of_diet'),
-      $this->termChips($node, 'field_recipe_ingredients'),
+      $this->termChips($node, 'field_type_of_diet', $cache),
+      $this->termChips($node, 'field_recipe_ingredients', $cache),
     );
 
     // -- Ingredients and method ---------------------------------------------
@@ -202,6 +215,8 @@ class NodeHooks {
     // to light the whole thing up without touching a template.
     $variables['recipe_ingredients'] = $this->ingredientRows($node);
     $variables['recipe_steps'] = $this->methodSteps($node);
+
+    $cache->applyTo($variables);
   }
 
   /**
