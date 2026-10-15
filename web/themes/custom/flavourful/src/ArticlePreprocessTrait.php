@@ -2,6 +2,7 @@
 
 namespace Drupal\flavourful;
 
+use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\node\NodeInterface;
 
 /**
@@ -50,8 +51,16 @@ trait ArticlePreprocessTrait {
     $variables['article_eyebrow'] = $this->storyTypeLabel($node);
     $variables['article_summary'] = $this->fieldValue($node, 'field_summary') ?: NULL;
 
+    // The chef and topic terms reach the components only as labels and URLs,
+    // so the element declares them as dependencies itself. Otherwise renaming
+    // either leaves the old name in every cached card and article header.
+    $cache = CacheableMetadata::createFromRenderArray($variables);
+
     $chef = $this->referencedEntity($node, 'field_chef');
-    $chef_url = $this->accessibleUrl($chef);
+    if ($chef) {
+      $cache->addCacheableDependency($chef);
+    }
+    $chef_url = $this->accessibleUrl($chef, $cache);
 
     // Every entry carries a label, which meta-list renders visually-hidden.
     // Without it "6 min" arrives as a bare fragment with no indication of what
@@ -70,7 +79,7 @@ trait ArticlePreprocessTrait {
       ],
     ]);
 
-    $variables['article_tags'] = $this->termChips($node, 'field_topics');
+    $variables['article_tags'] = $this->termChips($node, 'field_topics', $cache);
 
     // -- The full page -------------------------------------------------------
     // article-header needs the author and date split out rather than folded
@@ -89,6 +98,8 @@ trait ArticlePreprocessTrait {
     $variables['article_reading_time'] = $reading_time > 0
       ? (string) $this->t('@count min read', ['@count' => $reading_time])
       : NULL;
+
+    $cache->applyTo($variables);
   }
 
   /** The human label of field_story_type, or NULL when it is empty. */
