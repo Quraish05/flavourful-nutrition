@@ -368,6 +368,29 @@ back, plus re-enabling uninstalled modules) would only measure that again.
 does download is core's jQuery 4.0 on `/articles`, for the Views AJAX filter,
 which `48bbdad` did not touch.
 
+
+### What the `articles` view's own cache buys — 2026-10-15
+
+Week 9–12 item 2. Measurement profile, SHA `74b8af3`. `/articles` TTFB × 5,
+with only the page and dynamic page caches cleared before each request
+(`drush cache:clear bin page,dynamic_page_cache`). Checked: that request
+returns `x-drupal-cache: MISS` and `x-drupal-dynamic-cache: MISS`, so each
+request rebuilds the page, and only the view's own cache differs between the
+two runs. The view was switched in the Views UI (all displays) and back, and
+`config:status` showed only the four known differences afterwards.
+
+| `articles` view cache | Runs (ms) | Median |
+|---|---|---|
+| `tag` | 121, 169, 92, 48, 34 | 92 |
+| `none` | 112, 99, 56, 59, 47 | 59 |
+
+**No measurable difference.** The ranges overlap, and both runs fall steadily
+from the first request to the fifth: that warm-up is larger than any gap
+between them. The view lists five articles with a cheap query, and each card is
+render-cached separately whatever the view's setting. So the view's own cache
+only wraps five already-cached cards. It would start to matter with many rows,
+an expensive query, or rows that aren't cached on their own.
+
 ---
 
 ## DevTools traces
