@@ -4,7 +4,6 @@ namespace Drupal\flavourful\Hook;
 
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ThemeExtensionList;
 use Drupal\Core\Hook\Attribute\Hook;
@@ -42,7 +41,6 @@ class PageHooks {
     protected ConfigFactoryInterface $configFactory,
     protected EntityTypeManagerInterface $entityTypeManager,
     protected RouteMatchInterface $routeMatch,
-    protected DateFormatterInterface $dateFormatter,
     protected MenuLinkTreeInterface $menuTree,
     protected RequestStack $requestStack,
     protected ThemeExtensionList $themeList,
@@ -72,12 +70,13 @@ class PageHooks {
    * template has no `base_path` variable, so the href came out relative and
    * resolved against the current path — correct on the front page, a 404 on
    * /recipes/<slug>, and silent either way, because a failed preload warns
-   * nobody. base_path() plus the extension list gives an unambiguous path that
-   * also survives a sub-directory install.
+   * nobody. The request's base path plus the extension list gives an
+   * unambiguous path that also survives a sub-directory install.
    */
   #[Hook('page_attachments_alter')]
   public function pageAttachmentsAlter(array &$attachments): void {
-    $theme_path = base_path() . $this->themeList->getPath('flavourful');
+    $base_path = $this->requestStack->getCurrentRequest()?->getBasePath() ?? '';
+    $theme_path = $base_path . '/' . $this->themeList->getPath('flavourful');
 
     foreach (self::PRELOAD_FONTS as $file) {
       $attachments['#attached']['html_head_link'][] = [
@@ -105,7 +104,6 @@ class PageHooks {
     $cache = CacheableMetadata::createFromRenderArray($variables);
 
     $this->addSiteIdentity($variables, $cache);
-    $this->addUtilityDate($variables, $cache);
     $this->addCategoryBar($variables, $cache);
     $this->addFooterLinks($variables, $cache);
 
@@ -184,24 +182,6 @@ class PageHooks {
   }
 
   /**
-   * Adds the long-form date shown at the start of the utility bar.
-   *
-   * A date on every page would normally force max-age 0. Rather than disabling
-   * the page cache site-wide for one decorative line, the page is cached until
-   * the start of the next day — correct for its whole lifetime, and still a
-   * cache hit for most of it.
-   */
-  private function addUtilityDate(array &$variables, CacheableMetadata $cache): void {
-    $now = new \DateTimeImmutable('now', new \DateTimeZone(date_default_timezone_get()));
-
-    $variables['utility_date'] = $this->dateFormatter->format($now->getTimestamp(), 'custom', 'l, j F Y');
-    // The machine-readable form for the <time> element's datetime attribute.
-    $variables['utility_date_iso'] = $now->format('Y-m-d');
-
-    $cache->setCacheMaxAge($now->modify('tomorrow midnight')->getTimestamp() - $now->getTimestamp());
-  }
-
-  /**
    * Adds the cuisine category strip and the total recipe count.
    *
    * "All" is prepended pointing at the unfiltered listing, and the active item
@@ -217,8 +197,11 @@ class PageHooks {
       return;
     }
 
-    $terms = $this->entityTypeManager->getStorage('taxonomy_term')
-      ->loadTree('cuisine', 0, 1, TRUE);
+    // getStorage() is declared to return the generic EntityStorageInterface;
+    // loadTree() is on TermStorageInterface.
+    /** @var \Drupal\taxonomy\TermStorageInterface $storage */
+    $storage = $this->entityTypeManager->getStorage('taxonomy_term');
+    $terms = $storage->loadTree('cuisine', 0, 1, TRUE);
 
     // The strip changes whenever a cuisine term is added, renamed or deleted.
     $cache->addCacheTags(['taxonomy_term_list:cuisine']);

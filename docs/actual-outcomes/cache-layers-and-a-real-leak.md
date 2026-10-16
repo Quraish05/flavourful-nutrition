@@ -388,3 +388,96 @@ re-test under the measurement profile is step 8 of the plan.
 
 Saving a term now clears every card and header that shows it, and the next
 request rebuilds them with the new name.
+
+---
+
+## Part 4 — the utility-bar date goes stale for anonymous visitors
+
+> Phase 3, Week 9–12 item 2 · 2026-10-15 · Steps:
+> [`plan-perf-views-caching.md`](../plans/plan-perf-views-caching.md)
+
+`PageHooks::addUtilityDate()` (`web/themes/custom/flavourful/src/Hook/PageHooks.php:201`)
+prints today's date at the top of every page, and sets the page's max-age to
+the seconds left until midnight. That max-age is honoured by the dynamic page
+cache and the render cache, but **not by Internal Page Cache**, which serves
+every anonymous visitor:
+
+1. `FinishResponseSubscriber::setResponseCacheable()` gives every cacheable
+   response an `Expires` date of 19 Nov 1978 (`FinishResponseSubscriber.php:250`).
+2. `PageCache::storeResponse()` takes the entry's expiry from `Expires`, and
+   stores a past one as permanent (`PageCache.php:268-293`, *"page cache
+   ignores max age"*).
+
+**Checked under the measurement profile, 2026-10-15 at 18:38 IST,** after two
+anonymous requests for `/`:
+
+| Check | Result |
+|---|---|
+| `x-drupal-cache` | `HIT` |
+| `expires` | `Sun, 19 Nov 1978 05:00:00 GMT` |
+| Date in the cached page | `2026-10-15` |
+| `cache_page` row for `/` (and for `/articles`) | **`expire = -1`**, permanent |
+
+**Defect confirmed.** The page, date included, stays cached past midnight.
+Anonymous visitors see the old date until something clears the page. Any node
+save does, because the mega menu puts `node_list` on every page, but on a quiet
+day nothing will. Logged-in visitors are unaffected: the dynamic page cache
+does honour the midnight max-age.
+
+**The fix (2026-10-16): the date is written in the browser.**
+
+- `PageHooks::addUtilityDate()` is gone, with its midnight max-age and the
+  date-formatter service it was the only user of.
+- `page.html.twig` renders an empty placeholder,
+  `<time class="utility-bar__date" data-utility-date hidden></time>`, and
+  attaches the new `flavourful/utility-date` library.
+- `js/utility-date.js` fills it on every page load with the visitor's own date
+  ("Friday, 16 October 2026", the shape PHP's `l, j F Y` gave), sets its
+  `datetime`, and unhides it. Without JavaScript the bar shows no date rather
+  than a wrong one.
+
+One behaviour change: the date is now in the visitor's timezone, not the
+site's (Asia/Kolkata).
+
+**Checked.** Under the measurement profile, the homepage is still a page-cache
+`HIT`, and its cached HTML holds only the empty `<time>` element, with no date
+text anywhere. In the dev profile, `X-Drupal-Cache-Max-Age` on `/`, `/articles`,
+`/recipes` and both nodes is now `-1 (Permanent)`, where it used to count down
+to midnight. `/recipe-search` stays `0 (Uncacheable)`, for its own reason
+(Week 9–12 item 5). All six frozen URLs return 200.
+
+---
+
+## Part 5 — views caching: the decisions
+
+> Phase 3, Week 9–12 item 2 · 2026-10-16 · Evidence: *What the `articles`
+> view's own cache buys* in [`performance-baseline.md`](performance-baseline.md)
+
+**Every view keeps `tag` caching.** Measured on `/articles`, with each
+request missing the page and dynamic page caches, the view's own cache made no
+measurable difference: median 92 ms on `tag`, 59 ms on `none`, inside the
+warm-up noise. Each card is cached on its own, so the view's cache only wraps
+cards that are already cached. With nothing to gain, `time` caching would only
+add the risk of a listing staying stale for its lifetime.
+
+| View | Frozen URL | Decision | Reason |
+|---|---|---|---|
+| `frontpage` | `/` | `tag` | Must show a new recipe straight away; a stale homepage is the most visible kind |
+| `articles` | `/articles` | `tag` | Measured: its cache costs nothing and buys nothing; `tag` keeps it exact |
+| `recipes` | `/recipes` | `tag` | Same shape as `articles`: cached cards, cheap query |
+| `related_recipes`, `recipe_articles` | recipe node | `tag` | Small, per-node lists that should change the moment a recipe or article is saved |
+| `recipe_search` | `/recipe-search` | Unchanged (`search_api_none`) | Its cacheability is Week 9–12 item 5 |
+
+**The mega menu keeps its broad `node_list` tag.** It puts `node_list` on
+every page, so that a newly saved node always appears in the menu panels
+(`NavigationHooks.php:274-278`). The cost is that every node save clears every
+cached page. On a site this size, with few editors, that is cheap: the next
+visitor to each page rebuilds it once, and the measured cold page is about
+0.4–1.6 s. Narrowing it to bundle tags would clear less, but a panel with no
+results has no entity to take a narrower tag from, so a new node could be
+missed, as the comment at line 274 explains.
+
+**Revisit both if** the site grows to listings with many uncached rows or an
+expensive query (views caching starts to pay), or to frequent edits under real
+traffic (clearing every page on each save starts to cost).
+
