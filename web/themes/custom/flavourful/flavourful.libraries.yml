@@ -77,6 +77,14 @@ mega-menu:
     - core/drupal
     - core/once
 
+utility-date:
+  js:
+    js/utility-date.js: {}
+  dependencies:
+    - core/drupal
+    - core/once
+
+
 # An intentionally empty library.
 #
 # Olivero's own `libraries-extend` is inherited by this theme, and it bolts

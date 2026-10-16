@@ -4,7 +4,6 @@ namespace Drupal\flavourful\Hook;
 
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ThemeExtensionList;
 use Drupal\Core\Hook\Attribute\Hook;
@@ -42,7 +41,6 @@ class PageHooks {
     protected ConfigFactoryInterface $configFactory,
     protected EntityTypeManagerInterface $entityTypeManager,
     protected RouteMatchInterface $routeMatch,
-    protected DateFormatterInterface $dateFormatter,
     protected MenuLinkTreeInterface $menuTree,
     protected RequestStack $requestStack,
     protected ThemeExtensionList $themeList,
@@ -105,7 +103,6 @@ class PageHooks {
     $cache = CacheableMetadata::createFromRenderArray($variables);
 
     $this->addSiteIdentity($variables, $cache);
-    $this->addUtilityDate($variables, $cache);
     $this->addCategoryBar($variables, $cache);
     $this->addFooterLinks($variables, $cache);
 
@@ -181,24 +178,6 @@ class PageHooks {
     // slogan simply renders the wordmark without the caption.
     $variables['site_established'] = $config->get('slogan');
     $variables['home_url'] = Url::fromRoute('<front>')->toString();
-  }
-
-  /**
-   * Adds the long-form date shown at the start of the utility bar.
-   *
-   * A date on every page would normally force max-age 0. Rather than disabling
-   * the page cache site-wide for one decorative line, the page is cached until
-   * the start of the next day — correct for its whole lifetime, and still a
-   * cache hit for most of it.
-   */
-  private function addUtilityDate(array &$variables, CacheableMetadata $cache): void {
-    $now = new \DateTimeImmutable('now', new \DateTimeZone(date_default_timezone_get()));
-
-    $variables['utility_date'] = $this->dateFormatter->format($now->getTimestamp(), 'custom', 'l, j F Y');
-    // The machine-readable form for the <time> element's datetime attribute.
-    $variables['utility_date_iso'] = $now->format('Y-m-d');
-
-    $cache->setCacheMaxAge($now->modify('tomorrow midnight')->getTimestamp() - $now->getTimestamp());
   }
 
   /**

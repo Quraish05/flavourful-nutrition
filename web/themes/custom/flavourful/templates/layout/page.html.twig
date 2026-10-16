@@ -40,7 +40,6 @@
  *
  * Added by src/Hook/PageHooks.php — see that class for the cacheability of each:
  * - site_name, site_established, home_url: the masthead wordmark.
- * - utility_date, utility_date_iso: the date at the head of the utility bar.
  * - category_items, recipe_count: the cuisine strip and its tally.
  * - footer_links: the flattened footer menu.
  *
@@ -73,15 +72,16 @@
     #}
     {% embed 'flavourful:utility-bar' with {
       tone: 'deep',
-      utility_date: utility_date,
-      utility_date_iso: utility_date_iso,
       issue_line: site_established,
       secondary_menu: page.secondary_menu,
     } only %}
       {% block start %}
-        {% if utility_date %}
-          <time datetime="{{ utility_date_iso }}">{{ utility_date }}</time>
-        {% endif %}
+        {#
+          Filled in by js/utility-date.js. The page cache keeps anonymous
+          pages indefinitely, so a date rendered here would outlive the day.
+        #}
+        {{ attach_library('flavourful/utility-date') }}
+        <time class="utility-bar__date" data-utility-date hidden></time>
       {% endblock %}
 
       {% block center %}
