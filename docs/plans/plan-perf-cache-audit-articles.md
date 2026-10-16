@@ -1,8 +1,8 @@
 # Plan — cache audit of the Articles side (Phase 3, Week 9–12 item 1)
 
-> Branch: `perf/cache-audit-articles` (from `master` at `fa99d9b`) · Created: 2026-10-13 · Last updated: 2026-10-14
+> Branch: `perf/cache-audit-articles` (from `master` at `fa99d9b`) · Created: 2026-10-13 · Last updated: 2026-10-16
 >
-> **Status: Complete — not yet committed.** Both leaks confirmed (steps 3, 4, 7), fixed (step 8) and re-tested clean under the measurement profile (step 9). Result: Part 3 of `cache-layers-and-a-real-leak.md`.
+> **Status: Complete — merged in PR #56 (`dfbc263`, 2026-10-14).** Both leaks confirmed (steps 3, 4, 7), fixed (step 8) and re-tested clean under the measurement profile (step 9). Result: Part 3 of `cache-layers-and-a-real-leak.md`.
 
 **Goal:** for the `articles` view, the article node display and the theme's
 preprocess hooks, list the cache tags, contexts and max-age each one adds,

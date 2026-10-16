@@ -1,8 +1,8 @@
 # Plan — WebPageTest first and repeat view on Pantheon Dev (Phase 3, Week 8–10 item 5)
 
-> Branch: `perf/measurement-profile` · Created: 2026-10-12 · Last updated: 2026-10-12
+> Branch: `perf/measurement-profile` · Created: 2026-10-12 · Last updated: 2026-10-16
 >
-> **Status: Complete — nothing committed yet.** WebPageTest was blocked (deviation 1). The first view comes from headers, and the repeat view was measured in Chrome. Result: `performance-baseline.md` → *Repeat view on Pantheon Dev*.
+> **Status: Complete — merged in PR #53 (`a829d0d`, 2026-10-12).** WebPageTest was blocked (deviation 1). The first view comes from headers, and the repeat view was measured in Chrome. Result: `performance-baseline.md` → *Repeat view on Pantheon Dev*.
 
 **Goal:** one WebPageTest result for the article node on Pantheon Dev, with
 first view and repeat view, and a record of what the repeat view saves in

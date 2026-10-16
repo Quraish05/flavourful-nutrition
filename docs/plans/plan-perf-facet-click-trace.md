@@ -1,8 +1,8 @@
 # Plan — record a facet click on /recipe-search and attribute its long tasks (Phase 3, Week 8–10 item 4)
 
-> Branch: `perf/measurement-profile` · Created: 2026-10-10 · Last updated: 2026-10-10
+> Branch: `perf/measurement-profile` · Created: 2026-10-10 · Last updated: 2026-10-16
 >
-> **Status: Complete — nothing committed yet.** Result: `performance-baseline.md` → *DevTools traces → Facet click on /recipe-search*.
+> **Status: Complete — merged in PR #53 (`a829d0d`, 2026-10-12).** Result: `performance-baseline.md` → *DevTools traces → Facet click on /recipe-search*.
 
 **Goal:** DevTools recordings of one facet click on `/recipe-search`, with every
 long task (over 50 ms) listed and attributed to the script that owns it.

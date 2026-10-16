@@ -1,8 +1,8 @@
 # Plan — views caching, and the stale utility-bar date (Phase 3, Week 9–12 item 2)
 
-> Branch: `perf/views-caching` (from `master` at `74b8af3`) · Created: 2026-10-15 · Last updated: 2026-10-15
+> Branch: `perf/views-caching` (from `master` at `74b8af3`) · Created: 2026-10-15 · Last updated: 2026-10-16
 >
-> **Status: Complete — not yet committed.** A confirmed (`expire = -1`) and fixed: the date is now written client-side (steps 7–8). B: no measurable difference between `tag` and `none` on `/articles`. Both decisions recorded in Part 5 of the write-up: `tag` for every view, and the mega menu keeps `node_list`.
+> **Status: Complete — merged in PR #59 (`48ca061`, 2026-10-16).** A confirmed (`expire = -1`) and fixed: the date is now written client-side (steps 7–8). B: no measurable difference between `tag` and `none` on `/articles`. Both decisions recorded in Part 5 of the write-up: `tag` for every view, and the mega menu keeps `node_list`.
 
 **Goal:** two checks under the measurement profile.
 

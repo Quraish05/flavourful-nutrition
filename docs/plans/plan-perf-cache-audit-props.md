@@ -2,7 +2,7 @@
 
 > Branch: `perf/cache-audit-props` (from `master` at `dfbc263`) · Created: 2026-10-14 · Last updated: 2026-10-15
 >
-> **Status: Complete.** The missing tag was confirmed (step 3), fixed (step 7) and re-tested clean under the measurement profile (step 8): renamed terms now show at once on both cards and in the article's pills. Result: Part 3 of `cache-layers-and-a-real-leak.md`, PR #57.
+> **Status: Complete — merged in PR #57 (`ca68012`, 2026-10-15), re-test record in PR #58 (`74b8af3`).** The missing tag was confirmed (step 3), fixed (step 7) and re-tested clean under the measurement profile (step 8): renamed terms now show at once on both cards and in the article's pills. Result: Part 3 of `cache-layers-and-a-real-leak.md`, PR #57.
 
 **Goal:** find out whether a recipe card or an article header keeps showing a
 term's old name after the term is renamed, because the preprocess code that
