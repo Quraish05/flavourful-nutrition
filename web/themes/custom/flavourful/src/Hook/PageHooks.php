@@ -70,12 +70,13 @@ class PageHooks {
    * template has no `base_path` variable, so the href came out relative and
    * resolved against the current path — correct on the front page, a 404 on
    * /recipes/<slug>, and silent either way, because a failed preload warns
-   * nobody. base_path() plus the extension list gives an unambiguous path that
-   * also survives a sub-directory install.
+   * nobody. The request's base path plus the extension list gives an
+   * unambiguous path that also survives a sub-directory install.
    */
   #[Hook('page_attachments_alter')]
   public function pageAttachmentsAlter(array &$attachments): void {
-    $theme_path = base_path() . $this->themeList->getPath('flavourful');
+    $base_path = $this->requestStack->getCurrentRequest()?->getBasePath() ?? '';
+    $theme_path = $base_path . '/' . $this->themeList->getPath('flavourful');
 
     foreach (self::PRELOAD_FONTS as $file) {
       $attachments['#attached']['html_head_link'][] = [
@@ -196,8 +197,11 @@ class PageHooks {
       return;
     }
 
-    $terms = $this->entityTypeManager->getStorage('taxonomy_term')
-      ->loadTree('cuisine', 0, 1, TRUE);
+    // getStorage() is declared to return the generic EntityStorageInterface;
+    // loadTree() is on TermStorageInterface.
+    /** @var \Drupal\taxonomy\TermStorageInterface $storage */
+    $storage = $this->entityTypeManager->getStorage('taxonomy_term');
+    $terms = $storage->loadTree('cuisine', 0, 1, TRUE);
 
     // The strip changes whenever a cuisine term is added, renamed or deleted.
     $cache->addCacheTags(['taxonomy_term_list:cuisine']);
