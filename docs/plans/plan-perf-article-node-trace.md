@@ -1,8 +1,8 @@
 # Plan — record an article-node trace and its LCP breakdown (Phase 3, Week 8–10 item 4)
 
-> Branch: `perf/measurement-profile` · Created: 2026-10-09 · Last updated: 2026-10-09
+> Branch: `perf/measurement-profile` · Created: 2026-10-09 · Last updated: 2026-10-16
 >
-> **Status: Complete — all 9 steps done, nothing committed yet.** Result: `performance-baseline.md` → *DevTools traces → Article node*.
+> **Status: Complete — all 9 steps done, merged in PR #53 (`a829d0d`, 2026-10-12).** Result: `performance-baseline.md` → *DevTools traces → Article node*.
 
 **Goal:** one DevTools Performance recording of an article-node reload under the
 measurement profile, saved next to the baseline doc, with its LCP breakdown

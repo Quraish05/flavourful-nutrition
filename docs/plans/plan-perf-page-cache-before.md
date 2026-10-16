@@ -1,8 +1,8 @@
 # Plan — the page-cache "before" (`cache.page.max_age` 0) (Phase 3, Week 8–10 item 6)
 
-> Branch: `perf/lighthouse-baseline` · Created: 2026-10-12 · Last updated: 2026-10-12
+> Branch: `perf/lighthouse-baseline` · Created: 2026-10-12 · Last updated: 2026-10-16
 >
-> **Status: Complete — not yet committed.** Result: `performance-baseline.md` → *The page-cache "before": `max_age` 0*. The prediction held: `HIT` at both settings, only `Cache-Control` changed.
+> **Status: Complete — merged in PR #55 (`fa99d9b`, 2026-10-13).** Result: `performance-baseline.md` → *The page-cache "before": `max_age` 0*. The prediction held: `HIT` at both settings, only `Cache-Control` changed.
 
 **Goal:** reproduce the state before `fbf3b43` (page cache `max_age` 0 → 900)
 on DDEV, record what it changes against the Lighthouse baseline of 2026-10-12,

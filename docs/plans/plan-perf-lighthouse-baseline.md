@@ -1,8 +1,8 @@
 # Plan — Lighthouse baseline of the frozen URL set (Phase 3, Week 8–10 item 6)
 
-> Branch: `perf/lighthouse-baseline` · Created: 2026-10-12 · Last updated: 2026-10-12
+> Branch: `perf/lighthouse-baseline` · Created: 2026-10-12 · Last updated: 2026-10-16
 >
-> **Status: Complete — not yet committed.** Result: `performance-baseline.md` → *Lighthouse baseline — 2026-10-12*.
+> **Status: Complete — merged in PR #55 (`fa99d9b`, 2026-10-13).** Result: `performance-baseline.md` → *Lighthouse baseline — 2026-10-12*.
 
 **Goal:** for each of the six frozen URLs, under the measurement profile:
 anonymous TTFB cold and warm, LCP and its element, CLS, TBT, transfer bytes,

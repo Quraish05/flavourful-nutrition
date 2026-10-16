@@ -1,8 +1,8 @@
 # Plan — profile /recipe-search with XHGui and name its three most expensive functions (Phase 3, Week 8–10 item 4)
 
-> Branch: `perf/measurement-profile` · Created: 2026-10-11 · Last updated: 2026-10-12
+> Branch: `perf/measurement-profile` · Created: 2026-10-11 · Last updated: 2026-10-16
 >
-> **Status: Complete — nothing committed yet.** Result: `performance-baseline.md` → *XHGui profile of /recipe-search*.
+> **Status: Complete — merged in PR #53 (`a829d0d`, 2026-10-12).** Result: `performance-baseline.md` → *XHGui profile of /recipe-search*.
 
 **Goal:** XHGui profiles of a facet page being built on the server, with the
 three most expensive functions named and explained.

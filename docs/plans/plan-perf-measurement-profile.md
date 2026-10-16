@@ -1,8 +1,8 @@
 # Plan — make the site measurable (Phase 3, Week 8–10 items 2 and 3)
 
-> Branch: `perf/measurement-profile` (created from `master` 2026-10-09) · Created: 2026-10-08 · Last updated: 2026-10-09
+> Branch: `perf/measurement-profile` (created from `master` 2026-10-09) · Created: 2026-10-08 · Last updated: 2026-10-16
 >
-> **Status: Complete — all 7 steps done, nothing committed yet.** Notion items 2 and 3 are ticked. The commit is listed there as its own open item.
+> **Status: Complete — all 7 steps done, merged in PR #53 (`a829d0d`, 2026-10-12).** Notion items 2 and 3 are ticked.
 
 **Goal:** one command switches DDEV between the development profile and a
 measurement profile. Pantheon Dev is clean enough to measure. The baseline doc
